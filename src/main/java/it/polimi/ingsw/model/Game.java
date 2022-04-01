@@ -85,7 +85,6 @@ public class Game implements IMooshroomManHandled {
      * @param characters
      */
     private void useCharacterEffect(Characters characters){
-
     }
 
     /**
@@ -117,15 +116,6 @@ public class Game implements IMooshroomManHandled {
    private int getCharacterCost(Characters characters){
        return characters.getCoinValue();
    }
-
-
-
-
-
-
-
-
-
 
 
 

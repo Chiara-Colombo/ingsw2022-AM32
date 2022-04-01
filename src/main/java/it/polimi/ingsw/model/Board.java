@@ -96,11 +96,10 @@ public class Board implements IMonkHandled, ICentaurHandled {
 
 
     /**
-     * Method for moving MotherNature(ho cambiato in modo che risetti l'indice di mother nature)
+     * Method for moving MotherNature
      *
-     *AUMENTA IL VALORE DI MADRE NATURA BY INDEX PASSATO dalla funzione, SE IL VALORE TOTALE è >DEL NUMERO DELLE ISOLE PRESENTI,
-     * TORNA ALL'INIZIO DELL'ARRAY DI ISOLE
-     *andrà bene questa?ahah
+     * @param index the moves Mothernature has to do
+     *
      */
 
     public int moveMotherNature(int index){

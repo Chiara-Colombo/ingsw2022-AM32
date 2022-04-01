@@ -24,13 +24,13 @@ class BoardTest {
         assertTrue(-1<gameBoard2.getMotherNature() && gameBoard2.getMotherNature()<12);
 
     }
-/*
+
     @Test
     void Islandsize(){
         assertEquals(12,gameBoard.getIslandSize());
         assertEquals(12,gameBoard2.getIslandSize());
         }
-*/
+
 
 
     @Test

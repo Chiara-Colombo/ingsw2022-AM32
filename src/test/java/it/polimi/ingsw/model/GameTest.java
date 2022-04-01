@@ -23,8 +23,6 @@ public class GameTest {
     }
 
 
-
-
     @Test
     void setName() {
         game=new Game(2);
@@ -34,6 +32,10 @@ public class GameTest {
         assertEquals("something", player2.getNickname());
     }
 
+    /**-Set a game with two player
+     * -add the players to the game and check if they're in
+     * -set the current player and check if the current player corresponds with the chosen one
+     */
     @Test
     void addPlayer(){
         game=new Game(2);
@@ -42,9 +44,13 @@ public class GameTest {
         game.addPlayer(player1);
         game.addPlayer(player2);
         assertTrue(game.getPlayers().contains(player1)&& game.getPlayers().contains(player2));
+        game.setCurrentPlayer(0);
+        assertEquals("ellenripley",game.getCurrentPlayer().getNickname());
+        System.out.println(game.getCurrentPlayer().getNickname());
+        game.setCurrentPlayer(1);
+        assertEquals("Cannavaciuolo",game.getCurrentPlayer().getNickname());
 
     }
-
 
     @Test
     void activePlayers(){

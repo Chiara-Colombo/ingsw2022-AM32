@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 
+
 public class Island implements IIsland, INoEntry {
 
     private Optional<Tower> tower;
