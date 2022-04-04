@@ -9,7 +9,7 @@ class CloudTest {
     @Test
 
     void isEmpty(){
-        Pawn student=new Pawn();
+        Pawn student=new Pawn(PawnsColors.getRandom());
         Cloud cloud=new Cloud();
         System.out.println(cloud.isEmpty());
         cloud.addStudent(student);

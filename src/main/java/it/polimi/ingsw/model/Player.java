@@ -19,6 +19,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     /**
      * Player Class Constructor
      * @param nickname The nickname chosen by the player
+     * @param towers the number of towers that the player has
      */
     public Player(String nickname, int towers){
         this.nickname = nickname;
@@ -66,9 +67,10 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * @param student the student Pawn that needs to be put
      */
 
-    private void addStudentInEntrance(Pawn student){
+    public void addStudentInEntrance(Pawn student){
         schoolBoard.addStudent(student);
     }
+
 /**
     public boolean moveStudentInDiningRoom(Pawn student){
         return;

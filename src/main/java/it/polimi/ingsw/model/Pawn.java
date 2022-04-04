@@ -7,7 +7,9 @@ public class Pawn {
     /**
      * Pawn object Constructor
      */
-    Pawn(){
+    Pawn(PawnsColors color){
+        this.color=color;
+
     }
 
     /**
@@ -18,4 +20,5 @@ public class Pawn {
     public PawnsColors getColor() {
         return color;
     }
+
 }

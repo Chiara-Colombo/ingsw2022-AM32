@@ -11,28 +11,27 @@ public class Board implements IMonkHandled, ICentaurHandled {
     private final ArrayList<Island> islands;
     private int motherNature;
     /*private Map<PawnsColors,ArrayList<Integer>> bag?*/
-    private final EnumMap<PawnsColors,Integer> bag;
+    private final EnumMap<PawnsColors,ArrayList<Pawn>> bag;
     private ArrayList<Cloud> clouds;
     /**public Collection<Cloud> clouds;*/
     private Collection<Pawn> availableProfessors=new ArrayList<>();
-    private int coinsSupply;
+    private int coinsSupply=20;
     private HashMap<Integer,Integer> islandsTowerMultiplier;
 
     /**
      * Constructor of Board class
      */
 
-    public Board() {
+    public Board(int numOfPlayers) {
 
         /**initialize motherNature value to a random value beetween 0 and 11*/
         this.motherNature = ThreadLocalRandom.current().nextInt(0, 11);
-
         this.islands = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            this.islands.add(new Island(0));
-        }
+        for (int i = 0; i < 12; i++) {this.islands.add(new Island(0));}
         this.bag = new EnumMap<>(PawnsColors.class);
         this.clouds = new ArrayList<>();
+        for(int i=0;i<numOfPlayers;i++) {this.clouds.add(new Cloud()); }
+
     }
 
     /**
@@ -80,7 +79,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @return collection of clouds
      */
 
-    public Collection<Cloud> getClouds() {
+    public ArrayList<Cloud> getClouds() {
         return clouds;
     }
 
@@ -89,10 +88,9 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @return collection of Island
      */
 
-    public Collection<Island> getIslands() {
+    public ArrayList<Island> getIslands() {
         return islands;
     }
-
 
 
     /**
@@ -124,7 +122,9 @@ public class Board implements IMonkHandled, ICentaurHandled {
      */
 
     public void addCoins(int coins){
-        this.coinsSupply += coins;
+        if(this.coinsSupply+ coins<20)
+            this.coinsSupply += coins;
+        else this.coinsSupply=20;
     }
 
     /**
@@ -142,6 +142,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
     public int getCoinsSupply() {
         return this.coinsSupply;
     }
+
 
     /**
      * Method for merging islands whenever it's needed
@@ -168,6 +169,9 @@ public class Board implements IMonkHandled, ICentaurHandled {
     public void setStudentOnIsland(Pawn student, int island) {
         this.islands.get(island).addStudent(student);
     }
+
+
+
 
     @Override
     public void setTowerInfluenceForIslands(int groupOfIslands, int influence) {

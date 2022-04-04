@@ -9,5 +9,9 @@ public enum PawnsColors {
         GREEN,
         BLUE,
         YELLOW,
-        RED
+        RED;
+
+        public static PawnsColors getRandom() {
+                return values()[(int) (Math.random() * values().length)];
+        }
 }

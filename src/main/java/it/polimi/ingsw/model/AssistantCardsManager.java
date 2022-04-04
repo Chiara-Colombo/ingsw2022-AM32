@@ -18,12 +18,8 @@ public class AssistantCardsManager {
      */
 
     /*needs to be modified*/
-    public AssistantCardsManager(){/*
-            this.assistantCards=new ArrayList<>();
-            for(int i=1;i<11;i++){
-                AssistantCard card=new AssistantCard(i,i);
-                assistantCards.add(card);
-            }*/
+    public AssistantCardsManager(){
+
     }
 
 

@@ -13,9 +13,11 @@ public class SchoolBoard implements ISchoolBoard {
      */
 
     public SchoolBoard(){
-        this.entrance = new ArrayList<>();
+        this.entrance = new ArrayList<>(9);
         this.professorsTable = new ArrayList<>();
         this.diningRoom = new EnumMap<>(PawnsColors.class);
+        for(PawnsColors color:PawnsColors.values())
+        this.diningRoom.put(color,new ArrayList<Pawn>());
     }
 
     /**
@@ -69,10 +71,16 @@ public class SchoolBoard implements ISchoolBoard {
     }
 
 
+    public EnumMap<PawnsColors, ArrayList<Pawn>> getDiningRoom() {
+        return diningRoom;
+    }
+
     /**
      * Method that gets an iterator of Professor table
      * @return
      */
+
+
     @Override
     public Iterator<Pawn> getProfessors() {
         return professorsTable.iterator();

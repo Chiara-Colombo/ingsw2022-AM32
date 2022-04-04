@@ -41,6 +41,10 @@ public class Cloud implements ICloud  {
         this.students.add(student);
     }
 
+    public int studentsSize(){
+        return this.students.size();
+    }
+
     /**
      * Method that checks if the cloud has no student pawns
      */

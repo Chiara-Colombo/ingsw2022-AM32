@@ -28,7 +28,7 @@ public class Game implements IMooshroomManHandled {
      * @param numOfPlayers  number of Players that play the match
      */
     public Game(int numOfPlayers){
-        this.gameBoard = new Board();
+        this.gameBoard = new Board(numOfPlayers);
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>(numOfPlayers);
     }
@@ -54,9 +54,8 @@ public class Game implements IMooshroomManHandled {
         this.currentPlayer = currentPlayer;
     }
 
-        /* METODO GETPLAYERS IN CASO DI ARRAYLIST
-    public ArrayList<Player> getPlayers() {return players;}
-*/
+
+
     public ArrayList<Player>getPlayers() {
         return this.players;
     }
@@ -77,7 +76,6 @@ public class Game implements IMooshroomManHandled {
      * Method endGame that ends the Game when the conditions are satisfied
      */
     private void endGame() {
-
     }
 
     /**
@@ -113,7 +111,7 @@ public class Game implements IMooshroomManHandled {
      * @return  coinvalue of character card
      */
 
-   private int getCharacterCost(Characters characters){
+   public int getCharacterCost(Characters characters){
        return characters.getCoinValue();
    }
 
@@ -128,7 +126,6 @@ public class Game implements IMooshroomManHandled {
     public int getNumOfPlayers() {
         return numOfPlayers;
     }
-
 
 
 
