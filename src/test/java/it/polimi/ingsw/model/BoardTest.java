@@ -56,7 +56,7 @@ class BoardTest {
 
 
     /**sets students on island and check if the amaunt is correct**/
-    /**
+
     @Test
     void setStudentOnIsland(){
 
@@ -80,7 +80,7 @@ class BoardTest {
         assertEquals(3,i);
 
     }
-**/
+
     @Test
 
     void  getClouds() {

@@ -14,31 +14,7 @@ public class PlayerTest {
     /**add differents students pawns to the diningroom and check if the size of che key values which is the number of pawn of
      * each color is right
      */
-    @Test
-    void addToDiningRoom() {
 
-        SchoolBoard schoolBoard = new SchoolBoard();
-
-
-        Pawn student1 = new Pawn(PawnsColors.getRandom());
-        Pawn student2 = new Pawn(PawnsColors.getRandom());
-        Pawn student3 = new Pawn(PawnsColors.getRandom());
-        Pawn student4 = new Pawn(PawnsColors.getRandom());
-        Pawn student5 = new Pawn(PawnsColors.getRandom());
-
-
-        schoolBoard.addStudentToDiningRoom(student1);
-        schoolBoard.addStudentToDiningRoom(student2);
-        schoolBoard.addStudentToDiningRoom(student3);
-        schoolBoard.addStudentToDiningRoom(student4);
-        schoolBoard.addStudentToDiningRoom(student5);
-
-        for (PawnsColors color : PawnsColors.values()) {
-            System.out.println(schoolBoard.getDiningRoom().get(color).size());
-        }
-
-
-    }
 
 
     @Test

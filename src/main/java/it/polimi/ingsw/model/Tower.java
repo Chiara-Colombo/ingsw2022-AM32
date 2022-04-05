@@ -4,6 +4,10 @@ public class Tower {
 
     private TowersColors color;
 
+    public Tower(TowersColors color){
+        this.color=color;
+    }
+
     /**
      * Getter that returns the Tower color
      * @return the color value of Tower
