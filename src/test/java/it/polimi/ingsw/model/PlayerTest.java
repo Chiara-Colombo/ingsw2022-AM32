@@ -112,5 +112,18 @@ public class PlayerTest {
 
 
     }
+
+    @Test
+    void FarmerEffecttHandler() {
+        Player player = new Player("test", 5);
+        FarmerEffectHandler handler = new FarmerEffectHandler(player);
+        handler.applyEffect();
+       assertEquals(1,player.getExtraStudent());
+       handler.removeEffect();
+       assertEquals(0,player.getExtraStudent());
+
+
+
+    }
 }
 
