@@ -16,4 +16,13 @@ public class IslandTest {
         island.setGroupOfIslands(islandgroupToset);
         assertEquals(islandgroupToset,island.getGroupOfIslands());
     }
+    @Test
+    void setNoEntry(){
+        Island island=new Island(0);
+        GrandmaHerbsEffectHandler handler=new GrandmaHerbsEffectHandler(island);
+        handler.applyEffect();
+        assertTrue(island.isNoEntry());
+
+    }
+
 }
