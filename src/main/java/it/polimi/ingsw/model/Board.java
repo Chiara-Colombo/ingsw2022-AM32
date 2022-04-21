@@ -50,7 +50,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @param cloud
      */
 
-        /**maybe Pawn not void*/
     public void removeStudentFromCloud(int index,int cloud){
         clouds.get(cloud).removeStudent(index);}
 
@@ -132,7 +131,9 @@ public class Board implements IMonkHandled, ICentaurHandled {
      */
 
     public void giveCoin(){
+        if(this.coinsSupply>0)
         this.coinsSupply--;
+        else this.coinsSupply=0;
     }
 
     /**

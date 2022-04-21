@@ -11,15 +11,29 @@ import org.junit.jupiter.api.Test;
 
 public class AssistantCardTest {
 
-    AssistantCard card=new AssistantCard(1,2,1);
+    int value=3;
+    AssistantCard card=new AssistantCard(value,2,1);
 
     @Test
     void getValue(){
-        assertEquals(1,card.getValue());
+        assertEquals(value,card.getValue());
     }
     @Test
     void getmotherNaturemov(){
         assertEquals(2,card.getMotherNatureMovements());
+    }
+
+
+    @Test
+    void MagicMailManEffectHandler(){
+        AssistantCard assistantCard=new AssistantCard(7,3,1);
+        MagicMailmanEffectHandler magicMailmanEffectHandler=new MagicMailmanEffectHandler(assistantCard);
+        magicMailmanEffectHandler.applyEffect();
+        assertEquals(2,assistantCard.getExtraMotherNatureMovements());
+        magicMailmanEffectHandler.removeEffect();
+        assertEquals(0,assistantCard.getExtraMotherNatureMovements());
+
+
     }
 
 

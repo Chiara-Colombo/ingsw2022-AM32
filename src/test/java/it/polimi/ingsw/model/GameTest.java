@@ -44,31 +44,18 @@ public class GameTest {
     void addPlayer() {
         game = new Game(2);
         Player player1 = new Player("ellenripley", 0);
-        Player player2 = new Player("Cannavaciuolo", 0);
+        Player player2 = null;
         game.addPlayer(player1);
         game.addPlayer(player2);
-        Assertions.assertTrue(game.getPlayers().contains(player1) && game.getPlayers().contains(player2));
+        Assertions.assertFalse(game.getPlayers().contains(player1) && game.getPlayers().contains(player2));
         game.setCurrentPlayer(0);
         assertEquals("ellenripley",game.getCurrentPlayer().getNickname());
-        System.out.println(game.getCurrentPlayer().getNickname());
         game.setCurrentPlayer(1);
-        assertEquals("Cannavaciuolo",game.getCurrentPlayer().getNickname());
+        assertEquals("ellenripley",game.getCurrentPlayer().getNickname());
 
     }
 
-    /**
-     * add players to the game and check if they are contained in the player list of the game
-     **/
-    @Test
-    void activePlayers() {
-        game = new Game(2);
-        Player player1 = new Player("Furiosa", 0);
-        game.addPlayer(player1);
-        Assertions.assertEquals(1, game.getActivePlayers());
-        Player player2 = new Player("boh", 0);
-        game.addPlayer(player2);
-        Assertions.assertEquals(2, game.getActivePlayers());
-    }
+
 
     /**
      * get character cards costs
@@ -94,7 +81,6 @@ public class GameTest {
         Pawn student=new Pawn(color);
         Assertions.assertEquals(color, student.getColor());
     }
-    /**
-     * shows active players
-     **/
+
+
 }

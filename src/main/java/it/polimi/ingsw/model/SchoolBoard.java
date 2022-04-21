@@ -39,7 +39,9 @@ public class SchoolBoard implements ISchoolBoard {
      */
 
     public Pawn removeStudent(int studentIndex) {
-        return entrance.get(studentIndex);
+        Pawn studenttoremove=entrance.get(studentIndex);
+        entrance.remove(studentIndex);
+        return studenttoremove;
     }
 
     /**

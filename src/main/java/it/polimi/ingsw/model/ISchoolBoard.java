@@ -8,7 +8,6 @@ public interface ISchoolBoard {
     Iterator<Pawn> getProfessors();
     Iterator<Pawn> getStudentsOfColor(PawnsColors color);
 
-    /*int getStudentsInEntrance()*/
     Iterator<Pawn> getStudentsInEntrance();
 
 }

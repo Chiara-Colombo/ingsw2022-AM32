@@ -13,7 +13,7 @@ public class SpoiledPrincessEffectHandler implements EffectHandler{
 
 
 
-    /*Methods that apply the Spoiled Princess Character card Effects*/
+    /*Methods that applies the Spoiled Princess Character card Effects*/
     @Override
     public void applyEffect() {
         this.player.addStudentInDiningRoom(this.student);

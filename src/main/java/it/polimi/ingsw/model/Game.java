@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Handled.IMooshroomManHandled;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Objects;
 
 public class Game implements IMooshroomManHandled {
 
@@ -44,14 +45,18 @@ public class Game implements IMooshroomManHandled {
      * Get method that returns the current player
      * @return the index of the current player
      */
-    public Player getCurrentPlayer(){ return this.players.get(currentPlayer); }
+    public Player getCurrentPlayer(){
+        return this.players.get(currentPlayer); }
 
     /**
      * Method that sets the current player index
      * @param currentPlayer
      */
     public void setCurrentPlayer(int currentPlayer) {
+        if(currentPlayer>=0 & currentPlayer<players.size())
         this.currentPlayer = currentPlayer;
+        else
+            System.out.println("Error");
     }
 
 
@@ -64,7 +69,7 @@ public class Game implements IMooshroomManHandled {
      * Method that gets the gameBoard of the game
      * @return gameboard variable
      */
-    private Board getGameBoard() {return this.gameBoard; }
+    public Board getGameBoard() {return this.gameBoard; }
 
     /**
      * Method AssistantCardsManager that returns the cardsManager variable
@@ -129,13 +134,7 @@ public class Game implements IMooshroomManHandled {
 
 
 
-    /**
-     * Method which returns the number of players actually playing the game
-     * @return
-     */
-    public int getActivePlayers() {
-        return this.players.size();
-    }
+
 
 
     /**
@@ -143,7 +142,12 @@ public class Game implements IMooshroomManHandled {
      * @param player the player that needs to be added
      */
     public void addPlayer(Player player){
-        this.players.add(player);
+        if(Objects.nonNull(player)) {
+            this.players.add(player);
+        }
+        else
+            System.out.println("Player has not been added");
+
  }
 
 

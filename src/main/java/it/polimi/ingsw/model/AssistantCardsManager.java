@@ -17,7 +17,6 @@ public class AssistantCardsManager {
      * Constructor of AssistantCardManager Class
      */
 
-    /*needs to be modified*/
     public AssistantCardsManager(){
 
     }
