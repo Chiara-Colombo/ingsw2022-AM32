@@ -10,14 +10,13 @@
 | Functionality    |                       State                        |
 |:-----------------|:--------------------------------------------------:|
 | Basic rules      | 🟡 |
-| Complete rules   | 🔴 |
-| Socket           | 🔴 |
+| Complete rules   | 🟡 |
+| Socket           | 🟡 |
 | GUI              | 🔴 |
 | CLI              | 🔴 |
 | Multiple games   | 🔴 |
 | Persistence      | 🔴 |
-
-
-
-
-
+\
+🔴 Nothing done\
+🟡 Working on it\
+🟢 Done
