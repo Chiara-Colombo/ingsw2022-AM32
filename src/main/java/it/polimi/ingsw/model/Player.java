@@ -12,7 +12,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     public  String nickname;
     private final ArrayList<Tower> towers;
     private TowersColors color;
-    private Wizards wizards;
+    private Wizards wizard;
     private final SchoolBoard schoolBoard;
     private int coins, extraInfluence, extraStudent;
 
@@ -50,16 +50,16 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      */
 
     public Wizards getWizard() {
-        return wizards;
+        return this.wizard;
     }
 
     /**
-     * Method that sets Wizards for the selected Player
-     * @param wizards the enumeration of wizards
+     * Method that sets Wizard for the selected Player
+     * @param wizard the enumeration of wizards
      */
 
-    public void setWizard(Wizards wizards) {
-        this.wizards = wizards;
+    public void setWizard(Wizards wizard) {
+        this.wizard = wizard;
     }
 
     /**

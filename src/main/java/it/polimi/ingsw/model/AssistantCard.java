@@ -14,9 +14,8 @@ public class AssistantCard implements IMagicMailManHandled {
      * class constructor
      * @param value value of the card which goes from 1 to 10
      * @param motherNatureMovements integer value of mother nature movements
-     * @param wizards wizard which is assigned to the card
      */
-    public AssistantCard(int value, int motherNatureMovements, int wizards){
+    public AssistantCard(int value, int motherNatureMovements){
         this.value = value;
         this.motherNatureMovements = motherNatureMovements;
         this.extraMotherNatureMovements = 0;
@@ -64,5 +63,10 @@ public class AssistantCard implements IMagicMailManHandled {
 
     public EnumMap<Wizards, Boolean> getDiscarded() {
         return this.discarded;
+    }
+
+    @Override
+    public String toString() {
+        return "AssistantCard [value=" + this.value + ", motherNatureMovements=" + this.motherNatureMovements + "]";
     }
 }

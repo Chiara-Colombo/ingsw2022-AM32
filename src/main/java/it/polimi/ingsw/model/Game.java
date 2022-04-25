@@ -15,7 +15,7 @@ public class Game implements IMooshroomManHandled {
     private final Board gameBoard;
     private final int numOfPlayers;
     private boolean expertMode;
-    private AssistantCardsManager cardsManager;
+    private final AssistantCardsManager cardsManager;
     private Characters[] validCharacters;
     private EnumMap<Characters,Integer> charactersValue;
     private EnumMap<PawnsColors,Integer> colorsInfluenceMultiplier;
@@ -28,10 +28,11 @@ public class Game implements IMooshroomManHandled {
      * Game class Constructor
      * @param numOfPlayers  number of Players that play the match
      */
-    public Game(int numOfPlayers){
+    public Game(int numOfPlayers, String jsonCards){
         this.gameBoard = new Board(numOfPlayers);
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>(numOfPlayers);
+        this.cardsManager = new AssistantCardsManager(jsonCards);
     }
 
     /**
@@ -53,10 +54,9 @@ public class Game implements IMooshroomManHandled {
      * @param currentPlayer
      */
     public void setCurrentPlayer(int currentPlayer) {
-        if(currentPlayer>=0 & currentPlayer<players.size())
-        this.currentPlayer = currentPlayer;
-        else
-            System.out.println("Error");
+        if(currentPlayer >= 0 && currentPlayer < players.size())
+            this.currentPlayer = currentPlayer;
+        else System.out.println("Error");
     }
 
 
@@ -69,13 +69,13 @@ public class Game implements IMooshroomManHandled {
      * Method that gets the gameBoard of the game
      * @return gameboard variable
      */
-    public Board getGameBoard() {return this.gameBoard; }
+    public Board getGameBoard() { return this.gameBoard; }
 
     /**
      * Method AssistantCardsManager that returns the cardsManager variable
      * @return
      */
-    private AssistantCardsManager getCardsManager() {return this.cardsManager; }
+    private AssistantCardsManager getCardsManager() { return this.cardsManager; }
 
     /**
      * Method endGame that ends the Game when the conditions are satisfied
@@ -145,9 +145,7 @@ public class Game implements IMooshroomManHandled {
         if(Objects.nonNull(player)) {
             this.players.add(player);
         }
-        else
-            System.out.println("Player has not been added");
-
+        else System.out.println("Player has not been added");
  }
 
 

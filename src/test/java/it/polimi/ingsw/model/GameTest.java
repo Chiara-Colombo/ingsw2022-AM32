@@ -1,18 +1,23 @@
 package it.polimi.ingsw.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import static it.polimi.ingsw.utils.Utils.*;
 
 public class GameTest {
 
     public Game game;
 
+    private String readCards() throws IOException {
+        BufferedReader input = new BufferedReader(new FileReader(CARDS_RESOURCE_PATH));
+        return input.readLine();
+    }
 
     /**
      * select the number of players
@@ -20,8 +25,13 @@ public class GameTest {
 
     @Test
     void numOfPlayers() {
-
-        game = new Game(3);
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        game = new Game(3, jsonCards);
         Assertions.assertEquals(3, game.getNumOfPlayers());
     }
     /**
@@ -29,7 +39,13 @@ public class GameTest {
      **/
     @Test
     void setName() {
-        game = new Game(2);
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        game = new Game(2, jsonCards);
         Player player1 = new Player("Alana Kane", 0);
         Assertions.assertEquals("Alana Kane", player1.getNickname());
         Player player2 = new Player("something", 0);
@@ -42,7 +58,13 @@ public class GameTest {
      */
     @Test
     void addPlayer() {
-        game = new Game(2);
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        game = new Game(2, jsonCards);
         Player player1 = new Player("ellenripley", 0);
         Player player2 = null;
         game.addPlayer(player1);
@@ -55,14 +77,19 @@ public class GameTest {
 
     }
 
-
-
     /**
      * get character cards costs
      **/
+
     @Test
     void getCharactercost() {
-        Game game = new Game(3);
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        game = new Game(2, jsonCards);
         Assertions.assertEquals(3, game.getCharacterCost(Characters.CENTAUR));
         Assertions.assertEquals(2, game.getCharacterCost(Characters.GRANDMA_HERBS));
         Assertions.assertEquals(2, game.getCharacterCost(Characters.FARMER));
@@ -73,14 +100,10 @@ public class GameTest {
         Assertions.assertEquals(1, game.getCharacterCost(Characters.MONK));
     }
 
-
-
     @Test
     void getRandom(){
-        PawnsColors color=PawnsColors.getRandom();
-        Pawn student=new Pawn(color);
+        PawnsColors color = PawnsColors.getRandom();
+        Pawn student = new Pawn(color);
         Assertions.assertEquals(color, student.getColor());
     }
-
-
 }

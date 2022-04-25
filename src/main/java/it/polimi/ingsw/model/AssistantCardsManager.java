@@ -1,9 +1,12 @@
 package it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
 public class AssistantCardsManager {
 
@@ -17,8 +20,13 @@ public class AssistantCardsManager {
      * Constructor of AssistantCardManager Class
      */
 
-    public AssistantCardsManager(){
-
+    public AssistantCardsManager(String jsonCards){
+        if (Objects.isNull(jsonCards)) {
+            System.out.println("Error");
+            return;
+        }
+        Gson gson = new Gson();
+        this.assistantCards = gson.fromJson(jsonCards, new TypeToken<ArrayList<AssistantCard>>(){}.getType());
     }
 
 

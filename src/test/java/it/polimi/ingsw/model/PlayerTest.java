@@ -3,7 +3,11 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.Handled.ISpoiledPrincessHandled;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
+import static it.polimi.ingsw.utils.Utils.*;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +15,10 @@ public class PlayerTest {
 
     Game game;
 
+    private String readCards() throws IOException {
+        BufferedReader input = new BufferedReader(new FileReader(CARDS_RESOURCE_PATH));
+        return input.readLine();
+    }
 
     /**
      * add differents students pawns to the diningroom and check if the size of che key values which is the number of pawn of
@@ -22,7 +30,13 @@ public class PlayerTest {
     void setTowersColors() {
         int numOfPlayers = 3;
         int towers = 6;
-        game = new Game(numOfPlayers);
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        game = new Game(numOfPlayers, jsonCards);
 
         Player player1 = new Player("Anna", towers);
         Player player2 = new Player("Beatrice", towers);
