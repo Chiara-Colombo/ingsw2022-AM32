@@ -136,7 +136,17 @@ public class PlayerTest {
        handler.removeEffect();
        assertEquals(0,player.getExtraStudent());
 
+    }
 
+    @Test
+    void KnightEffectHandler() {
+        Player player = new Player("test", 7);
+        KnightEffectHandler handler = new KnightEffectHandler(player);
+        handler.applyEffect();
+
+        assertEquals(2,player.getExtraInfluence());
+        handler.removeEffect();
+        assertEquals(0,player.getExtraStudent());
 
     }
 }

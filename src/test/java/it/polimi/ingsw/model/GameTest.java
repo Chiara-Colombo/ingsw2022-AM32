@@ -106,4 +106,30 @@ public class GameTest {
         Pawn student = new Pawn(color);
         Assertions.assertEquals(color, student.getColor());
     }
+
+    @Test
+    void MooshroomManEffectHandler() {
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Game game = new Game(2,jsonCards);
+        PawnsColors color= PawnsColors.getRandom();
+        MooshroomManEffectHandler handler = new MooshroomManEffectHandler(color,game);
+        handler.applyEffect();
+        assertEquals(0,game.getInfluenceForColor(color));
+        handler.removeEffect();
+        assertEquals(1,game.getInfluenceForColor(color));
+
+        PawnsColors color2= PawnsColors.getRandom();
+        MooshroomManEffectHandler handler2 = new MooshroomManEffectHandler(color2,game);
+        handler2.applyEffect();
+        assertEquals(0,game.getInfluenceForColor(color2));
+        handler2.removeEffect();
+        assertEquals(1,game.getInfluenceForColor(color2));
+        assertEquals(1,game.getInfluenceForColor(color));
+
+    }
 }

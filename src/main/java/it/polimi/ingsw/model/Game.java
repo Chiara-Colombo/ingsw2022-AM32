@@ -33,6 +33,7 @@ public class Game implements IMooshroomManHandled {
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>(numOfPlayers);
         this.cardsManager = new AssistantCardsManager(jsonCards);
+        this.colorsInfluenceMultiplier=new EnumMap<PawnsColors, Integer>(PawnsColors.class);
     }
 
     /**
@@ -152,7 +153,11 @@ public class Game implements IMooshroomManHandled {
  /**Override methods of MushroomMan Character Card*/
     @Override
     public void setInfluenceForColor(PawnsColors color, int influence) {
-        this.colorsInfluenceMultiplier.replace(color, influence);
+        if((Objects.nonNull(this.colorsInfluenceMultiplier.get(color)))) {
+            this.colorsInfluenceMultiplier.replace(color, influence);
+        }
+        else
+            this.colorsInfluenceMultiplier.put(color,influence);
     }
 
     @Override
