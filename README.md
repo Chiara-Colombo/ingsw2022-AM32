@@ -13,6 +13,6 @@
 | Complete rules   | 🟡 |
 | Socket           | 🟡 |
 | GUI              | 🔴 |
-| CLI              | 🔴 |
+| CLI              | 🟡 |
 | Multiple games   | 🔴 |
 | Persistence      | 🔴 |
