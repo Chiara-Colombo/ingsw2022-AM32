@@ -28,7 +28,8 @@ public class Game implements IMooshroomManHandled {
      * Game class Constructor
      * @param numOfPlayers  number of Players that play the match
      */
-    public Game(int numOfPlayers, String jsonCards){
+    public Game(int numOfPlayers, boolean expertMode, String jsonCards){
+        this.expertMode = expertMode;
         this.gameBoard = new Board(numOfPlayers);
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>(numOfPlayers);

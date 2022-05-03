@@ -36,7 +36,7 @@ public class PlayerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        game = new Game(numOfPlayers, jsonCards);
+        game = new Game(numOfPlayers, true, jsonCards);
 
         Player player1 = new Player("Anna", towers);
         Player player2 = new Player("Beatrice", towers);

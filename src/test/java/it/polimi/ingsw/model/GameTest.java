@@ -31,7 +31,7 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        game = new Game(3, jsonCards);
+        game = new Game(3, false, jsonCards);
         Assertions.assertEquals(3, game.getNumOfPlayers());
     }
     /**
@@ -45,7 +45,7 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        game = new Game(2, jsonCards);
+        game = new Game(2, true, jsonCards);
         Player player1 = new Player("Alana Kane", 0);
         Assertions.assertEquals("Alana Kane", player1.getNickname());
         Player player2 = new Player("something", 0);
@@ -64,7 +64,7 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        game = new Game(2, jsonCards);
+        game = new Game(2, true, jsonCards);
         Player player1 = new Player("ellenripley", 0);
         Player player2 = null;
         game.addPlayer(player1);
@@ -89,7 +89,7 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        game = new Game(2, jsonCards);
+        game = new Game(2, false, jsonCards);
         Assertions.assertEquals(3, game.getCharacterCost(Characters.CENTAUR));
         Assertions.assertEquals(2, game.getCharacterCost(Characters.GRANDMA_HERBS));
         Assertions.assertEquals(2, game.getCharacterCost(Characters.FARMER));
@@ -115,7 +115,7 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Game game = new Game(2,jsonCards);
+        Game game = new Game(2, false, jsonCards);
         PawnsColors color= PawnsColors.getRandom();
         MooshroomManEffectHandler handler = new MooshroomManEffectHandler(color,game);
         handler.applyEffect();
