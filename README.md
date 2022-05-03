@@ -16,3 +16,7 @@
 | CLI              | 🟡 |
 | Multiple games   | 🔴 |
 | Persistence      | 🔴 |
+
+🔴 Not implemented
+🟡 Working on it
+🟢 All done
