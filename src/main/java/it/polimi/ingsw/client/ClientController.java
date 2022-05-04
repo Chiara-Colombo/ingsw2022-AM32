@@ -28,6 +28,7 @@ public class ClientController implements Runnable{
 
     public void sendMessage(String message) {
         this.output.println(message);
+        this.output.flush();
     }
 
     private void handleMessage(String message) {
@@ -43,6 +44,13 @@ public class ClientController implements Runnable{
             }
             case "UsernameCorrectlyAssigned" -> {
                 this.view.showWaitingView();
+            }
+            case "UsernameNotAssigned" -> {
+                String error = "Username invalido. Deve essere univoco!";
+                this.view.showErrorMessage(error);
+            }
+            case "GameIsStarting" -> {
+                this.view.showGameStartingView();
             }
         }
     }

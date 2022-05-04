@@ -53,4 +53,9 @@ public class CLI implements View{
     public void showWaitingView() {
         System.out.println("In attesa che altri giocatori si colleghino...");
     }
+
+    @Override
+    public void showGameStartingView() {
+        System.out.println("Partita avviata");
+    }
 }

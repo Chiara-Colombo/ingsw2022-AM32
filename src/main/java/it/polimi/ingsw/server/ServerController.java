@@ -29,6 +29,7 @@ public class ServerController {
             System.out.println("Too many players");
         }
         ClientHandler client = new ClientHandler(player, this);
+        new Thread(client).start();
         this.clients.add(client);
         if (this.numOfPlayers < 0) {
             System.out.println("First player");
@@ -52,11 +53,20 @@ public class ServerController {
     }
 
     public void setUsername(String username, ClientHandler player) {
+        if (this.usernames.containsKey(username)) {
+            String message = "UsernameNotAssigned";
+            player.sendMessage(message);
+            message = "RequestUsername";
+            player.sendMessage(message);
+            return;
+        }
         this.usernames.put(username, player);
         String message = "UsernameCorrectlyAssigned";
         System.out.println("Added player " + username);
         player.sendMessage(message);
         if (this.numOfPlayers == this.clients.size()) {
+            message = "GameIsStarting";
+            player.sendMessage(message);
             this.startGame();
         }
     }

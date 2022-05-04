@@ -10,4 +10,6 @@ public interface View {
     void showErrorMessage(String message);
 
     void showWaitingView();
+
+    void showGameStartingView();
 }
