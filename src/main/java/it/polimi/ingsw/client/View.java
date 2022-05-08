@@ -12,4 +12,6 @@ public interface View {
     void showWaitingView();
 
     void showGameStartingView();
+
+    void showUsernameCorrectlyAssigned();
 }

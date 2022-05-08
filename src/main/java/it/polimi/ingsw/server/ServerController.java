@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.messages.clienttoserver.NumOfPlayersResponse;
+import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
 import java.io.*;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import static it.polimi.ingsw.utils.Utils.CARDS_RESOURCE_PATH;
 
@@ -27,24 +30,40 @@ public class ServerController {
         if (this.clients.size() >= this.numOfPlayers && this.numOfPlayers > 0) {
             new PrintWriter(player.getOutputStream()).println("ConnectionRefused");
             System.out.println("Too many players");
+            player.close();
         }
         ClientHandler client = new ClientHandler(player, this);
         new Thread(client).start();
         this.clients.add(client);
         if (this.numOfPlayers < 0) {
             System.out.println("First player");
-            String message = "NumOfPlayersRequest";
-            client.sendMessage(message);
-            message = "GameModeRequest";
-            client.sendMessage(message);
+           // String message = "NumOfPlayersRequest";
+           ServerMessage NumOfPlayersRequest = new NumOfPlayersRequest();
+           client.sendObjectMessage(NumOfPlayersRequest);
+           // client.sendMessage(message);
+           ServerMessage GameModeRequest = new GameModeRequest();
+           client.sendObjectMessage(GameModeRequest);
+          //  message = "GameModeRequest";
+          //  client.sendMessage(message);
         }
-        String message = "RequestUsername";
-        client.sendMessage(message);
+       // String message = "RequestUsername";
+        ServerMessage RequestUsername = new RequestUsername();
+        client.sendObjectMessage(RequestUsername);
+       // client.sendMessage(message);
     }
-
-    public void setNumOfPlayers(int numOfPlayers) {
+/**
+    public void setNumOfPlayers(int numOfPlayers, ClientHandler player) {
         this.numOfPlayers = numOfPlayers;
     }
+    */
+
+
+
+    public void setNumOfPlayersVero(int numOfPlayers, ClientHandler player) {
+        this.numOfPlayers = numOfPlayers;
+    }
+
+
 
     public void setGameMode(boolean expertMode) throws IOException {
         BufferedReader input = new BufferedReader(new FileReader(CARDS_RESOURCE_PATH));
@@ -54,19 +73,34 @@ public class ServerController {
 
     public void setUsername(String username, ClientHandler player) {
         if (this.usernames.containsKey(username)) {
-            String message = "UsernameNotAssigned";
-            player.sendMessage(message);
-            message = "RequestUsername";
-            player.sendMessage(message);
+           // String message = "UsernameNotAssigned";
+            UsernameNotAssigned usernameNotAssigned = new UsernameNotAssigned();
+            player.sendObjectMessage(usernameNotAssigned);
+           // player.sendMessage(message);
+            RequestUsername requestUsername = new RequestUsername();
+            player.sendObjectMessage(requestUsername);
+            //message = "RequestUsername";
+            //player.sendMessage(message);
             return;
         }
         this.usernames.put(username, player);
-        String message = "UsernameCorrectlyAssigned";
+       // String message = "UsernameCorrectlyAssigned";
+        UsernameCorrectlyAssigned usernameCorrectlyAssigned = new UsernameCorrectlyAssigned();
         System.out.println("Added player " + username);
-        player.sendMessage(message);
-        if (this.numOfPlayers == this.clients.size()) {
-            message = "GameIsStarting";
-            player.sendMessage(message);
+        player.sendObjectMessage(usernameCorrectlyAssigned);
+        if(this.numOfPlayers != this.clients.size()){
+            WaitingForPlayers waitingForPlayers = new WaitingForPlayers();
+            player.sendObjectMessage(waitingForPlayers);
+        }
+        //player.sendMessage(message);
+       // if (this.numOfPlayers == this.clients.size())
+        else {
+          //  message = "GameIsStarting";
+            GameIsStarting gameIsStarting = new GameIsStarting();
+            for(int i = 0; i < clients.size(); i++) {
+                clients.get(i).sendObjectMessage(gameIsStarting);
+            }
+           // player.sendMessage(message);
             this.startGame();
         }
     }
