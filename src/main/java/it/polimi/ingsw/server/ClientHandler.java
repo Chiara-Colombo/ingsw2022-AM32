@@ -23,7 +23,6 @@ public class ClientHandler implements Runnable {
 
 
 
-
     public ClientHandler(Socket client, ServerController controller) throws IOException {
         this.client = client;
         this.controller = controller;
@@ -49,20 +48,15 @@ public class ClientHandler implements Runnable {
 */
 
         while(true) {
-
             try {
                 ClientMessage clientMessage =  (ClientMessage) inputStream.readObject();
                 System.out.println("Received message: " + clientMessage.TypeOfMessage());
                 clientMessage.accept(visitorServer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
-
         }
-
-        }
+    }
 
 
 /**
