@@ -9,22 +9,37 @@ public class ConcreteClientVisitor implements VisitorClient{
     public ConcreteClientVisitor(View view) {
         this.view = view;
     }
+
+    @Override
+    public void visitMessage(ConnectionRefused connectionRefused) {
+        this.view.showErrorMessage("Raggiunto il massimo limite di giocatori");
+    }
     @Override
     public void visitMessage(NumOfPlayersRequest numOfPlayersRequest) {
-        view.showRequestNumOfPlayers();
+        this.view.showRequestNumOfPlayers();
     }
-    public void visitMessage(GameModeRequest gameModeRequest) {view.showRequestExpertMode();}
+    @Override
+    public void visitMessage(GameModeRequest gameModeRequest) { this.view.showRequestExpertMode(); }
+    @Override
     public void visitMessage(RequestUsername requestUsername) {
-        view.showRequestUsername();
+        this.view.showRequestUsername();
     }
-    public void visitMessage(GameIsStarting gameIsStarting) {view.showGameStartingView();}
-    public void visitMessage(UsernameCorrectlyAssigned usernameCorrectlyAssigned) {view.showUsernameCorrectlyAssigned();}
-    public void visitMessage(UsernameNotAssigned usernameNotAssigned) {view.showErrorMessage("Lo username deve essere univico!");}
-    public void visitMessage(ErrorOnPlayerNumber errorOnPlayerNumber) {view.showErrorMessage("Hai Selezionato un numero non corretto!");}
-    public void visitMessage(WaitingForPlayers waitingForPlayers) {view.showWaitingView();}
-
-
-
+    @Override
+    public void visitMessage(GameIsStarting gameIsStarting) { this.view.showGameStartingView(); }
+    @Override
+    public void visitMessage(UsernameNotAssigned usernameNotAssigned) { this.view.showErrorMessage("Lo username deve essere univoco!"); }
+    @Override
+    public void visitMessage(ErrorOnPlayerNumber errorOnPlayerNumber) { this.view.showErrorMessage("Hai Selezionato un numero non corretto!"); }
+    @Override
+    public void visitMessage(WaitingForPlayers waitingForPlayers) { this.view.showWaitingView(); }
+    @Override
+    public void visitMessage(PlayerDisconnected playerDisconnected) {
+        this.view.showErrorMessage(playerDisconnected.getPlayer() + " si è disconnesso!");
+    }
+    @Override
+    public void visitMessage(PlayerWinner playerWinner) {
+        this.view.showErrorMessage(playerWinner.getWinner() + " vince per " + playerWinner.getReason());
+    }
 }
 
 

@@ -14,8 +14,9 @@ public class CLI implements View{
     private ClientController clientController;
 
     public void start() {
+        this.clientController = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this);
         try {
-            this.clientController = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this);
+            this.clientController.connect();
             System.out.println("Controller initialized");
         } catch (IOException e) {
             System.out.println("Cannot instantiate connection towards server");
@@ -28,9 +29,7 @@ public class CLI implements View{
     public void showRequestNumOfPlayers() {
         System.out.print("Quanti giocatori per questa partita? [2 - 3]\n - ");
         int numOfPlayers = new Scanner(System.in).nextInt();
-      //  String message = "NumOfPlayersResponse" + '%' + numOfPlayers;
         ClientMessage clientMessage = new NumOfPlayersResponse(numOfPlayers);
-      //  this.clientController.sendMessage(message);
         this.clientController.sendObjectMessage(clientMessage);
     }
 
@@ -39,9 +38,7 @@ public class CLI implements View{
         System.out.print("Vuoi giocare con la modalità esperti? [y - n]\n - ");
         String ans = new Scanner(System.in).nextLine();
         boolean expertMode = ans.toLowerCase().charAt(0) == 'y';
-      //  String message = "GameModeResponse" + '%' + expertMode;
         GameModeResponse gameModeResponse = new GameModeResponse(expertMode);
-       // this.clientController.sendMessage(message);
         this.clientController.sendObjectMessage(gameModeResponse);
     }
 
@@ -49,9 +46,7 @@ public class CLI implements View{
     public void showRequestUsername() {
         System.out.print("Inserisci uno username:\n - ");
         String username = new Scanner(System.in).nextLine();
-       // String message = "SetUsername" + '%' + username;
-         SetUsername setUsername = new SetUsername(username);
-       // this.clientController.sendMessage(message);
+        SetUsername setUsername = new SetUsername(username);
         this.clientController.sendObjectMessage(setUsername);
     }
 
@@ -69,10 +64,4 @@ public class CLI implements View{
     public void showGameStartingView() {
         System.out.println("Partita avviata");
     }
-
-    @Override
-    public void showUsernameCorrectlyAssigned() {
-        System.out.println("Lo username che hai scelto ti è stato assegnato!");
-    }
-
 }

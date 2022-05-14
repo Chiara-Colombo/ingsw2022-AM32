@@ -22,6 +22,7 @@ public class Game implements IMooshroomManHandled {
     private Collection<Pawn> monkStudents;
     private Collection<Pawn> spoiledPrincessStudents;
     private Characters activeCharacters;
+    private GamePhase gamePhase;
     private int grandmaHerbsNoEntryTiles;
 
     /**
@@ -29,6 +30,7 @@ public class Game implements IMooshroomManHandled {
      * @param numOfPlayers  number of Players that play the match
      */
     public Game(int numOfPlayers, boolean expertMode, String jsonCards){
+        this.gamePhase = GamePhase.NO_PHASE;
         this.expertMode = expertMode;
         this.gameBoard = new Board(numOfPlayers);
         this.numOfPlayers = numOfPlayers;
@@ -41,8 +43,17 @@ public class Game implements IMooshroomManHandled {
      * Method for start the game
      */
     public void startGame(){
-        return;
+        this.gamePhase = GamePhase.START_PHASE;
     }
+
+    public GamePhase getGamePhase() {
+        return this.gamePhase;
+    }
+
+    public void setGamePhase(GamePhase gamePhase) {
+        this.gamePhase = gamePhase;
+    }
+
 
     /**
      * Get method that returns the current player

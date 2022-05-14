@@ -21,13 +21,13 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(NumOfPlayersResponse numOfPlayersResponse) {
-        this.serverController.setNumOfPlayersVero(numOfPlayersResponse.getNumOfPlayers(), player);
+        this.serverController.setNumOfPlayers(numOfPlayersResponse.getNumOfPlayers());
     }
 
     @Override
     public void visitMessage(GameModeResponse gameModeResponse)  {
         try {
-            this.serverController.setGameMode(gameModeResponse.getExpertMode());
+            this.serverController.setGameMode(gameModeResponse.getExpertMode(), this.player);
         } catch (IOException e) {
             e.printStackTrace();
         }

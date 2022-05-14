@@ -17,6 +17,5 @@ public class UsernameCorrectlyAssigned extends ServerMessage{
 
     @Override
     public void accept(VisitorClient visitorClient) throws IOException {
-        visitorClient.visitMessage(this);
     }
 }

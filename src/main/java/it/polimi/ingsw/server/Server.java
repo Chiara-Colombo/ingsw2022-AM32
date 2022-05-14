@@ -19,7 +19,7 @@ public class Server {
 
     public void start() throws IOException {
         System.out.println("Server started...");
-        ExecutorService executor = Executors.newCachedThreadPool();
+        //ExecutorService executor = Executors.newCachedThreadPool();
         while (true) {
             Socket clientSocket = this.serverSocket.accept();
             System.out.println("Client connected");

@@ -22,8 +22,7 @@ public class App {
             CLI client = new CLI();
             client.start();
         } else if (choice == 3) {
-            GUI gui = new GUI();
-            gui.main(args);
+            GUI.main(args);
         }
     }
 }
