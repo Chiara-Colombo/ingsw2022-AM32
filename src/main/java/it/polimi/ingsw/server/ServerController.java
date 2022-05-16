@@ -4,8 +4,7 @@ import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.*;

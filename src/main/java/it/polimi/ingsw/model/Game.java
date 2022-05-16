@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMooshroomManHandled;
-import it.polimi.ingsw.server.ModelObservable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +8,7 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Game extends ModelObservable implements IMooshroomManHandled {
+public class Game implements IMooshroomManHandled {
 
    private final ArrayList<Player> players;
    /* private Player[] players;*/
