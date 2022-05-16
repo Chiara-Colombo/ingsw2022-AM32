@@ -190,5 +190,13 @@ public class GUI extends Application implements View{
     public void showAssistantCardRequest() {
 
     }
+    @Override
+    public void showErrorMotherNaturePosition(){
+    }
+
+    @Override
+    public void showNotEnoughCoins(){
+
+    }
 
 }
