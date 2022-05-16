@@ -15,4 +15,5 @@ public interface VisitorServer {
     void visitMessage(SelectPawnResponse selectPawnResponse);
     void visitMessage(UseCharacterCard useCharacterCard);
     void visitMessage(WizardCardResponse wizardCardResponse);
+    void visitMessage(Quit quit);
 }

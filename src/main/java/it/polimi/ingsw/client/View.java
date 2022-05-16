@@ -53,4 +53,9 @@ public interface View {
 
     void showAssistantCardRequest();
 
+    void showErrorMotherNaturePosition();
+
+    void showNotEnoughCoins();
+
+
 }

@@ -74,4 +74,8 @@ public class ConcreteServerVisitor implements VisitorServer{
     public void visitMessage(WizardCardResponse wizardCardResponse) {
 
     }
+
+    public void visitMessage(Quit quit){
+
+    }
 }

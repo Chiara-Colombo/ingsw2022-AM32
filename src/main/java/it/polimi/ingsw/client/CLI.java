@@ -168,5 +168,11 @@ public class CLI  implements View{
         System.out.println("Seleziona una carta assistente");
     }
 
+    @Override
+    public void showErrorMotherNaturePosition(){
+        System.out.println("Hai scelto una posizione di Madre Natura non valida"); }
+
+    @Override
+    public void showNotEnoughCoins(){System.out.println("Non hai abbastanza soldi");}
 
 }
