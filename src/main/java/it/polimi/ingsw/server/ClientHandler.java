@@ -19,6 +19,7 @@ public class ClientHandler implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ConcreteServerVisitor visitorServer;
+    private String nickname;
 
     public ClientHandler(Socket client, ServerController controller) throws IOException {
         this.client = client;
@@ -42,6 +43,14 @@ public class ClientHandler implements Runnable {
                 break;
             }
         }
+    }
+
+    public void setNickname(String nickname){
+        this.nickname = nickname;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public void sendObjectMessage(ServerMessage message) {

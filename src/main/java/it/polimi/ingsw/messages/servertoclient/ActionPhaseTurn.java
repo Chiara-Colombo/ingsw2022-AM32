@@ -2,18 +2,24 @@ package it.polimi.ingsw.messages.servertoclient;
 
 import it.polimi.ingsw.client.VisitorClient;
 
+import javax.swing.*;
 import java.io.IOException;
-import java.io.Serializable;
 
-public class GameIsStarting extends ServerMessage{
+public class ActionPhaseTurn extends ServerMessage{
 
-    public String typeOfMessage = "GameIsStarting";
+    public String nickname;
 
+    public ActionPhaseTurn(String nickname){
+        this.nickname = nickname;
+    }
 
+    public String getNickname() {
+        return nickname;
+    }
 
     @Override
     public String TypeOfMessage() {
-        return this.typeOfMessage;
+        return "ActionPhaseTUrn";
     }
 
     @Override

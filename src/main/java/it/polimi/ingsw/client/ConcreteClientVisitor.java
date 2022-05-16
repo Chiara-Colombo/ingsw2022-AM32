@@ -29,7 +29,7 @@ public class ConcreteClientVisitor implements VisitorClient{
     @Override
     public void visitMessage(UsernameNotAssigned usernameNotAssigned) { this.view.showErrorMessage("Lo username deve essere univoco!"); }
     @Override
-    public void visitMessage(ErrorOnPlayerNumber errorOnPlayerNumber) { this.view.showErrorMessage("Hai Selezionato un numero non corretto!"); }
+    public void visitMessage(ErrorOnPlayerNumber errorOnPlayerNumber) { this.view.showErrorMessage("Non è possibile creare una partita con questo numero di giocatori! Ritenta! "); }
     @Override
     public void visitMessage(WaitingForPlayers waitingForPlayers) { this.view.showWaitingView(); }
     @Override
@@ -39,6 +39,95 @@ public class ConcreteClientVisitor implements VisitorClient{
     @Override
     public void visitMessage(PlayerWinner playerWinner) {
         this.view.showErrorMessage(playerWinner.getWinner() + " vince per " + playerWinner.getReason());
+    }
+
+    public void visitMessage(WizardCardRequest wizardCardRequest){
+        this.view.showWizardCardRequest(wizardCardRequest.getNickname());
+    }
+
+    @Override
+    public void visitMessage(PlayerChoosingWizard playerChoosingWizard) {
+        this.view.showPlayerChoosingWizard(playerChoosingWizard.getNickname());
+    }
+
+    @Override
+    public void visitMessage(ActionPhaseTurn actionPhaseTurn) {
+        this.view.showActionPhaseTurn(actionPhaseTurn.getNickname());
+    }
+
+    @Override
+    public void visitMessage(AssistantCardChosen assistantCardChosen) {
+        this.view.showAssistantCardChosen();
+    }
+
+    @Override
+    public void visitMessage(AssistantCardRequest assistantCardRequest) {
+        this.view.showAssistantCardRequest();
+    }
+
+    @Override
+    public void visitMessage(AssistantsCardUpdate assistantsCardUpdate) {
+        this.view.showAssistantsCardUpdate();
+    }
+
+    @Override
+    public void visitMessage(BoardUpdate boardUpdate) {
+        this.view.showBoardUpdate();
+    }
+
+    @Override
+    public void visitMessage(ChosenWizardCard chosenWizardCard) {
+        this.view.showChosenWizardCard();
+    }
+
+    @Override
+    public void visitMessage(CloudRequest cloudRequest) {
+        this.view.showCloudRequest();
+    }
+
+    @Override
+    public void visitMessage(CoinsUpdate coinsUpdate) {
+        this.view.showCoinsUpdate();
+    }
+
+    @Override
+    public void visitMessage(MNPositionUpdate mnPositionUpdate) {
+        this.view.showMNPositionUpdate();
+    }
+
+    @Override
+    public void visitMessage(MoveMNRequest moveMNRequest) {
+        this.view.showMoveMNRequest(moveMNRequest.getMovements());
+    }
+
+    @Override
+    public void visitMessage(MovePawnRequest movePawnRequest) {
+        this.view.showMovePawnRequest();
+    }
+
+    @Override
+    public void visitMessage(PlanningPhaseTurn planningPhaseTurn) {
+        this.view.showPlanningPhaseTurn(planningPhaseTurn.getNick());
+    }
+
+    @Override
+    public void visitMessage(SchoolBoardUpdate schoolBoardUpdate) {
+        this.view.showSchoolBoardUpdate();
+    }
+
+    @Override
+    public void visitMessage(SelectPawnRequest selectPawnRequest) {
+        this.view.showSelectPawnRequest();
+    }
+
+    @Override
+    public void visitMessage(YourActionPhaseTurnEnds yourActionPhaseTurnEnds) {
+        this.view.showYourActionPhaseTurnEnds();
+    }
+
+    @Override
+    public void visitMessage(YourPlanningPhaseTurnEnds yourPlanningPhaseTurnEnds) {
+        this.view.showYourPlanningPhaseTurnEnds();
     }
 }
 

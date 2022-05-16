@@ -1,19 +1,23 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
 import static it.polimi.ingsw.utils.Utils.CARDS_RESOURCE_PATH;
 
-public class ServerController {
+public class ServerController  {
     private Game game;
     private final ArrayList<ClientHandler> clients;
     private final Map<String, ClientHandler> usernames;
     private int numOfPlayers;
+    private State stateOfTheGame;
 
     public ServerController() {
         this.numOfPlayers = -1;
@@ -24,9 +28,19 @@ public class ServerController {
     public void setupGame(ClientHandler player) {
         ServerMessage NumOfPlayersRequest = new NumOfPlayersRequest();
         player.sendObjectMessage(NumOfPlayersRequest);
+    }
+
+    public void errorOnPlayerNumber(ClientHandler player){
+        ServerMessage errorOnPlayerNumber = new ErrorOnPlayerNumber();
+        player.sendObjectMessage(errorOnPlayerNumber);
+        this.setupGame(player);
+    }
+
+    public void setupGameMode(ClientHandler player) {
         ServerMessage GameModeRequest = new GameModeRequest();
         player.sendObjectMessage(GameModeRequest);
     }
+
 
     public synchronized void addPlayer(Socket player) throws IOException {
         if (this.clients.size() >= this.numOfPlayers && this.numOfPlayers > 0) {
@@ -41,8 +55,9 @@ public class ServerController {
         client.sendObjectMessage(RequestUsername);
     }
 
-    public void setNumOfPlayers(int numOfPlayers) {
+    public void setNumOfPlayers(int numOfPlayers, ClientHandler player) {
         this.numOfPlayers = numOfPlayers;
+        this.setupGameMode(player);
     }
 
     public void setGameMode(boolean expertMode, ClientHandler player) throws IOException {
@@ -80,6 +95,7 @@ public class ServerController {
             return;
         }
         this.usernames.put(username, player);
+        player.setNickname(username);
         UsernameCorrectlyAssigned usernameCorrectlyAssigned = new UsernameCorrectlyAssigned();
         System.out.println("Added player " + username);
         player.sendObjectMessage(usernameCorrectlyAssigned);
@@ -140,5 +156,8 @@ public class ServerController {
             this.game.addPlayer(player);
         }
         this.game.startGame();
+        this.stateOfTheGame = new StartState(this.game,this.clients);
+        this.stateOfTheGame.StartTurn();
     }
+
 }

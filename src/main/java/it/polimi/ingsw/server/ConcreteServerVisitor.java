@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.View;
-import it.polimi.ingsw.messages.clienttoserver.GameModeResponse;
-import it.polimi.ingsw.messages.clienttoserver.NumOfPlayersResponse;
-import it.polimi.ingsw.messages.clienttoserver.SetUsername;
+import it.polimi.ingsw.messages.clienttoserver.*;
 import it.polimi.ingsw.messages.servertoclient.NumOfPlayersRequest;
 
 import java.io.IOException;
@@ -21,7 +19,11 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(NumOfPlayersResponse numOfPlayersResponse) {
-        this.serverController.setNumOfPlayers(numOfPlayersResponse.getNumOfPlayers());
+        if(numOfPlayersResponse.getNumOfPlayers() > 3 || numOfPlayersResponse.getNumOfPlayers() < 2){
+            this.serverController.errorOnPlayerNumber(player);
+        }
+        else
+        this.serverController.setNumOfPlayers(numOfPlayersResponse.getNumOfPlayers(),player);
     }
 
     @Override
@@ -36,5 +38,40 @@ public class ConcreteServerVisitor implements VisitorServer{
     @Override
     public void visitMessage(SetUsername setUsername)  {
        this.serverController.setUsername(setUsername.getUsername(), player);
+    }
+
+    @Override
+    public void visitMessage(AssistantCardResponse assistantCardResponse) {
+
+    }
+
+    @Override
+    public void visitMessage(CloudResponse cloudResponse) {
+
+    }
+
+    @Override
+    public void visitMessage(MoveMNResponse moveMNResponse) {
+
+    }
+
+    @Override
+    public void visitMessage(MovePawnResponse movePawnResponse) {
+
+    }
+
+    @Override
+    public void visitMessage(SelectPawnResponse selectPawnResponse) {
+
+    }
+
+    @Override
+    public void visitMessage(UseCharacterCard useCharacterCard) {
+
+    }
+
+    @Override
+    public void visitMessage(WizardCardResponse wizardCardResponse) {
+
     }
 }

@@ -1,13 +1,15 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMooshroomManHandled;
+import it.polimi.ingsw.server.ModelObservable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class Game implements IMooshroomManHandled {
+public class Game extends ModelObservable implements IMooshroomManHandled {
 
    private final ArrayList<Player> players;
    /* private Player[] players;*/
@@ -44,7 +46,20 @@ public class Game implements IMooshroomManHandled {
      */
     public void startGame(){
         this.gamePhase = GamePhase.START_PHASE;
+        this.currentPlayer =  ThreadLocalRandom.current().nextInt(0, this.numOfPlayers - 1);
     }
+
+    public void nextPlayer() {
+        if (this.currentPlayer + 1 > this.players.size()){
+            this.currentPlayer = 0;
+        return;
+    }
+         else{
+            this.currentPlayer = this.currentPlayer + 1;
+        }
+    }
+
+
 
     public GamePhase getGamePhase() {
         return this.gamePhase;

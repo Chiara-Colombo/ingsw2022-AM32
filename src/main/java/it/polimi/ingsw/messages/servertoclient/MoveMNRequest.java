@@ -3,17 +3,22 @@ package it.polimi.ingsw.messages.servertoclient;
 import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public class GameIsStarting extends ServerMessage{
+public class MoveMNRequest extends ServerMessage{
 
-    public String typeOfMessage = "GameIsStarting";
+    private int movements;
 
+    public MoveMNRequest(int movements){
+        this.movements = movements;
+    }
 
+    public int getMovements() {
+        return movements;
+    }
 
     @Override
     public String TypeOfMessage() {
-        return this.typeOfMessage;
+        return "MoveMNRequest";
     }
 
     @Override

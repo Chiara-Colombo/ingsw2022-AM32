@@ -90,4 +90,105 @@ public class GUI extends Application implements View{
     public void showGameStartingView() {
         stage.setScene(scenes.get(EnumScenes.GAME_STARTING_SCENE));
     }
+
+    @Override
+    public void showWizardCardRequest(String nickname) {
+
+    }
+
+    @Override
+    public void showPlayerChoosingWizard(String nicknae) {
+
+    }
+
+    @Override
+    public void showActionPhaseTurn(String nickname) {
+
+    }
+
+    @Override
+    public void showAssistantCardChosen() {
+
+    }
+
+    @Override
+    public void showAssistantsCardUpdate() {
+
+    }
+
+    @Override
+    public void showBoardUpdate() {
+
+    }
+
+    @Override
+    public void showChosenWizardCard() {
+
+    }
+
+    @Override
+    public void showCloudRequest() {
+
+    }
+
+    @Override
+    public void showCoinsUpdate() {
+
+    }
+
+    @Override
+    public void showMNPositionUpdate() {
+
+    }
+
+    @Override
+    public void showMoveMNRequest(int movements) {
+
+    }
+
+    @Override
+    public void showMovePawnRequest() {
+
+    }
+
+    @Override
+    public void showPlanningPhaseTurn(String nickname) {
+
+    }
+
+    @Override
+    public void showPlayerChoosingWizard() {
+
+    }
+
+    @Override
+    public void showSchoolBoardUpdate() {
+
+    }
+
+    @Override
+    public void showSelectPawnRequest() {
+
+    }
+
+    @Override
+    public void showWizardCardRequest() {
+
+    }
+
+    @Override
+    public void showYourActionPhaseTurnEnds() {
+
+    }
+
+    @Override
+    public void showYourPlanningPhaseTurnEnds() {
+
+    }
+
+    @Override
+    public void showAssistantCardRequest() {
+
+    }
+
 }

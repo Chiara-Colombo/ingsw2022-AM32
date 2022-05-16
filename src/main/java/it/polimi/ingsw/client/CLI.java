@@ -6,11 +6,12 @@ import it.polimi.ingsw.messages.clienttoserver.NumOfPlayersResponse;
 import it.polimi.ingsw.messages.clienttoserver.SetUsername;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
-public class CLI implements View{
+public class CLI  implements View{
     private ClientController clientController;
 
     public void start() {
@@ -24,6 +25,8 @@ public class CLI implements View{
         }
         new Thread(this.clientController).start();
     }
+
+
 
     @Override
     public void showRequestNumOfPlayers() {
@@ -64,4 +67,106 @@ public class CLI implements View{
     public void showGameStartingView() {
         System.out.println("Partita avviata");
     }
+
+    @Override
+    public void showWizardCardRequest(String nickname) {
+        System.out.println("Scegli una carta mago " + nickname);
+    }
+
+    @Override
+    public void showPlayerChoosingWizard(String nickname) {
+        System.out.println(nickname + "sta scegliendo il suo mago");
+    }
+
+    @Override
+    public void showActionPhaseTurn(String nickname) {
+        System.out.println("Fase Azione: è il turno di " + nickname);
+    }
+
+    @Override
+    public void showAssistantCardChosen() {
+
+    }
+
+    @Override
+    public void showAssistantsCardUpdate() {
+
+    }
+
+    @Override
+    public void showBoardUpdate() {
+
+    }
+
+    @Override
+    public void showChosenWizardCard() {
+
+    }
+
+    @Override
+    public void showCloudRequest() {
+
+    }
+
+    @Override
+    public void showCoinsUpdate() {
+
+    }
+
+    @Override
+    public void showMNPositionUpdate() {
+
+    }
+
+    @Override
+    public void showMoveMNRequest(int movements) {
+        System.out.println("Muovi madre natura: seleziona  un numero compreso tra 1 e" + movements);
+    }
+
+    @Override
+    public void showMovePawnRequest() {
+
+    }
+
+    @Override
+    public void showPlanningPhaseTurn(String nickname) {
+        System.out.println("Fase Pianificazione: è il turno di " + nickname );
+    }
+
+    @Override
+    public void showPlayerChoosingWizard() {
+
+    }
+
+    @Override
+    public void showSchoolBoardUpdate() {
+
+    }
+
+    @Override
+    public void showSelectPawnRequest() {
+
+    }
+
+    @Override
+    public void showWizardCardRequest() {
+
+    }
+
+    @Override
+    public void showYourActionPhaseTurnEnds() {
+        System.out.println("Il tuo turno è terminato");
+    }
+
+    @Override
+    public void showYourPlanningPhaseTurnEnds() {
+        System.out.println("Il tuo turno è terminato");
+    }
+
+    @Override
+    public void showAssistantCardRequest() {
+        System.out.println("Seleziona una carta assistente");
+    }
+
+
 }

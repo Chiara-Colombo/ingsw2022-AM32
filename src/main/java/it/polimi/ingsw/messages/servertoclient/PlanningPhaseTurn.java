@@ -3,17 +3,22 @@ package it.polimi.ingsw.messages.servertoclient;
 import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public class GameIsStarting extends ServerMessage{
+public class PlanningPhaseTurn extends ServerMessage{
 
-    public String typeOfMessage = "GameIsStarting";
+    public String nick;
 
+    public PlanningPhaseTurn(String nick){
+        this.nick = nick;
+    }
 
+    public String getNick() {
+        return nick;
+    }
 
     @Override
     public String TypeOfMessage() {
-        return this.typeOfMessage;
+        return "PlanningPhaseTurn";
     }
 
     @Override
