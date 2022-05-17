@@ -56,6 +56,7 @@ public class UsernameScene extends Scene {
         continueBtn.addEventHandler(ActionEvent.ACTION, event -> {
             String username = usernameInput.getText();
             SetUsername setUsername = new SetUsername(username);
+            GUI.getController().setUsername(username);
             GUI.getController().sendObjectMessage(setUsername);
         });
     }

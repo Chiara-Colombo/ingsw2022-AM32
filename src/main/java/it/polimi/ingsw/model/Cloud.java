@@ -17,13 +17,6 @@ public class Cloud implements ICloud  {
         this.students = new ArrayList<>();
     }
 
-    /*public boolean isFull(){
-    if(students.size()==3)
-    return true;
-    false;
-    }
-     */
-
     /**
      *
      * @param index  of the students pawn that has to be removed

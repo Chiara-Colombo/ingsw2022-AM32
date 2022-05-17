@@ -55,6 +55,6 @@ public class StartState implements  State {
 
     @Override
     public State changeState() {
-        return null;
+        return new PlanningState();
     }
 }

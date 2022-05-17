@@ -8,18 +8,17 @@ import java.util.*;
 public class Game implements IMooshroomManHandled {
 
    private final ArrayList<Player> players;
-   /* private Player[] players;*/
     private int currentPlayer;
     private final Board gameBoard;
     private final int numOfPlayers;
-    private boolean expertMode;
+    private final boolean expertMode;
     private final AssistantCardsManager cardsManager;
     private final ArrayList<Characters> validCharacters;
     private final EnumMap<Characters,Integer> charactersValue;
     private final EnumMap<PawnsColors,Integer> colorsInfluenceMultiplier;
     private Collection<Pawn> monkStudents;
     private Collection<Pawn> spoiledPrincessStudents;
-    private Characters activeCharacters;
+    private EffectHandler activeCharacter;
     private GamePhase gamePhase;
     private int grandmaHerbsNoEntryTiles;
 
@@ -51,27 +50,31 @@ public class Game implements IMooshroomManHandled {
                 this.validCharacters.add(characters.remove((int) Math.floor(Math.random() * characters.size())));
                 this.charactersValue.put(this.validCharacters.get(i), this.validCharacters.get(i).getCoinValue());
             }
-            if (this.validCharacters.contains(Characters.MONK)) {
-                this.monkStudents = new ArrayList<>();
-                for (int i = 0; i<4; i++) {
-                    this.gameBoard.drawFromBag().ifPresent(pawn -> {
-                        this.monkStudents.add(pawn);
-                    });
-                }
-            }
-            if (this.validCharacters.contains(Characters.SPOILED_PRINCESS)) {
-                this.spoiledPrincessStudents = new ArrayList<>();
-                for (int i = 0; i<4; i++) {
-                    this.gameBoard.drawFromBag().ifPresent(pawn -> {
-                        this.spoiledPrincessStudents.add(pawn);
-                    });
-                }
-            }
-            if (this.validCharacters.contains(Characters.GRANDMA_HERBS)) {
-                this.grandmaHerbsNoEntryTiles = 4;
-            }
+            this.setupCharacters();
         } else {
             System.out.println("Cannot start a new game");
+        }
+    }
+
+    private void setupCharacters() {
+        if (this.validCharacters.contains(Characters.MONK)) {
+            this.monkStudents = new ArrayList<>();
+            for (int i = 0; i<4; i++) {
+                this.gameBoard.drawFromBag().ifPresent(pawn -> {
+                    this.monkStudents.add(pawn);
+                });
+            }
+        }
+        if (this.validCharacters.contains(Characters.SPOILED_PRINCESS)) {
+            this.spoiledPrincessStudents = new ArrayList<>();
+            for (int i = 0; i<4; i++) {
+                this.gameBoard.drawFromBag().ifPresent(pawn -> {
+                    this.spoiledPrincessStudents.add(pawn);
+                });
+            }
+        }
+        if (this.validCharacters.contains(Characters.GRANDMA_HERBS)) {
+            this.grandmaHerbsNoEntryTiles = 4;
         }
     }
 
@@ -100,7 +103,7 @@ public class Game implements IMooshroomManHandled {
      * @return the index of the current player
      */
     public Player getCurrentPlayer(){
-        return this.players.get(currentPlayer); }
+        return this.players.get(this.currentPlayer); }
 
     /**
      * Method that sets the current player index
@@ -138,15 +141,19 @@ public class Game implements IMooshroomManHandled {
 
     /**
      * Method used for calling the effects of Characters cards
-     * @param characters
+     * @param character
      */
-    private void useCharacterEffect(Characters characters){
+    private void useCharacterEffect(EffectHandler character){
+        this.activeCharacter = character;
+        this.activeCharacter.applyEffect();
     }
 
     /**
      * Method that removes the Character card effect
      */
-    private void removeCharacterEffect(){ return; }
+    private void removeCharacterEffect(){
+        this.activeCharacter.removeEffect();
+    }
 
 
 
@@ -215,5 +222,9 @@ public class Game implements IMooshroomManHandled {
     @Override
     public int getInfluenceForColor(PawnsColors color) {
         return this.colorsInfluenceMultiplier.get(color);
+    }
+
+    public boolean isExpertMode() {
+        return expertMode;
     }
 }

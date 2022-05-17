@@ -95,7 +95,7 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showBoardUpdate() {
+    public void showBoardUpdate(BoardUpdateContent boardUpdateContent) {
 
     }
 

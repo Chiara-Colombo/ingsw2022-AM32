@@ -10,8 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientController implements Runnable{
-    private Socket server;
-    private final View view;
+    private String username;
     private final String serverAddress;
     private final int serverPort;
     private ObjectOutputStream outputStream;
@@ -22,9 +21,8 @@ public class ClientController implements Runnable{
     public ClientController(int serverPort, String serverAddress, View view, boolean isGui) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
-        this.view = view;
         this.isGui = isGui;
-        this.clientVisitor = new ConcreteClientVisitor(this.view);
+        this.clientVisitor = new ConcreteClientVisitor(view);
     }
 
     @Override
@@ -46,14 +44,15 @@ public class ClientController implements Runnable{
                  }
              } catch (ClassNotFoundException | IOException e) {
                  e.printStackTrace();
+                 break;
              }
          }
     }
 
     public void connect() throws IOException {
-        this.server = new Socket(this.serverAddress, this.serverPort);
-        this.outputStream = new ObjectOutputStream(this.server.getOutputStream());
-        this.inputStream = new ObjectInputStream(this.server.getInputStream());
+        Socket server = new Socket(this.serverAddress, this.serverPort);
+        this.outputStream = new ObjectOutputStream(server.getOutputStream());
+        this.inputStream = new ObjectInputStream(server.getInputStream());
     }
 
     public void sendObjectMessage(ClientMessage message){
@@ -63,5 +62,13 @@ public class ClientController implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

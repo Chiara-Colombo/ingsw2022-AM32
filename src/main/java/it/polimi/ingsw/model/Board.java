@@ -44,6 +44,11 @@ public class Board implements IMonkHandled, ICentaurHandled {
         this.availableProfessors.add(new Pawn(PawnsColors.RED));
         this.availableProfessors.add(new Pawn(PawnsColors.GREEN));
         this.availableProfessors.add(new Pawn(PawnsColors.YELLOW));
+        for (int i = 0; i < this.islands.size(); i++) {
+            if (i == this.motherNature || i % 6 == this.motherNature % 6) continue;
+            final int index = i;
+            this.drawFromBag().ifPresent(pawn -> this.setStudentOnIsland(pawn, index));
+        }
     }
 
     /**
@@ -81,7 +86,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @return collection of abailable professors pawns
      */
 
-    Collection<Pawn> getAvailableProfessors() {
+    public Collection<Pawn> getAvailableProfessors() {
         return availableProfessors;
     }
 
@@ -90,7 +95,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @return collection of clouds
      */
 
-    ArrayList<Cloud> getClouds() {
+    public ArrayList<Cloud> getClouds() {
         return clouds;
     }
 
@@ -99,7 +104,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @return collection of Island
      */
 
-    ArrayList<Island> getIslands() {
+    public ArrayList<Island> getIslands() {
         return islands;
     }
 
@@ -111,20 +116,20 @@ public class Board implements IMonkHandled, ICentaurHandled {
      *
      */
 
-    int moveMotherNature(int index){
-        if(getMotherNature()+index> islands.size()-1)
-        {
-           return motherNature=(getMotherNature()+index)%(islands.size());
+    public int moveMotherNature(int index){
+        if (this.motherNature + index >= islands.size()) {
+           return this.motherNature = (this.motherNature + index) % (islands.size());
+        } else {
+            return this.motherNature= this.motherNature + index;
         }
-        else
-         return motherNature= motherNature+index;}
+    }
 
     /**
      * Getter of motherNature,which is an index
      * @return the value of motherNature
      */
 
-    int getMotherNature() {
+    public int getMotherNature() {
         return this.motherNature;
     }
 
@@ -152,7 +157,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Getter that returns the coinsSupply
      * @return coinsSupply value
      */
-    int getCoinsSupply() {
+    public int getCoinsSupply() {
         return this.coinsSupply;
     }
 

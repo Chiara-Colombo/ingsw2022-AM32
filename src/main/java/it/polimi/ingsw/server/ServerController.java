@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.client.*;
 import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
@@ -7,6 +8,7 @@ import it.polimi.ingsw.model.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.function.Function;
 
 import static it.polimi.ingsw.utils.Utils.CARDS_RESOURCE_PATH;
 
@@ -163,7 +165,85 @@ public class ServerController  {
         if (this.game.nextPlayer()) {
             this.stateOfTheGame.chooseWizard();
         } else {
-            this.stateOfTheGame = new PlanningState();
+            this.stateOfTheGame = this.stateOfTheGame.changeState();
+            ArrayList<PlayerUpdate> playerUpdates = new ArrayList<>();
+            for (Player player : this.game.getPlayers()) {
+                EnumMap<PawnsColors, Integer> diningRoom = new EnumMap<>(PawnsColors.class);
+                for (PawnsColors color : PawnsColors.values()) {
+                    int size = 0;
+                    Iterator<Pawn> studentsOfColor = player.getSchoolBoard().getStudentsOfColor(color);
+                    while (studentsOfColor.hasNext()) {
+                        size++;
+                        studentsOfColor.next();
+                    }
+                    diningRoom.put(color, size);
+                }
+                Iterator<Pawn> studentsIterator = player.getSchoolBoard().getStudentsInEntrance();
+                Iterator<Pawn> professorsIterator = player.getSchoolBoard().getProfessors();
+                ArrayList<PawnsColors> students = new ArrayList<>();
+                ArrayList<PawnsColors> professors = new ArrayList<>();
+                while (studentsIterator.hasNext()) {
+                    students.add(studentsIterator.next().getColor());
+                }
+                while (professorsIterator.hasNext()) {
+                    professors.add(professorsIterator.next().getColor());
+                }
+                playerUpdates.add(
+                        new PlayerUpdate(
+                                player.getNickname(),
+                                students,
+                                professors,
+                                diningRoom, player.getColor(), player.getTowers().size()
+                        )
+                );
+            }
+            ArrayList<IslandUpdate> islandsUpdate = new ArrayList<>();
+            this.game.getGameBoard().getIslands().forEach(island -> {
+                ArrayList<PawnsColors> students = new ArrayList<>();
+                Iterator<Pawn> studentsOnIsland = island.getStudents();
+                while (studentsOnIsland.hasNext()) {
+                    students.add(studentsOnIsland.next().getColor());
+                }
+                islandsUpdate.add(new IslandUpdate(
+                                island.getGroupOfIslands(),
+                                island.getTower().isPresent(),
+                                island.isNoEntry(),
+                                island.getTower()
+                                        .stream()
+                                        .map(Tower::getColor)
+                                        .reduce(null, (currentColor, towerColor) -> currentColor = towerColor),
+                                students
+                        )
+                );
+            });
+            ArrayList<CloudUpdate> cloudsUpdate = new ArrayList<>();
+            this.game.getGameBoard().getClouds().forEach(cloud -> {
+                ArrayList<PawnsColors> students = new ArrayList<>();
+                Iterator<Pawn> studentsOnCloud = cloud.getStudents();
+                while (studentsOnCloud.hasNext()) {
+                    students.add(studentsOnCloud.next().getColor());
+                }
+                cloudsUpdate.add(new CloudUpdate(cloud.isEmpty(), students));
+            });
+            BoardUpdateContent boardUpdateContent = new BoardUpdateContent(
+                    this.game.getGameBoard().getMotherNature(),
+                    this.game.getGameBoard().getCoinsSupply(),
+                    islandsUpdate,
+                    new ArrayList<PawnsColors>(this.game.getGameBoard().getAvailableProfessors()
+                            .stream()
+                            .map(Pawn::getColor)
+                            .toList()),
+                    cloudsUpdate
+            );
+            GameUpdate gameUpdate = new GameUpdate(
+                    this.game.getNumOfPlayers(),
+                    this.game.isExpertMode(),
+                    this.game.getCurrentPlayer().getNickname(),
+                    this.game.getGamePhase()
+            );
+            BoardUpdate boardUpdate = new BoardUpdate(playerUpdates, boardUpdateContent, gameUpdate);
+            for (ClientHandler client : this.clients)
+                client.sendObjectMessage(boardUpdate);
         }
     }
 }

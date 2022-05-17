@@ -3,10 +3,7 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.GUI;
 import it.polimi.ingsw.messages.clienttoserver.WizardCardResponse;
 import it.polimi.ingsw.model.Wizards;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
@@ -84,6 +81,7 @@ public class GameSetupScene extends Scene {
             title.setTextAlignment(TextAlignment.CENTER);
             title.setFont(Font.font("Berlin Sans FB", 40));
             ProgressIndicator progressIndicator = new ProgressIndicator(-1.0);
+            progressIndicator.setStyle("-fx-progress-color: #3040de;");
             progressIndicator.setLayoutX(GUI_WIDTH / 2);
             progressIndicator.setLayoutY(GUI_HEIGHT / 2);
             pane.getChildren().addAll(title, progressIndicator);

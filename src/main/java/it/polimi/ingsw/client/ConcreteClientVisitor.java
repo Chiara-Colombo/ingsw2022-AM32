@@ -72,7 +72,7 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(BoardUpdate boardUpdate) {
-        this.view.showBoardUpdate();
+        this.view.showBoardUpdate(boardUpdate.getBoardUpdateContent());
     }
 
     @Override

@@ -176,4 +176,8 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     public int getExtraStudent() {
         return this.extraStudent;
     }
+
+    public ArrayList<Tower> getTowers() {
+        return towers;
+    }
 }
