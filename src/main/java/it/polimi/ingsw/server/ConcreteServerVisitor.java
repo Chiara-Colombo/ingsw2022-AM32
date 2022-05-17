@@ -1,11 +1,8 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.messages.clienttoserver.*;
-import it.polimi.ingsw.messages.servertoclient.NumOfPlayersRequest;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public class ConcreteServerVisitor implements VisitorServer{
 
@@ -72,7 +69,7 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(WizardCardResponse wizardCardResponse) {
-
+        this.serverController.setWizard(wizardCardResponse.getChosenWizard());
     }
 
     public void visitMessage(Quit quit){

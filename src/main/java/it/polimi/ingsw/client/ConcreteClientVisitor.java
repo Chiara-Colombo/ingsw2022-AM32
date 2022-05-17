@@ -42,12 +42,12 @@ public class ConcreteClientVisitor implements VisitorClient{
     }
 
     public void visitMessage(WizardCardRequest wizardCardRequest){
-        this.view.showWizardCardRequest(wizardCardRequest.getNickname());
+        this.view.showWizardCardRequest(wizardCardRequest.getValidWizards());
     }
 
     @Override
     public void visitMessage(PlayerChoosingWizard playerChoosingWizard) {
-        this.view.showPlayerChoosingWizard(playerChoosingWizard.getNickname());
+        this.view.showPlayerChoosingWizard();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
@@ -155,8 +154,16 @@ public class ServerController  {
             this.game.addPlayer(player);
         }
         this.game.startGame();
-        this.stateOfTheGame = new StartState(this.game,this.clients);
-        this.stateOfTheGame.StartTurn();
+        this.stateOfTheGame = new StartState(this.game, this.usernames);
+        this.stateOfTheGame.chooseWizard();
     }
 
+    public void setWizard(Wizards wizard) {
+        this.game.getCurrentPlayer().setWizard(wizard);
+        if (this.game.nextPlayer()) {
+            this.stateOfTheGame.chooseWizard();
+        } else {
+            this.stateOfTheGame = new PlanningState();
+        }
+    }
 }

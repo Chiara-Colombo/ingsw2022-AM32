@@ -2,17 +2,17 @@ package it.polimi.ingsw.server;
 
 public interface State {
 
-    public void StartTurn();
+    void chooseWizard();
 
-    public void chooseCloud();
+    void chooseCloud();
 
-    public void drawAssistantCard();
+    void drawAssistantCard();
 
-    public void fillClouds();
+    void fillClouds();
 
-    public void moveMN();
+    void moveMN();
 
-    public void endGame();
+    void endGame();
 
-    public State changeState();
+    State changeState();
 }

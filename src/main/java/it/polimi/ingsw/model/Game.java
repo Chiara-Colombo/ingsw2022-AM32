@@ -1,12 +1,9 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMooshroomManHandled;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 
 public class Game implements IMooshroomManHandled {
 
@@ -17,9 +14,9 @@ public class Game implements IMooshroomManHandled {
     private final int numOfPlayers;
     private boolean expertMode;
     private final AssistantCardsManager cardsManager;
-    private Characters[] validCharacters;
-    private EnumMap<Characters,Integer> charactersValue;
-    private EnumMap<PawnsColors,Integer> colorsInfluenceMultiplier;
+    private final ArrayList<Characters> validCharacters;
+    private final EnumMap<Characters,Integer> charactersValue;
+    private final EnumMap<PawnsColors,Integer> colorsInfluenceMultiplier;
     private Collection<Pawn> monkStudents;
     private Collection<Pawn> spoiledPrincessStudents;
     private Characters activeCharacters;
@@ -37,25 +34,54 @@ public class Game implements IMooshroomManHandled {
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>(numOfPlayers);
         this.cardsManager = new AssistantCardsManager(jsonCards);
-        this.colorsInfluenceMultiplier=new EnumMap<PawnsColors, Integer>(PawnsColors.class);
+        this.validCharacters = new ArrayList<>();
+        this.charactersValue = new EnumMap<>(Characters.class);
+        this.colorsInfluenceMultiplier = new EnumMap<>(PawnsColors.class);
     }
 
     /**
      * Method for start the game
      */
     public void startGame(){
-        this.gamePhase = GamePhase.START_PHASE;
-        this.currentPlayer =  ThreadLocalRandom.current().nextInt(0, this.numOfPlayers - 1);
+        if (this.numOfPlayers == this.players.size()) {
+            this.gamePhase = GamePhase.START_PHASE;
+            this.currentPlayer = 0;
+            final ArrayList<Characters> characters = new ArrayList<>(Arrays.asList(Characters.values()));
+            for (int i = 0; i<3; i++) {
+                this.validCharacters.add(characters.remove((int) Math.floor(Math.random() * characters.size())));
+                this.charactersValue.put(this.validCharacters.get(i), this.validCharacters.get(i).getCoinValue());
+            }
+            if (this.validCharacters.contains(Characters.MONK)) {
+                this.monkStudents = new ArrayList<>();
+                for (int i = 0; i<4; i++) {
+                    this.gameBoard.drawFromBag().ifPresent(pawn -> {
+                        this.monkStudents.add(pawn);
+                    });
+                }
+            }
+            if (this.validCharacters.contains(Characters.SPOILED_PRINCESS)) {
+                this.spoiledPrincessStudents = new ArrayList<>();
+                for (int i = 0; i<4; i++) {
+                    this.gameBoard.drawFromBag().ifPresent(pawn -> {
+                        this.spoiledPrincessStudents.add(pawn);
+                    });
+                }
+            }
+            if (this.validCharacters.contains(Characters.GRANDMA_HERBS)) {
+                this.grandmaHerbsNoEntryTiles = 4;
+            }
+        } else {
+            System.out.println("Cannot start a new game");
+        }
     }
 
-    public void nextPlayer() {
-        if (this.currentPlayer + 1 > this.players.size()){
+    public boolean nextPlayer() {
+        if (this.currentPlayer + 1 >= this.players.size()){
             this.currentPlayer = 0;
-        return;
-    }
-         else{
-            this.currentPlayer = this.currentPlayer + 1;
+            return false;
         }
+        this.currentPlayer = this.currentPlayer + 1;
+        return true;
     }
 
 
@@ -125,7 +151,7 @@ public class Game implements IMooshroomManHandled {
 
 
 
-    private Characters[] getValidCharacters(){ return this.validCharacters; }
+    private ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
 
 
 

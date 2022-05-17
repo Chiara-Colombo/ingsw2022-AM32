@@ -17,11 +17,11 @@ public enum Characters {
     /**
      * Assigns directly the coin value,funzione per incrementare se usata
      */
-    int coinValue;
+    private final int coinValue;
 
     Characters (int coinValue){
- this.coinValue = coinValue;
- }
+        this.coinValue = coinValue;
+    }
 
     public int getCoinValue() {
         return coinValue;

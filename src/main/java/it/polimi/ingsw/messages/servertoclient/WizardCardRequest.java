@@ -1,31 +1,29 @@
 package it.polimi.ingsw.messages.servertoclient;
 
 import it.polimi.ingsw.client.VisitorClient;
+import it.polimi.ingsw.model.Wizards;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.util.ArrayList;
 
 public class WizardCardRequest extends ServerMessage{
 
-    public String typeOfMessage = "WizardCardRequest";
+    private final ArrayList<Wizards> validWizards;
 
-    public String nickname;
-
-    public WizardCardRequest(String nickname){
-        this.nickname = nickname;
-    }
-
-    public String getNickname() {
-        return nickname;
+    public WizardCardRequest(ArrayList<Wizards> validWizards){
+        this.validWizards = validWizards;
     }
 
     @Override
     public String TypeOfMessage() {
-        return this.typeOfMessage;
+        return "WizardCardRequest";
     }
 
     @Override
     public void accept(VisitorClient visitorClient) {
         visitorClient.visitMessage(this);
+    }
+
+    public ArrayList<Wizards> getValidWizards() {
+        return this.validWizards;
     }
 }

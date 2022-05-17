@@ -1,8 +1,9 @@
 package it.polimi.ingsw.server;
 
 public class PlanningState implements State{
+
     @Override
-    public void StartTurn() {
+    public void chooseWizard() {
 
     }
 

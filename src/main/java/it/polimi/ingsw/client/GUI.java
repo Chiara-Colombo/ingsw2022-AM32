@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.gui.*;
+import it.polimi.ingsw.model.Wizards;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -17,20 +17,23 @@ public class GUI extends Application implements View{
     private static Stage stage;
     private static ClientController controller;
     private static GamesSettingsManager gamesSettingsManager;
+    private static GameSetupManager gameSetupManager;
     private static EnumMap<EnumScenes, Scene> scenes;
 
     @Override
     public void start(Stage primaryStage) {
         scenes = new EnumMap<>(EnumScenes.class);
-        controller = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this);
+        controller = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this, true);
         stage = primaryStage;
         GameSettingsScene gameSettingsScene = GameSettingsScene.getInstance();
+        GameSetupScene gameSetupScene = GameSetupScene.getInstance();
         gamesSettingsManager = new GamesSettingsManager(gameSettingsScene);
+        gameSetupManager = new GameSetupManager(gameSetupScene);
         scenes.put(EnumScenes.MAIN_SCENE, MainScene.getInstance());
         scenes.put(EnumScenes.GAME_SETTINGS_SCENE, gameSettingsScene);
         scenes.put(EnumScenes.USERNAME_SCENE, UsernameScene.getInstance());
         scenes.put(EnumScenes.WAITING_SCENE, WaitingScene.getInstance());
-        scenes.put(EnumScenes.GAME_STARTING_SCENE, GameSetupScene.getInstance());
+        scenes.put(EnumScenes.GAME_STARTING_SCENE, gameSetupScene);
         primaryStage.setScene(scenes.get(EnumScenes.MAIN_SCENE));
         primaryStage.setTitle("Eriantys");
         primaryStage.setResizable(false);
@@ -89,16 +92,17 @@ public class GUI extends Application implements View{
     @Override
     public void showGameStartingView() {
         stage.setScene(scenes.get(EnumScenes.GAME_STARTING_SCENE));
+        gameSetupManager.showPlayerChoosingWizard();
     }
 
     @Override
-    public void showWizardCardRequest(String nickname) {
-
+    public void showWizardCardRequest(ArrayList<Wizards> validWizards) {
+        gameSetupManager.showWizardCards(validWizards, this);
     }
 
     @Override
-    public void showPlayerChoosingWizard(String nicknae) {
-
+    public void showPlayerChoosingWizard() {
+        gameSetupManager.showPlayerChoosingWizard();
     }
 
     @Override
@@ -157,22 +161,12 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showPlayerChoosingWizard() {
-
-    }
-
-    @Override
     public void showSchoolBoardUpdate() {
 
     }
 
     @Override
     public void showSelectPawnRequest() {
-
-    }
-
-    @Override
-    public void showWizardCardRequest() {
 
     }
 
@@ -188,6 +182,16 @@ public class GUI extends Application implements View{
 
     @Override
     public void showAssistantCardRequest() {
+
+    }
+
+    @Override
+    public void showErrorMotherNaturePosition() {
+
+    }
+
+    @Override
+    public void showNotEnoughCoins() {
 
     }
 

@@ -4,6 +4,7 @@ import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.clienttoserver.GameModeResponse;
 import it.polimi.ingsw.messages.clienttoserver.NumOfPlayersResponse;
 import it.polimi.ingsw.messages.clienttoserver.SetUsername;
+import it.polimi.ingsw.model.Wizards;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class CLI  implements View{
     private ClientController clientController;
 
     public void start() {
-        this.clientController = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this);
+        this.clientController = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this, false);
         try {
             this.clientController.connect();
             System.out.println("Controller initialized");
@@ -69,13 +70,13 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showWizardCardRequest(String nickname) {
-        System.out.println("Scegli una carta mago " + nickname);
+    public void showWizardCardRequest(ArrayList<Wizards> validWizards) {
+        //System.out.println("Scegli una carta mago " + nickname);
     }
 
     @Override
-    public void showPlayerChoosingWizard(String nickname) {
-        System.out.println(nickname + "sta scegliendo il suo mago");
+    public void showPlayerChoosingWizard() {
+        System.out.println("Un altro giocatore sta scegliendo il suo mago");
     }
 
     @Override
@@ -134,22 +135,12 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showPlayerChoosingWizard() {
-
-    }
-
-    @Override
     public void showSchoolBoardUpdate() {
 
     }
 
     @Override
     public void showSelectPawnRequest() {
-
-    }
-
-    @Override
-    public void showWizardCardRequest() {
 
     }
 

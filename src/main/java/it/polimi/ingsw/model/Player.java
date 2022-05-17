@@ -6,13 +6,14 @@ import it.polimi.ingsw.model.Handled.ISpoiledPrincessHandled;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerHandled {
 
-    public  String nickname;
+    private final String nickname;
     private final ArrayList<Tower> towers;
     private TowersColors color;
-    private Wizards wizard;
+    private Optional<Wizards> wizard;
     private final SchoolBoard schoolBoard;
     private int coins, extraInfluence, extraStudent;
 
@@ -25,6 +26,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         this.nickname = nickname;
         this.schoolBoard = new SchoolBoard();
         this.towers = new ArrayList<>(towers);
+        this.wizard = Optional.empty();
     }
 
     /**
@@ -49,7 +51,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * @return Wizard number
      */
 
-    public Wizards getWizard() {
+    public Optional<Wizards> getWizard() {
         return this.wizard;
     }
 
@@ -59,7 +61,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      */
 
     public void setWizard(Wizards wizard) {
-        this.wizard = wizard;
+        this.wizard = Optional.of(wizard);
     }
 
     /**

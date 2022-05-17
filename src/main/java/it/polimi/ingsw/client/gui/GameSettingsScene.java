@@ -26,6 +26,8 @@ public class GameSettingsScene extends Scene {
     private static RadioButton threePlayersOption;
     private static RadioButton expertModeOption;
     private static Button continueBtn;
+    private static VBox numOfPlayersPane;
+    private static boolean isNumOfPlayersOptions;
 
     private GameSettingsScene(Parent root) {
         super(root, GUI_WIDTH, GUI_HEIGHT);
@@ -43,14 +45,17 @@ public class GameSettingsScene extends Scene {
         continueBtn.setCursor(Cursor.HAND);
         continueBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
         continueBtn.addEventHandler(ActionEvent.ACTION, event -> {
-            int numOfPlayers = twoPlayersOption.isSelected() ? 2 : threePlayersOption.isSelected() ? 3 : 0;
-            ClientMessage numOfPlayersMessage = new NumOfPlayersResponse(numOfPlayers);
-            GUI.getController().sendObjectMessage(numOfPlayersMessage);
-            boolean expertMode = expertModeOption.isSelected();
-            ClientMessage expertModeMessage = new GameModeResponse(expertMode);
-            GUI.getController().sendObjectMessage(expertModeMessage);
+            if (isNumOfPlayersOptions) {
+                int numOfPlayers = twoPlayersOption.isSelected() ? 2 : threePlayersOption.isSelected() ? 3 : 0;
+                ClientMessage numOfPlayersMessage = new NumOfPlayersResponse(numOfPlayers);
+                GUI.getController().sendObjectMessage(numOfPlayersMessage);
+            } else {
+                boolean expertMode = expertModeOption.isSelected();
+                ClientMessage expertModeMessage = new GameModeResponse(expertMode);
+                GUI.getController().sendObjectMessage(expertModeMessage);
+            }
         });
-        continueBtn.setDisable(true);
+        isNumOfPlayersOptions = true;
         AnchorPane.setBottomAnchor(continueBtn, 55.0);
         AnchorPane.setRightAnchor(continueBtn, 80.0);
         anchorPane.setBackground(Background.fill(Paint.valueOf("#dedede")));
@@ -59,7 +64,7 @@ public class GameSettingsScene extends Scene {
 
     public static void showNumOfPlayersOptions(AnchorPane anchorPane) {
         if (Objects.nonNull(anchorPane)) {
-            VBox numOfPlayersPane = new VBox();
+            numOfPlayersPane = new VBox();
             numOfPlayersPane.setAlignment(Pos.CENTER);
             numOfPlayersPane.setFillWidth(true);
             numOfPlayersPane.setSpacing(50.0);
@@ -99,6 +104,8 @@ public class GameSettingsScene extends Scene {
 
     public static void showExpertModeOptions(AnchorPane anchorPane) {
         if (Objects.nonNull(anchorPane)) {
+            isNumOfPlayersOptions = false;
+            numOfPlayersPane.setDisable(true);
             VBox expertModePane = new VBox();
             expertModePane.setAlignment(Pos.CENTER);
             expertModePane.setFillWidth(true);
@@ -134,7 +141,6 @@ public class GameSettingsScene extends Scene {
             expertModePane.getChildren().addAll(title, expertModeOptions);
             AnchorPane.setBottomAnchor(expertModePane, 100.0);
             anchorPane.getChildren().add(expertModePane);
-            continueBtn.setDisable(false);
         }
     }
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.servertoclient.ServerMessage;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,12 +17,14 @@ public class ClientController implements Runnable{
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private final ConcreteClientVisitor clientVisitor;
+    private final boolean isGui;
 
-    public ClientController(int serverPort, String serverAddress, View view) {
+    public ClientController(int serverPort, String serverAddress, View view, boolean isGui) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.view = view;
         this.clientVisitor = new ConcreteClientVisitor(this.view);
+        this.isGui = isGui;
     }
 
     @Override
@@ -30,7 +33,17 @@ public class ClientController implements Runnable{
              try {
                  ServerMessage servermessage =  (ServerMessage) inputStream.readObject();
                  System.out.println("Received message: " + servermessage.TypeOfMessage());
-                 servermessage.accept(clientVisitor);
+                 if (this.isGui) {
+                     Platform.runLater(() -> {
+                         try {
+                             servermessage.accept(clientVisitor);
+                         } catch (IOException e) {
+                             e.printStackTrace();
+                         }
+                     });
+                 } else {
+                     servermessage.accept(clientVisitor);
+                 }
              } catch (ClassNotFoundException | IOException e) {
                  e.printStackTrace();
              }

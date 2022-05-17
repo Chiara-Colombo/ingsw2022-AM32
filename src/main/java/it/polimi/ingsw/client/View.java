@@ -1,5 +1,9 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.model.Wizards;
+
+import java.util.ArrayList;
+
 public interface View {
     void showRequestNumOfPlayers();
 
@@ -13,9 +17,9 @@ public interface View {
 
     void showGameStartingView();
 
-    void showWizardCardRequest(String nickname);
+    void showWizardCardRequest(ArrayList<Wizards> validWizards);
 
-    void showPlayerChoosingWizard(String nickname);
+    void showPlayerChoosingWizard();
 
     void showActionPhaseTurn(String nickname);
 
@@ -39,13 +43,9 @@ public interface View {
 
     void showPlanningPhaseTurn(String nickname);
 
-    void showPlayerChoosingWizard();
-
     void showSchoolBoardUpdate();
 
     void showSelectPawnRequest();
-
-    void showWizardCardRequest();
 
     void showYourActionPhaseTurnEnds();
 
@@ -56,6 +56,4 @@ public interface View {
     void showErrorMotherNaturePosition();
 
     void showNotEnoughCoins();
-
-
 }
