@@ -23,8 +23,8 @@ public class ClientController implements Runnable{
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.view = view;
-        this.clientVisitor = new ConcreteClientVisitor(this.view);
         this.isGui = isGui;
+        this.clientVisitor = new ConcreteClientVisitor(this.view);
     }
 
     @Override
