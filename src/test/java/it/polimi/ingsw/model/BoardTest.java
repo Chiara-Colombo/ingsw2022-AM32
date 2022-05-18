@@ -83,18 +83,20 @@ class BoardTest {
         Pawn student1=new Pawn(PawnsColors.getRandom());
         Pawn student2=new Pawn(PawnsColors.getRandom());
         Pawn student3=new Pawn(PawnsColors.getRandom());
-        int indexOfIsland=2;
+        int indexOfIslandwithMotherNature = gameBoard.getMotherNature();
 
-        gameBoard.setStudentOnIsland(student1,indexOfIsland);
-        gameBoard.setStudentOnIsland(student2,indexOfIsland);
-        gameBoard.setStudentOnIsland(student3,indexOfIsland);
-        Iterator<Pawn> iterator =gameBoard.getIslands().get(indexOfIsland).getStudents();
+        gameBoard.setStudentOnIsland(student1,indexOfIslandwithMotherNature);
+        gameBoard.setStudentOnIsland(student2,indexOfIslandwithMotherNature);
+        gameBoard.setStudentOnIsland(student3,indexOfIslandwithMotherNature);
+        Iterator<Pawn> iterator =gameBoard.getIslands().get(indexOfIslandwithMotherNature).getStudents();
         int i=0;
         while(iterator.hasNext())
         {
             iterator.next();
             i++;
         }
+        //When the board is created, the island arleady has a pawn
+
         assertEquals(3,i);
 
     }
@@ -128,19 +130,21 @@ class BoardTest {
 
     @Test
     void monkEffectHandler(){
-        Board boardtest=new Board(3);
-        Pawn pawn=new Pawn(PawnsColors.getRandom());
-        int islandIndex=3;
-        MonkEffectHandler monkEffectHandler=new MonkEffectHandler(boardtest,pawn,islandIndex);
+        Board boardtest = new Board(3);
+        Pawn pawn = new Pawn(PawnsColors.getRandom());
+        int indexOfIslandwithMotherNature = boardtest.getMotherNature();
+        MonkEffectHandler monkEffectHandler=new MonkEffectHandler(boardtest,pawn,indexOfIslandwithMotherNature);
         monkEffectHandler.applyEffect();
 
-        Iterator<Pawn> iterator =boardtest.getIslands().get(islandIndex).getStudents();
+        Iterator<Pawn> iterator =boardtest.getIslands().get(indexOfIslandwithMotherNature).getStudents();
         int i=0;
         while(iterator.hasNext())
         {
             iterator.next();
             i++;
         }
+
+        //when the board is created it arleady has a  student pawn on the island
         assertEquals(1,i);
 
     }
