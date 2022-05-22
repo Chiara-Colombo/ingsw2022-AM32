@@ -18,7 +18,7 @@ public class Cloud implements ICloud  {
     }
 
     /**
-     *
+     * Method that removes a student
      * @param index  of the students pawn that has to be removed
      * @return the (student pawn) selected
      */
@@ -40,6 +40,7 @@ public class Cloud implements ICloud  {
 
     /**
      * Method that checks if the cloud has no student pawns
+     * @return that the cloud is empty
      */
     @Override
     public boolean isEmpty() {

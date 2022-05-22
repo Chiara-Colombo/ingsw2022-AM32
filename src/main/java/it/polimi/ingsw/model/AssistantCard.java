@@ -40,17 +40,25 @@ public class AssistantCard implements IMagicMailManHandled {
         return this.motherNatureMovements;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setExtraMotherNatureMovements(int extraMotherNatureMovements) {
         this.extraMotherNatureMovements = extraMotherNatureMovements;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getExtraMotherNatureMovements() {
         return this.extraMotherNatureMovements;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resetExtraMotherNatureMovements() {
         this.extraMotherNatureMovements = 0;
@@ -65,6 +73,9 @@ public class AssistantCard implements IMagicMailManHandled {
         return this.discarded;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "AssistantCard [value=" + this.value + ", motherNatureMovements=" + this.motherNatureMovements + "]";
