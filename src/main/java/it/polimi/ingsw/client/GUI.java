@@ -1,10 +1,13 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.gui.*;
+import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
+import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Wizards;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,7 +22,7 @@ public class GUI extends Application implements View{
     private static ClientController controller;
     private static GamesSettingsManager gamesSettingsManager;
     private static GameSetupManager gameSetupManager;
-    private static GameSceneManager gameSceneManager;
+    private static GameScene gameScene;
     private static EnumMap<EnumScenes, Scene> scenes;
 
     @Override
@@ -29,10 +32,9 @@ public class GUI extends Application implements View{
         stage = primaryStage;
         GameSettingsScene gameSettingsScene = GameSettingsScene.getInstance();
         GameSetupScene gameSetupScene = GameSetupScene.getInstance();
-        GameScene gameScene = GameScene.getInstance();
+        gameScene = new GameScene(new Pane());
         gamesSettingsManager = new GamesSettingsManager(gameSettingsScene);
         gameSetupManager = new GameSetupManager(gameSetupScene);
-        gameSceneManager = new GameSceneManager(gameScene);
         scenes.put(EnumScenes.MAIN_SCENE, MainScene.getInstance());
         scenes.put(EnumScenes.GAME_SETTINGS_SCENE, gameSettingsScene);
         scenes.put(EnumScenes.USERNAME_SCENE, UsernameScene.getInstance());
@@ -126,9 +128,11 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showBoardUpdate(BoardUpdateContent boardUpdateContent) {
+    public void showBoardUpdate(BoardUpdate boardUpdate) {
         stage.setScene(scenes.get(EnumScenes.GAME_SCENE));
-        gameSceneManager.showBoardUpdate(boardUpdateContent);
+        gameScene.updateBoard(boardUpdate.getBoardUpdateContent());
+        gameScene.showPlayers(boardUpdate.getPlayersUpdate());
+        gameScene.showGameUpdate(boardUpdate.getGameUpdate());
     }
 
     @Override
@@ -163,12 +167,17 @@ public class GUI extends Application implements View{
 
     @Override
     public void showPlanningPhaseTurn(String nickname) {
-
+        if (controller.getUsername().equals(nickname)) {
+            gameScene.showGamePhaseMessage("Scegli la carta assistente");
+            gameScene.showTurnMessage("È il tuo turno");
+        } else {
+            gameScene.showGamePhaseMessage(nickname + " sta scegliendo la carta assistente");
+            gameScene.showTurnMessage("È il turno di " + nickname);
+        }
     }
 
     @Override
     public void showSchoolBoardUpdate() {
-
     }
 
     @Override
@@ -183,13 +192,14 @@ public class GUI extends Application implements View{
 
     @Override
     public void showYourPlanningPhaseTurnEnds() {
-
+        gameScene.showBoard();
     }
 
     @Override
-    public void showAssistantCardRequest() {
-
+    public void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
+        gameScene.showAssistantCardsPane(availableCards);
     }
+
     @Override
     public void showErrorMotherNaturePosition(){
     }

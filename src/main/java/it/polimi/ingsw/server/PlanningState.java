@@ -1,6 +1,23 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.messages.servertoclient.AssistantCardRequest;
+import it.polimi.ingsw.messages.servertoclient.PlanningPhaseTurn;
+import it.polimi.ingsw.model.AssistantCard;
+import it.polimi.ingsw.model.Game;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 public class PlanningState implements State{
+
+    private final Game game;
+    private final Map<String, ClientHandler> players;
+
+    public PlanningState(Game game, Map<String, ClientHandler> players) {
+        this.game = game;
+        this.players = players;
+    }
 
     @Override
     public void chooseWizard() {
@@ -14,7 +31,14 @@ public class PlanningState implements State{
 
     @Override
     public void drawAssistantCard() {
-        this.changeState();
+        System.out.println("DRAW ASSISTANT CARD FOR " + this.game.getCurrentPlayer().getNickname());
+        this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
+            PlanningPhaseTurn phaseTurn = new PlanningPhaseTurn(this.game.getCurrentPlayer().getNickname());
+            this.players.forEach((nickname, clientHandler) -> clientHandler.sendObjectMessage(phaseTurn));
+            ArrayList<AssistantCard> availableCards = this.game.getCardsManager().getAvailableCardsForPlayer(wizard);
+            AssistantCardRequest cardRequest = new AssistantCardRequest(availableCards);
+            this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(cardRequest);
+        });
     }
 
     @Override

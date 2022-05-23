@@ -39,7 +39,7 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(AssistantCardResponse assistantCardResponse) {
-
+        this.serverController.setAssistantCard(assistantCardResponse.getChosenCard());
     }
 
     @Override

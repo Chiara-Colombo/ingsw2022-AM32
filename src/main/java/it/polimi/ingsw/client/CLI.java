@@ -4,6 +4,8 @@ import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.clienttoserver.GameModeResponse;
 import it.polimi.ingsw.messages.clienttoserver.NumOfPlayersResponse;
 import it.polimi.ingsw.messages.clienttoserver.SetUsername;
+import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
+import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Wizards;
 
 import java.io.IOException;
@@ -95,7 +97,7 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showBoardUpdate(BoardUpdateContent boardUpdateContent) {
+    public void showBoardUpdate(BoardUpdate boardUpdate) {
 
     }
 
@@ -155,7 +157,7 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showAssistantCardRequest() {
+    public void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
         System.out.println("Seleziona una carta assistente");
     }
 

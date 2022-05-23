@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.TowersColors;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.Iterator;
 
 public class PlayerUpdate implements Serializable {
     private final String nickname;
@@ -28,16 +27,16 @@ public class PlayerUpdate implements Serializable {
         return this.nickname;
     }
 
-    public Iterator<PawnsColors> getEntranceStudents() {
-        return this.entranceStudents.iterator();
+    public ArrayList<PawnsColors> getEntranceStudents() {
+        return this.entranceStudents;
     }
 
     public EnumMap<PawnsColors, Integer> getDiningRoom() {
         return this.diningRoom;
     }
 
-    public Iterator<PawnsColors> getProfessors() {
-        return this.professors.iterator();
+    public ArrayList<PawnsColors> getProfessors() {
+        return this.professors;
     }
 
     public int getTowers() {

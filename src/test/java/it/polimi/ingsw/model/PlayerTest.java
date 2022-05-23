@@ -64,12 +64,8 @@ public class PlayerTest {
         player.addStudentInEntrance(student1);
         player.addStudentInEntrance(student2);
 
-        Iterator<Pawn> iterator = schoolBoard.getStudentsInEntrance();
-        while (iterator.hasNext()) {
-            iterator.next();
-            i++;
-        }
-        assertEquals(2, i);
+        ArrayList<Pawn> students = schoolBoard.getStudentsInEntrance();
+        assertEquals(2, students.size());
 
 
     }
@@ -99,12 +95,8 @@ public class PlayerTest {
 
         player.addProfessor(professor);
 
-        Iterator<Pawn> iterator = schoolBoard.getProfessors();
-        while (iterator.hasNext()) {
-            iterator.next();
-            i++;
-        }
-        assertEquals(1, i);
+        ArrayList<Pawn> professors = schoolBoard.getProfessors();
+        assertEquals(1, professors.size());
     }
 
 
@@ -112,19 +104,12 @@ public class PlayerTest {
     void SpoiledPrincessEffectHandler() {
         Player player = new Player("player", 7);
         Pawn student = new Pawn(PawnsColors.BLUE);
-        int i=0;
+        int i = 0;
         SpoiledPrincessEffectHandler handler = new SpoiledPrincessEffectHandler(student, player);
         handler.applyEffect();
 
-        Iterator<Pawn> iterator= player.getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE);
-        while(iterator.hasNext()){
-            i++;
-            iterator.next();
-        }
-        assertEquals(1,i);
-
-
-
+        ArrayList<Pawn> students = player.getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE);
+        assertEquals(1, students.size());
     }
 
     @Test

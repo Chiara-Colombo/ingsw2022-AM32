@@ -6,14 +6,14 @@ import java.io.IOException;
 
 public class PlanningPhaseTurn extends ServerMessage{
 
-    public String nick;
+    public String nickname;
 
-    public PlanningPhaseTurn(String nick){
-        this.nick = nick;
+    public PlanningPhaseTurn(String nickname){
+        this.nickname = nickname;
     }
 
-    public String getNick() {
-        return nick;
+    public String getNickname() {
+        return nickname;
     }
 
     @Override

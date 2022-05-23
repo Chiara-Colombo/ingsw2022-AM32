@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Game implements IMooshroomManHandled {
 
-   private final ArrayList<Player> players;
+    private final ArrayList<Player> players;
     private int currentPlayer;
     private final Board gameBoard;
     private final int numOfPlayers;
@@ -31,7 +31,7 @@ public class Game implements IMooshroomManHandled {
         this.expertMode = expertMode;
         this.gameBoard = new Board(numOfPlayers);
         this.numOfPlayers = numOfPlayers;
-        this.players = new ArrayList<>(numOfPlayers);
+        this.players = new ArrayList<>();
         this.cardsManager = new AssistantCardsManager(jsonCards);
         this.validCharacters = new ArrayList<>();
         this.charactersValue = new EnumMap<>(Characters.class);
@@ -51,6 +51,7 @@ public class Game implements IMooshroomManHandled {
                 this.charactersValue.put(this.validCharacters.get(i), this.validCharacters.get(i).getCoinValue());
             }
             this.setupCharacters();
+            this.setupPlayers();
         } else {
             System.out.println("Cannot start a new game");
         }
@@ -78,7 +79,16 @@ public class Game implements IMooshroomManHandled {
         }
     }
 
+    private void setupPlayers() {
+        this.players.forEach(player -> {
+            for (int i = 0; i < 7; i++) {
+                this.gameBoard.drawFromBag().ifPresent(player::addStudentInEntrance);
+            }
+        });
+    }
+
     public boolean nextPlayer() {
+        System.out.println("CURRENT PLAYER: " + this.currentPlayer);
         if (this.currentPlayer + 1 >= this.players.size()){
             this.currentPlayer = 0;
             return false;
@@ -131,7 +141,7 @@ public class Game implements IMooshroomManHandled {
      * Method AssistantCardsManager that returns the cardsManager variable
      * @return
      */
-    private AssistantCardsManager getCardsManager() { return this.cardsManager; }
+    public AssistantCardsManager getCardsManager() { return this.cardsManager; }
 
     /**
      * Method endGame that ends the Game when the conditions are satisfied

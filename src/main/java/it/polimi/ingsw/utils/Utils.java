@@ -1,6 +1,7 @@
 package it.polimi.ingsw.utils;
 
 import it.polimi.ingsw.model.PawnsColors;
+import it.polimi.ingsw.model.TowersColors;
 import it.polimi.ingsw.model.Wizards;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
@@ -24,5 +25,10 @@ public class Utils {
             Map.entry(PawnsColors.RED, Paint.valueOf("#de2f2f")),
             Map.entry(PawnsColors.GREEN, Paint.valueOf("#1a6302")),
             Map.entry(PawnsColors.YELLOW, Paint.valueOf("#c9c604"))
+    ));
+    public static final EnumMap<TowersColors, Paint> TOWERS_COLORS_PAINT_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(TowersColors.BLACK, Paint.valueOf("#101010")),
+            Map.entry(TowersColors.WHITE, Paint.valueOf("#fafafa")),
+            Map.entry(TowersColors.GREY, Paint.valueOf("#adadad"))
     ));
 }

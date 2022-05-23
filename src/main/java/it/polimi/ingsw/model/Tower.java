@@ -5,7 +5,7 @@ public class Tower {
     private TowersColors color;
 
     public Tower(TowersColors color){
-        this.color=color;
+        this.color = color;
     }
 
     /**
@@ -15,5 +15,9 @@ public class Tower {
 
     public TowersColors getColor() {
         return color;
+    }
+
+    public void setColor(TowersColors color) {
+        this.color = color;
     }
 }

@@ -84,8 +84,8 @@ public class SchoolBoard implements ISchoolBoard {
 
 
     @Override
-    public Iterator<Pawn> getProfessors() {
-        return professorsTable.iterator();
+    public ArrayList<Pawn> getProfessors() {
+        return this.professorsTable;
     }
 
 
@@ -95,8 +95,8 @@ public class SchoolBoard implements ISchoolBoard {
      * @return iterator of students pawns
      */
     @Override
-    public Iterator<Pawn> getStudentsOfColor(PawnsColors color) {
-        return this.diningRoom.get(color).iterator();
+    public ArrayList<Pawn> getStudentsOfColor(PawnsColors color) {
+        return this.diningRoom.get(color);
     }
 
     /**
@@ -105,8 +105,8 @@ public class SchoolBoard implements ISchoolBoard {
      */
 
     @Override
-    public Iterator<Pawn> getStudentsInEntrance() {
-        return entrance.iterator();
+    public ArrayList<Pawn> getStudentsInEntrance() {
+        return this.entrance;
     }
     /*public int getStudentsInEntrance(){
     return entrance.sizeof()

@@ -2,12 +2,13 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMagicMailManHandled;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class AssistantCard implements IMagicMailManHandled {
+public class AssistantCard implements IMagicMailManHandled, Serializable {
 
     private final int motherNatureMovements, value;
-    private final EnumMap<Wizards,Boolean> discarded;
+    private final EnumMap<Wizards, Boolean> discarded;
     private int extraMotherNatureMovements;
 
     /**
@@ -61,7 +62,7 @@ public class AssistantCard implements IMagicMailManHandled {
      * @return the discarded cards of AssistantCardsManager
      */
 
-    public EnumMap<Wizards, Boolean> getDiscarded() {
+    EnumMap<Wizards, Boolean> getDiscarded() {
         return this.discarded;
     }
 

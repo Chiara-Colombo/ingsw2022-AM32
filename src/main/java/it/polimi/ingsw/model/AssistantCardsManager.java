@@ -14,7 +14,7 @@ public class AssistantCardsManager {
     private ArrayList<AssistantCard> assistantCards;
     */
     private ArrayList<AssistantCard> assistantCards;
-    private Map<Wizards,Integer> currentCards;
+    private EnumMap<Wizards, Integer> currentCards;
 
     /**
      * Constructor of AssistantCardManager Class
@@ -27,6 +27,7 @@ public class AssistantCardsManager {
         }
         Gson gson = new Gson();
         this.assistantCards = gson.fromJson(jsonCards, new TypeToken<ArrayList<AssistantCard>>(){}.getType());
+        this.currentCards = new EnumMap<>(Wizards.class);
     }
 
 
@@ -44,26 +45,47 @@ public class AssistantCardsManager {
      * @param player
      * @return
      */
-/**
-    public ArrayList<AssistantCard> getAvailableCardsForPlayer(Wizards player){return assistantCards.get();}
-*/
+
+    public ArrayList<AssistantCard> getAvailableCardsForPlayer(Wizards player){
+        return new ArrayList<>(
+                this.assistantCards
+                        .stream()
+                        .filter(card -> !card.getDiscarded().get(player))
+                        .toList()
+        );
+    }
+
     /**
      * Method that gets the current AssistantCard for a certain player
      * @param player the player
      * @return
      */
-    /*
-    public AssistantCard getCurrentCardForPlayer(Wizards player){
-        return assistantCards;
+
+    public Optional<AssistantCard> getCurrentCardForPlayer(Wizards player){
+        if (this.currentCards.get(player) >= 0)
+            return Optional.of(this.assistantCards.get(this.currentCards.get(player)));
+        return Optional.empty();
     }
-*/
+
     /**
      *
      * @param player
-     * @param card
+     * @param discarded
      */
-    public void setDiscardedCardForPlayer(Wizards player,int card) {
-        this.assistantCards.get(card).getDiscarded().put(player, true);
+    public void setDiscardedForPlayer(Wizards player, boolean discarded) {
+        if (this.currentCards.get(player) >= 0)
+            this.assistantCards.get(this.currentCards.get(player)).getDiscarded().put(player, discarded);
     }
 
+    public void setCurrentCardForPlayer(Wizards player, int cardValue) {
+        for (int i = 0; i<this.assistantCards.size(); i++) {
+            if (cardValue == this.assistantCards.get(i).getValue())
+                this.currentCards.put(player, i);
+        }
+    }
+
+    public void initializeCardsForPlayer(Wizards player) {
+        this.assistantCards.forEach(card -> card.getDiscarded().put(player, false));
+        this.currentCards.put(player, -1);
+    }
 }

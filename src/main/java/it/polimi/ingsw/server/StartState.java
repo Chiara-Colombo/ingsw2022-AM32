@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class StartState implements  State {
 
-    private Game game;
-    private Map<String, ClientHandler> players;
+    private final Game game;
+    private final Map<String, ClientHandler> players;
 
     public StartState(Game game, Map<String, ClientHandler> players) {
         this.game = game;
@@ -55,6 +55,6 @@ public class StartState implements  State {
 
     @Override
     public State changeState() {
-        return new PlanningState();
+        return new PlanningState(this.game, this.players);
     }
 }

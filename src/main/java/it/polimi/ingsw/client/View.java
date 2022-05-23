@@ -1,5 +1,7 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
+import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Wizards;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public interface View {
     void showActionPhaseTurn(String nickname);
     void showAssistantCardChosen();
     void showAssistantsCardUpdate();
-    void showBoardUpdate(BoardUpdateContent boardUpdateContent);
+    void showBoardUpdate(BoardUpdate boardUpdate);
     void showChosenWizardCard();
     void showCloudRequest();
     void showCoinsUpdate();
@@ -28,7 +30,7 @@ public interface View {
     void showSelectPawnRequest();
     void showYourActionPhaseTurnEnds();
     void showYourPlanningPhaseTurnEnds();
-    void showAssistantCardRequest();
+    void showAssistantCardRequest(ArrayList<AssistantCard> availableCards);
     void showErrorMotherNaturePosition();
     void showNotEnoughCoins();
 }

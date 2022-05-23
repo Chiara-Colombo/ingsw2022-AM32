@@ -25,16 +25,22 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     public Player(String nickname, int towers){
         this.nickname = nickname;
         this.schoolBoard = new SchoolBoard();
-        this.towers = new ArrayList<>(towers);
+        this.towers = new ArrayList<>();
         this.wizard = Optional.empty();
+        for (int i = 0; i<towers; i++) {
+            this.towers.add(new Tower(TowersColors.NONE));
+        }
     }
 
     /**
      * Set the tower color for the player
-     * @param colors the colors available
+     * @param color the colors available
      */
-    public void setColor(TowersColors colors) {
-        this.color = colors;
+    public void setColor(TowersColors color) {
+        this.color = color;
+        this.towers.forEach(tower -> {
+            tower.setColor(color);
+        });
     }
 
     /**

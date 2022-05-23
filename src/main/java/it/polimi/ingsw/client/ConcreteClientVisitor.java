@@ -62,7 +62,7 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(AssistantCardRequest assistantCardRequest) {
-        this.view.showAssistantCardRequest();
+        this.view.showAssistantCardRequest(assistantCardRequest.getAvailableCards());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(BoardUpdate boardUpdate) {
-        this.view.showBoardUpdate(boardUpdate.getBoardUpdateContent());
+        this.view.showBoardUpdate(boardUpdate);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(PlanningPhaseTurn planningPhaseTurn) {
-        this.view.showPlanningPhaseTurn(planningPhaseTurn.getNick());
+        this.view.showPlanningPhaseTurn(planningPhaseTurn.getNickname());
     }
 
     @Override

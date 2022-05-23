@@ -19,7 +19,7 @@ public class ActionPhaseTurn extends ServerMessage{
 
     @Override
     public String TypeOfMessage() {
-        return "ActionPhaseTUrn";
+        return "ActionPhaseTurn";
     }
 
     @Override
