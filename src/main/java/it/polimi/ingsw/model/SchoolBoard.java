@@ -11,7 +11,6 @@ public class SchoolBoard implements ISchoolBoard {
     /**
      * Constructor of SchoolBoard class
      */
-
     public SchoolBoard(){
         this.entrance = new ArrayList<>(9);
         this.professorsTable = new ArrayList<>();
@@ -24,10 +23,9 @@ public class SchoolBoard implements ISchoolBoard {
      * Method that adds a student pawn to the entrance of schoolboard
      * @param student the student pawn that needs to be added
      */
-
     public void addStudent(Pawn student){
 
-        /*if getStudentsInEntrance() - 7=0 --->non puoi aggiungere altri studenti in ingresso
+        /*if getStudentsInEntrance() - 7=0 --->you can't app other students in entrance
         else*/
         entrance.add(student) ;
     }
@@ -37,7 +35,6 @@ public class SchoolBoard implements ISchoolBoard {
      * @param studentIndex the index which refers to the position of the student in the entrance
      * @return the removed student Pawn
      */
-
     public Pawn removeStudent(int studentIndex) {
         Pawn studenttoremove=entrance.get(studentIndex);
         entrance.remove(studentIndex);
@@ -72,7 +69,10 @@ public class SchoolBoard implements ISchoolBoard {
         return this.professorsTable.remove(professorIndex);
     }
 
-
+    /**
+     * Method that gets the dining room (an enumerator for Pawns Colors and an array list for Pawns)
+     * @return
+     */
     public EnumMap<PawnsColors, ArrayList<Pawn>> getDiningRoom() {
         return diningRoom;
     }
@@ -81,8 +81,6 @@ public class SchoolBoard implements ISchoolBoard {
      * Method that gets an iterator of Professor table
      * @return
      */
-
-
     @Override
     public ArrayList<Pawn> getProfessors() {
         return this.professorsTable;
@@ -103,7 +101,6 @@ public class SchoolBoard implements ISchoolBoard {
      * Method that returns the iterator of students pawns that are in entrance
      * @return iterator of students pawn
      */
-
     @Override
     public ArrayList<Pawn> getStudentsInEntrance() {
         return this.entrance;

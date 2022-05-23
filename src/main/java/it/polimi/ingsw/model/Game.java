@@ -25,6 +25,8 @@ public class Game implements IMooshroomManHandled {
     /**
      * Game class Constructor
      * @param numOfPlayers  number of Players that play the match
+     * @param expertMode sets the mode of the match
+     * @param jsonCards file that sets the character cards
      */
     public Game(int numOfPlayers, boolean expertMode, String jsonCards){
         this.gamePhase = GamePhase.NO_PHASE;
@@ -57,6 +59,9 @@ public class Game implements IMooshroomManHandled {
         }
     }
 
+    /**
+     * Method that sets up Characters
+     */
     private void setupCharacters() {
         if (this.validCharacters.contains(Characters.MONK)) {
             this.monkStudents = new ArrayList<>();
@@ -87,6 +92,9 @@ public class Game implements IMooshroomManHandled {
         });
     }
 
+    /**
+     * Method that calculate the next player
+     */
     public boolean nextPlayer() {
         System.out.println("CURRENT PLAYER: " + this.currentPlayer);
         if (this.currentPlayer + 1 >= this.players.size()){
@@ -97,12 +105,18 @@ public class Game implements IMooshroomManHandled {
         return true;
     }
 
-
-
+    /**
+     * Getter for the Phase of the game
+     * @return the phase of the game
+     */
     public GamePhase getGamePhase() {
         return this.gamePhase;
     }
 
+    /**
+     * Setter for the Phase of the game
+     * @return the phase of the game
+     */
     public void setGamePhase(GamePhase gamePhase) {
         this.gamePhase = gamePhase;
     }
@@ -126,7 +140,10 @@ public class Game implements IMooshroomManHandled {
     }
 
 
-
+    /**
+     * Getter for the Players
+     * @return the players
+     */
     public ArrayList<Player>getPlayers() {
         return this.players;
     }
@@ -167,7 +184,9 @@ public class Game implements IMooshroomManHandled {
 
 
 
-
+    /**
+     * Method that get valid characters
+     */
     private ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
 
 
@@ -192,8 +211,9 @@ public class Game implements IMooshroomManHandled {
 
 
 
-/*
+ /*
     METODI AGGIUNTIVI:
+ */
     /**
      * getter for returning the number of players which was selected
      * @return numoplayers value
@@ -229,11 +249,20 @@ public class Game implements IMooshroomManHandled {
             this.colorsInfluenceMultiplier.put(color,influence);
     }
 
+    /**
+     * Method that get the influence for a pawn color
+     * @param color is the color of the pawns of which we calculate the influence
+     * @return
+     */
     @Override
     public int getInfluenceForColor(PawnsColors color) {
         return this.colorsInfluenceMultiplier.get(color);
     }
 
+    /**
+     * Method that tell if the match is in Expert Mode
+     * @return expertMode variable
+     */
     public boolean isExpertMode() {
         return expertMode;
     }

@@ -20,7 +20,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Constructor of Board class
      * @param numOfPlayers the number of players
      */
-
     Board(int numOfPlayers) {
 
         /**initialize motherNature value to a random value beetween 0 and 11*/
@@ -57,7 +56,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @param student  tile that needs to be setted
      * @param cloud  tile where student need to be placed
      */
-
     void setStudentOnCloud(Pawn student,int cloud){
         clouds.get(cloud).addStudent(student);
     }
@@ -67,7 +65,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @param index
      * @param cloud
      */
-
     void removeStudentFromCloud(int index,int cloud){
         clouds.get(cloud).removeStudent(index);}
 
@@ -77,7 +74,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * @param tower that needs to be placed
      * @param island index of the island where the tower needs to be placed
      */
-
     void setTowerOnIsland(Tower tower,int island){
 
     }
@@ -86,7 +82,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Getter that returns the available professors pawns
      * @return collection of abailable professors pawns
      */
-
     public Collection<Pawn> getAvailableProfessors() {
         return availableProfessors;
     }
@@ -95,7 +90,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Getter that returns the collection of clouds
      * @return collection of clouds
      */
-
     public ArrayList<Cloud> getClouds() {
         return clouds;
     }
@@ -104,7 +98,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Getter that returns the islands
      * @return collection of Island
      */
-
     public ArrayList<Island> getIslands() {
         return islands;
     }
@@ -112,11 +105,8 @@ public class Board implements IMonkHandled, ICentaurHandled {
 
     /**
      * Method for moving MotherNature
-     *
      * @param index the moves Mothernature has to do
-     *
      */
-
     public int moveMotherNature(int index){
         if (this.motherNature + index >= islands.size()) {
            return this.motherNature = (this.motherNature + index) % (islands.size());
@@ -129,7 +119,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Getter of motherNature,which is an index
      * @return the value of motherNature
      */
-
     public int getMotherNature() {
         return this.motherNature;
     }
@@ -138,7 +127,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Method that adds coins
      * @param coins the coins that are added to a player
      */
-
     void addCoins(int coins){
         if(this.coinsSupply + coins < 20)
             this.coinsSupply += coins;
@@ -148,7 +136,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
     /**
      *  Method that gives coins
      */
-
     void giveCoin(){
         if (this.coinsSupply > 0)
             this.coinsSupply--;
@@ -167,7 +154,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
     /**
      * Method for merging islands whenever it's needed
      */
-
     void mergeIslands(Collection<Island> islands){
         int group = islands.stream().mapToInt( Island::getGroupOfIslands ).max().getAsInt();
         islands.forEach( island -> island.setGroupOfIslands(group));

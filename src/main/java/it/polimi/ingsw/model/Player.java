@@ -47,7 +47,6 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that gets the tower color of the player
      * @return the tower color
      */
-
     public TowersColors getColor() {
         return color;
     }
@@ -56,7 +55,6 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that gets the Wizard of the player, which determines the AssistantCardsManager
      * @return Wizard number
      */
-
     public Optional<Wizards> getWizard() {
         return this.wizard;
     }
@@ -65,7 +63,6 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that sets Wizard for the selected Player
      * @param wizard the enumeration of wizards
      */
-
     public void setWizard(Wizards wizard) {
         this.wizard = Optional.of(wizard);
     }
@@ -74,7 +71,6 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      *Method which put a student tile in the schoolBoard entrance of the selected player
      * @param student the student Pawn that needs to be put
      */
-
     public void addStudentInEntrance(Pawn student){
         schoolBoard.addStudent(student);
     }
@@ -114,7 +110,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     }
 
     /**
-     *
+     * Method that decrease the coins of a player when he uses a Character Card
      */
     public boolean payCoins(int value){
         if (this.coins - value >= 0) {
@@ -127,12 +123,9 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     /**
      * Method which increase the coins of the player
      */
-
     public void earnCoin(){
         this.coins++;
     }
-
-
 
     /**
      * Method that gets the schoolBoard for the player
@@ -151,33 +144,51 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     }
 
     /**Methods based on the Knight Character Card/**/
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setExtraInfluence(int extraInfluence) {
         this.extraInfluence = extraInfluence;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resetExtraInfluence(){
         this.extraInfluence = 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getExtraInfluence(){
         return this.extraInfluence;
     }
 
     /**Methods based of the SpoiledPrincess Character Card/**/
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addStudentInDiningRoom(Pawn student) {
         this.schoolBoard.addStudentToDiningRoom(student);
     }
 
     /**Methods based on the Farmer Character Card**/
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setExtraStudent(int extraStudent) {
         this.extraStudent = extraStudent;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getExtraStudent() {
         return this.extraStudent;

@@ -16,7 +16,6 @@ public class Pawn {
      * Method that gets the pawn object color
      * @return value of pawnsColors for the selected pawn
      */
-
     public PawnsColors getColor() {
         return color;
     }
