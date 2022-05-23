@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class GameTest {
@@ -130,6 +133,56 @@ public class GameTest {
         handler2.removeEffect();
         assertEquals(1,game.getInfluenceForColor(color2));
         assertEquals(1,game.getInfluenceForColor(color));
+
+    }
+
+    @Test
+    void nextPlayer(){
+
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Game gameTest = new Game(3,false,jsonCards);
+
+        Player player1 = new Player("Paolo Tommaso",7);
+        Player player2 = new Player("Gasparo Noe",7);
+        Player player3 = new Player("Danilo Vilnuovo",7);
+
+        gameTest.addPlayer(player1);
+        gameTest.addPlayer(player2);
+        gameTest.addPlayer(player3);
+
+        assertEquals("Paolo Tommaso",gameTest.getCurrentPlayer().getNickname());
+        gameTest.nextPlayer();
+        assertEquals("Gasparo Noe",gameTest.getCurrentPlayer().getNickname());
+        gameTest.nextPlayer();
+        assertEquals("Danilo Vilnuovo",gameTest.getCurrentPlayer().getNickname());
+        gameTest.nextPlayer();
+        assertEquals("Paolo Tommaso",gameTest.getCurrentPlayer().getNickname());
+    }
+
+    @Test
+    public void StarGame(){
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       Game gametest = new Game(2,true, jsonCards );
+
+        Player player1 = new Player("Paolo Tommaso",7);
+        Player player2 = new Player("Gasparo Noe",7);
+
+        gametest.addPlayer(player1);
+        gametest.addPlayer(player2);
+
+        gametest.startGame();
+
+        assertEquals(GamePhase.START_PHASE,gametest.getGamePhase());
 
     }
 }

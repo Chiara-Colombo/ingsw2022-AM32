@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 /**
- * Enumeation of Characters
+ * Enumeration of Characters
  */
 
 public enum Characters {
@@ -14,15 +14,20 @@ public enum Characters {
     FARMER(2),
     MAGIC_MAILMAN(1);
 
-    /**
-     * Assigns directly the coin value,funzione per incrementare se usata
-     */
-    private final int coinValue;
 
+    private final int coinValue;
+    /**
+     * Assigns directly the coin value
+     * @param coinValue is the coin value of a card
+     */
     Characters (int coinValue){
         this.coinValue = coinValue;
     }
 
+    /**
+     * Getter for the coin value
+     * @return the value of the coinValue
+     */
     public int getCoinValue() {
         return coinValue;
     }

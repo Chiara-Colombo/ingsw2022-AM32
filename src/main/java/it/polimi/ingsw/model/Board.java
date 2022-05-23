@@ -18,6 +18,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
 
     /**
      * Constructor of Board class
+     * @param numOfPlayers the number of players
      */
 
     Board(int numOfPlayers) {
@@ -100,7 +101,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
     }
 
     /**
-     *
+     * Getter that returns the islands
      * @return collection of Island
      */
 
@@ -134,7 +135,8 @@ public class Board implements IMonkHandled, ICentaurHandled {
     }
 
     /**
-     *
+     * Method that adds coins
+     * @param coins the coins that are added to a player
      */
 
     void addCoins(int coins){
@@ -144,7 +146,7 @@ public class Board implements IMonkHandled, ICentaurHandled {
     }
 
     /**
-     *
+     *  Method that gives coins
      */
 
     void giveCoin(){
@@ -201,16 +203,25 @@ public class Board implements IMonkHandled, ICentaurHandled {
         return islands.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setStudentOnIsland(Pawn student, int island) {
         this.islands.get(island).addStudent(student);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTowerInfluenceForIslands(int groupOfIslands, int influence) {
         this.islandsTowerMultiplier.replace(groupOfIslands, influence);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTowerInfluenceForIslands(int groupOfIslands) {
         return this.islandsTowerMultiplier.get(groupOfIslands);
