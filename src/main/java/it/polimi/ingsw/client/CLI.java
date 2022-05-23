@@ -1,15 +1,13 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
-import it.polimi.ingsw.messages.clienttoserver.GameModeResponse;
-import it.polimi.ingsw.messages.clienttoserver.NumOfPlayersResponse;
-import it.polimi.ingsw.messages.clienttoserver.SetUsername;
+import it.polimi.ingsw.messages.clienttoserver.*;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Wizards;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static it.polimi.ingsw.utils.Utils.*;
@@ -73,7 +71,18 @@ public class CLI  implements View{
 
     @Override
     public void showWizardCardRequest(ArrayList<Wizards> validWizards) {
-        //System.out.println("Scegli una carta mago " + nickname);
+        System.out.print("Scegli una carta mago selezionando il numero\n");
+        for(int i = 0; i < validWizards.size(); i++ ){
+            System.out.println("[ " + i + " ] " + validWizards.get(i).toString() );
+        }
+        try{
+            int wizardCard = new Scanner(System.in).nextInt();
+        ClientMessage clientMessage = new WizardCardResponse(validWizards.get(wizardCard));
+        this.clientController.sendObjectMessage(clientMessage);}
+        catch(IndexOutOfBoundsException | InputMismatchException error){
+            System.out.println(" Hai selezionato un valore scorretto! Ritenta! ");
+            this.showWizardCardRequest(validWizards);
+        }
     }
 
     @Override
@@ -123,7 +132,16 @@ public class CLI  implements View{
 
     @Override
     public void showMoveMNRequest(int movements) {
-        System.out.println("Muovi madre natura: seleziona  un numero compreso tra 1 e" + movements);
+        System.out.println("Muovi madre natura: seleziona  un numero fino a " + movements);
+        try {
+            int choice = new Scanner(System.in).nextInt();
+            ClientMessage MNResponse = new MoveMNResponse(movements);
+            this.clientController.sendObjectMessage(MNResponse);
+        }
+        catch (InputMismatchException error){
+            System.out.println("Hai inserito un valore non corretto, ritenta! ");
+            this.showMoveMNRequest(movements);
+        }
     }
 
     @Override
@@ -158,7 +176,22 @@ public class CLI  implements View{
 
     @Override
     public void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
-        System.out.println("Seleziona una carta assistente");
+
+        System.out.println("Seleziona una carta assistente digitando il suo numero! : ");
+
+        for(int i = 0; i < availableCards.size() ; i++ ){
+            System.out.println("[ " + i + " ] : " + " Valore : " + availableCards.get(i).getValue() + "  Movimenti MN " + availableCards.get(i).getMotherNatureMovements());
+        }
+
+        try {
+            int choice = new Scanner(System.in).nextInt();
+            ClientMessage clientMessage = new AssistantCardResponse(availableCards.get(choice));
+            this.clientController.sendObjectMessage(clientMessage);
+        }
+        catch (IndexOutOfBoundsException  | InputMismatchException error){
+            System.out.println("Hai selezionato una carta sbagliata! Ritenta! ");
+            this.showAssistantCardRequest(availableCards);
+        }
     }
 
     @Override
