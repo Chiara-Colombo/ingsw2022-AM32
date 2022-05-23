@@ -26,7 +26,7 @@ public class CentaurEffectHandler implements EffectHandler{
     }
 
     /**
-     * Method that applies Centaur Character card Effects
+     * Method that removes Centaur Character card Effects
      */
     @Override
     public void removeEffect() {

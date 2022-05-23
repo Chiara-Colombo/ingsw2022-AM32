@@ -54,6 +54,11 @@ public class ServerController  {
         client.sendObjectMessage(RequestUsername);
     }
 
+    /**
+     * Method that sets the number of player
+     * @param numOfPlayers chosen by the first player
+     * @param player
+     */
     public void setNumOfPlayers(int numOfPlayers, ClientHandler player) {
         this.numOfPlayers = numOfPlayers;
         this.setupGameMode(player);
@@ -85,6 +90,11 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that sets the username
+     * @param username is the username chosen by the user
+     * @param player is the player to whom assign the username
+     */
     public synchronized void setUsername(String username, ClientHandler player) {
         if (this.usernames.containsKey(username)) {
             UsernameNotAssigned usernameNotAssigned = new UsernameNotAssigned();
@@ -105,6 +115,10 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that removes a player when it disconnects
+     * @param player that has to be removed
+     */
     public void removePlayer(ClientHandler player) {
         System.out.println("Removing client");
         boolean isFirstPlayer = this.clients.get(0).equals(player);
@@ -132,6 +146,9 @@ public class ServerController  {
         }
     }
 
+    /**
+     * This method is called when a player disconnect and calculate the winner
+     */
     private void calculateWinner() {
         String winner = "Vince lo sport";
         PlayerWinner playerWinnerMessage = new PlayerWinner(winner, "giocatore disconnesso");
@@ -139,6 +156,9 @@ public class ServerController  {
             client.sendObjectMessage(playerWinnerMessage);
     }
 
+    /**
+     * This method is called when the game starts
+     */
     private synchronized void startGame() {
         Iterator<String> iterUsernames = this.usernames.keySet().iterator();
         ArrayList<TowersColors> colors = new ArrayList<>(0);
@@ -159,6 +179,10 @@ public class ServerController  {
         this.stateOfTheGame.chooseWizard();
     }
 
+    /**
+     * method that set the Wizard
+     * @param wizard that the player has chosen
+     */
     public void setWizard(Wizards wizard) {
         this.game.getCurrentPlayer().setWizard(wizard);
         this.game.getCardsManager().initializeCardsForPlayer(wizard);

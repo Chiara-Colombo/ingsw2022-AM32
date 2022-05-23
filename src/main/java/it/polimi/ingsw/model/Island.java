@@ -19,7 +19,6 @@ public class Island implements IIsland, INoEntry {
     /**
      * Constructor Of Island Object
      */
-
     public Island(int groupOfIslands){
         this.students = new ArrayList<>();
         this.noEntry = false;
@@ -32,7 +31,6 @@ public class Island implements IIsland, INoEntry {
      * Methods that set a tower object on a island
      * @param tower the tower to be set
      */
-
     public void setTower(Tower tower){
         this.tower = Optional.of(tower);
     }
@@ -41,7 +39,6 @@ public class Island implements IIsland, INoEntry {
      *
      * @param groupOfIslands
      */
-
     public void setGroupOfIslands(int groupOfIslands){
        this.groupOfIslands = groupOfIslands;
     }
@@ -61,7 +58,6 @@ public class Island implements IIsland, INoEntry {
     public Optional<Tower> getTower() {
         return this.tower;
     }
-
 
     /**
      *
