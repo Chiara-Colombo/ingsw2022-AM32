@@ -54,7 +54,6 @@ public class ClientHandler implements Runnable {
     }
 
     public void sendObjectMessage(ServerMessage message) {
-        System.out.println("SENDING MESSAGE: " + message.TypeOfMessage());
         try {
             outputStream.writeObject(message);
             outputStream.flush();

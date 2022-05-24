@@ -29,6 +29,11 @@ public class StartState implements  State {
     }
 
     @Override
+    public boolean moveStudent() {
+        return false;
+    }
+
+    @Override
     public void chooseCloud() {
 
     }

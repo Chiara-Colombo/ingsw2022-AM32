@@ -84,8 +84,8 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method which removes a student pawn
      * @param studentIndex the index of the student pawn to be removed
      */
-    public void removeStudent(int studentIndex){
-        this.schoolBoard.removeStudent(studentIndex);
+    public Pawn removeStudent(int studentIndex){
+        return this.schoolBoard.removeStudent(studentIndex);
     }
 
 

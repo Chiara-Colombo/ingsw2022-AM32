@@ -35,10 +35,13 @@ public class SchoolBoard implements ISchoolBoard {
      * @param studentIndex the index which refers to the position of the student in the entrance
      * @return the removed student Pawn
      */
-    public Pawn removeStudent(int studentIndex) {
-        Pawn studenttoremove=entrance.get(studentIndex);
-        entrance.remove(studentIndex);
-        return studenttoremove;
+    Pawn removeStudent(int studentIndex) {
+        if (studentIndex >= 0) {
+            Pawn student = entrance.get(studentIndex);
+            entrance.remove(studentIndex);
+            return student;
+        }
+        return null;
     }
 
     /**

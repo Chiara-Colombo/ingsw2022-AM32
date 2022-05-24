@@ -135,10 +135,9 @@ public class CLI  implements View{
         System.out.println("Muovi madre natura: seleziona  un numero fino a " + movements);
         try {
             int choice = new Scanner(System.in).nextInt();
-            ClientMessage MNResponse = new MoveMNResponse(movements);
+            ClientMessage MNResponse = new MoveMNResponse(choice);
             this.clientController.sendObjectMessage(MNResponse);
-        }
-        catch (InputMismatchException error){
+        } catch (InputMismatchException error){
             System.out.println("Hai inserito un valore non corretto, ritenta! ");
             this.showMoveMNRequest(movements);
         }

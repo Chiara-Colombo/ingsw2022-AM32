@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class MoveMNResponse extends ClientMessage{
 
-    int movements;
+    private final int movements;
 
     public MoveMNResponse(int movements){
         this.movements = movements;
@@ -19,5 +19,9 @@ public class MoveMNResponse extends ClientMessage{
 
     public void accept(VisitorServer serverVisitor) throws IOException {
         serverVisitor.visitMessage(this);
+    }
+
+    public int getMovements() {
+        return movements;
     }
 }

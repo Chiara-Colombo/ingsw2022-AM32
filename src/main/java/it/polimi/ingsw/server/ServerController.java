@@ -156,6 +156,10 @@ public class ServerController  {
             client.sendObjectMessage(playerWinnerMessage);
     }
 
+    private boolean isEndOfGame() {
+        return false;
+    }
+
     /**
      * This method is called when the game starts
      */
@@ -229,8 +233,37 @@ public class ServerController  {
                 ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
                 this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
                 this.stateOfTheGame = this.stateOfTheGame.changeState();
+                this.stateOfTheGame.moveStudent();
             }
         });
+    }
+
+    public void moveStudent(int pawnIndex, int islandIndex, boolean moveOnSchoolBoard) {
+        Pawn student = this.game.getCurrentPlayer().removeStudent(pawnIndex);
+        if (moveOnSchoolBoard) {
+            this.game.getCurrentPlayer().addStudentInDiningRoom(student);
+        } else {
+            this.game.getGameBoard().setStudentOnIsland(student, islandIndex);
+        }
+        final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+        this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+        ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
+        this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
+        if (!this.stateOfTheGame.moveStudent()) {
+            this.stateOfTheGame.moveMN();
+        }
+    }
+
+    public void moveMotherNature(int movements) {
+        this.game.getGameBoard().moveMotherNature(movements);
+        final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+        this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+        if (!this.isEndOfGame()) {
+            this.game.nextPlayer();
+            ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
+            this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
+            this.stateOfTheGame.moveStudent();
+        }
     }
 
     private BoardUpdate calculateBoardUpdate() {

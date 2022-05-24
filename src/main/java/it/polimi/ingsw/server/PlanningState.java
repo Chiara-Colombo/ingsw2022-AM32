@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.Game;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class PlanningState implements State{
 
@@ -22,6 +21,11 @@ public class PlanningState implements State{
     @Override
     public void chooseWizard() {
 
+    }
+
+    @Override
+    public boolean moveStudent() {
+        return false;
     }
 
     @Override
@@ -58,6 +62,6 @@ public class PlanningState implements State{
 
     @Override
     public State changeState() {
-        return new ActionState();
+        return new ActionState(game, players);
     }
 }

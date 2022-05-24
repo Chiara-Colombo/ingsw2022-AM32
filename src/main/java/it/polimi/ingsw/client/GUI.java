@@ -3,7 +3,6 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.client.gui.*;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
-import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Wizards;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -24,6 +23,8 @@ public class GUI extends Application implements View{
     private static GameSetupManager gameSetupManager;
     private static GameScene gameScene;
     private static EnumMap<EnumScenes, Scene> scenes;
+    private static MoveStudentsManager moveStudentsManager;
+    private static MoveMNManager moveMNManager;
 
     @Override
     public void start(Stage primaryStage) {
@@ -32,6 +33,8 @@ public class GUI extends Application implements View{
         stage = primaryStage;
         GameSettingsScene gameSettingsScene = GameSettingsScene.getInstance();
         GameSetupScene gameSetupScene = GameSetupScene.getInstance();
+        moveStudentsManager = new MoveStudentsManager(controller, this);
+        moveMNManager = new MoveMNManager(controller, this);
         gameScene = new GameScene(new Pane());
         gamesSettingsManager = new GamesSettingsManager(gameSettingsScene);
         gameSetupManager = new GameSetupManager(gameSetupScene);
@@ -70,6 +73,10 @@ public class GUI extends Application implements View{
         new Thread(controller).start();
     }
 
+    public void removeEventHandlers() {
+        gameScene.removeHandlers();
+    }
+
     @Override
     public void showRequestNumOfPlayers() {
         stage.setScene(scenes.get(EnumScenes.GAME_SETTINGS_SCENE));
@@ -87,9 +94,7 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showErrorMessage(String message) {
-
-    }
+    public void showErrorMessage(String message) {}
 
     @Override
     public void showWaitingView() {
@@ -114,18 +119,20 @@ public class GUI extends Application implements View{
 
     @Override
     public void showActionPhaseTurn(String nickname) {
-
+        if (controller.getUsername().equals(nickname)) {
+            gameScene.showTurnMessage("È il tuo turno");
+            gameScene.showGamePhaseMessage("");
+        } else {
+            gameScene.showGamePhaseMessage(nickname + " è nella fase azione");
+            gameScene.showTurnMessage("È il turno di " + nickname);
+        }
     }
 
     @Override
-    public void showAssistantCardChosen() {
-
-    }
+    public void showAssistantCardChosen() {}
 
     @Override
-    public void showAssistantsCardUpdate() {
-
-    }
+    public void showAssistantsCardUpdate() {}
 
     @Override
     public void showBoardUpdate(BoardUpdate boardUpdate) {
@@ -136,33 +143,28 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showChosenWizardCard() {
-
-    }
+    public void showChosenWizardCard() {}
 
     @Override
-    public void showCloudRequest() {
-
-    }
+    public void showCloudRequest() {}
 
     @Override
-    public void showCoinsUpdate() {
-
-    }
+    public void showCoinsUpdate() {}
 
     @Override
-    public void showMNPositionUpdate() {
-
-    }
+    public void showMNPositionUpdate() {}
 
     @Override
     public void showMoveMNRequest(int movements) {
-
+        gameScene.showGamePhaseMessage("Sposta madre natura. Puoi spostarla di un massimo di " + movements + " isole in qualunque senso");
+        moveMNManager.setMaxMovements(movements);
+        gameScene.addMoveMNHandlers(moveMNManager);
     }
 
     @Override
     public void showMovePawnRequest() {
-
+        gameScene.showGamePhaseMessage("Sposta tre studenti dall'ingresso");
+        gameScene.addMoveEntranceStudentsHandlers(moveStudentsManager);
     }
 
     @Override
@@ -177,18 +179,13 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showSchoolBoardUpdate() {
-    }
+    public void showSchoolBoardUpdate() {}
 
     @Override
-    public void showSelectPawnRequest() {
-
-    }
+    public void showSelectPawnRequest() {}
 
     @Override
-    public void showYourActionPhaseTurnEnds() {
-
-    }
+    public void showYourActionPhaseTurnEnds() {}
 
     @Override
     public void showYourPlanningPhaseTurnEnds() {
@@ -201,11 +198,8 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showErrorMotherNaturePosition(){
-    }
+    public void showErrorMotherNaturePosition(){}
 
     @Override
-    public void showNotEnoughCoins(){
-
-    }
+    public void showNotEnoughCoins(){}
 }

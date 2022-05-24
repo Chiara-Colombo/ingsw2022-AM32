@@ -49,12 +49,12 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(MoveMNResponse moveMNResponse) {
-
+        this.serverController.moveMotherNature(moveMNResponse.getMovements());
     }
 
     @Override
     public void visitMessage(MovePawnResponse movePawnResponse) {
-
+        this.serverController.moveStudent(movePawnResponse.getStudentIndex(), movePawnResponse.getIslandIndex(), movePawnResponse.isMoveOnSchoolBoard());
     }
 
     @Override

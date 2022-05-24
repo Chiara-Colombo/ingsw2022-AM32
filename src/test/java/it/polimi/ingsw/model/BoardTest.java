@@ -52,12 +52,12 @@ class BoardTest {
     void moveMotherNature(){
 
         int index=16;
-
-        assertTrue(gameBoard.moveMotherNature(index)<12 && gameBoard.moveMotherNature(index)>=0);
+        gameBoard.moveMotherNature(index);
+        assertTrue(gameBoard.getMotherNature() < 12 && gameBoard.getMotherNature() >= 0);
 
         int index2=1;
-
-        assertTrue(gameBoard.moveMotherNature(index2)<12 && gameBoard.moveMotherNature(index2)>=0);
+        gameBoard.moveMotherNature(index2);
+        assertTrue(gameBoard.getMotherNature() < 12 && gameBoard.getMotherNature() >= 0);
 
 
 

@@ -96,7 +96,6 @@ public class Game implements IMooshroomManHandled {
      * Method that calculate the next player
      */
     public boolean nextPlayer() {
-        System.out.println("CURRENT PLAYER: " + this.currentPlayer);
         if (this.currentPlayer + 1 >= this.players.size()){
             this.currentPlayer = 0;
             return false;

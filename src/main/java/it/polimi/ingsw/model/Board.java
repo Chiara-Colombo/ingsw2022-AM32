@@ -107,11 +107,11 @@ public class Board implements IMonkHandled, ICentaurHandled {
      * Method for moving MotherNature
      * @param index the moves Mothernature has to do
      */
-    public int moveMotherNature(int index){
+    public void moveMotherNature(int index){
         if (this.motherNature + index >= islands.size()) {
-           return this.motherNature = (this.motherNature + index) % (islands.size());
+            this.motherNature = (this.motherNature + index) % (islands.size());
         } else {
-            return this.motherNature= this.motherNature + index;
+            this.motherNature = this.motherNature + index;
         }
     }
 

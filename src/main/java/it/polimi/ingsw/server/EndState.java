@@ -8,6 +8,11 @@ public class EndState implements State{
     }
 
     @Override
+    public boolean moveStudent() {
+        return false;
+    }
+
+    @Override
     public void chooseCloud() {
 
     }
