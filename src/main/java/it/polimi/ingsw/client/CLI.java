@@ -3,17 +3,29 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.messages.clienttoserver.*;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
+import it.polimi.ingsw.model.PawnsColors;
 import it.polimi.ingsw.model.Wizards;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class CLI  implements View{
     private ClientController clientController;
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
+    public static final String RED_BACKGROUND_BRIGHT = "\033[0;101m";// RED
+    public static final String GREEN_BACKGROUND_BRIGHT = "\033[0;102m";// GREEN
+    public static final String YELLOW_BACKGROUND_BRIGHT = "\033[0;103m";// YELLOW
+    public static final String BLUE_BACKGROUND_BRIGHT = "\033[0;104m";// BLUE
+    public static final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m"; // PURPLE
+    public static final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
+    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
+
 
     public void start() {
         this.clientController = new ClientController(DEFAULT_SERVER_PORT, DEFAULT_SERVER_ADDRESS, this, false);
@@ -80,7 +92,7 @@ public class CLI  implements View{
         ClientMessage clientMessage = new WizardCardResponse(validWizards.get(wizardCard));
         this.clientController.sendObjectMessage(clientMessage);}
         catch(IndexOutOfBoundsException | InputMismatchException error){
-            System.out.println(" Hai selezionato un valore scorretto! Ritenta! ");
+            System.out.println(ANSI_RED + " Hai selezionato un valore scorretto! Ritenta! " + ANSI_RESET);
             this.showWizardCardRequest(validWizards);
         }
     }
@@ -97,7 +109,6 @@ public class CLI  implements View{
 
     @Override
     public void showAssistantCardChosen() {
-
     }
 
     @Override
@@ -108,6 +119,52 @@ public class CLI  implements View{
     @Override
     public void showBoardUpdate(BoardUpdate boardUpdate) {
 
+        System.out.println(ANSI_RED + "                     BOARD" + ANSI_RESET + "\n");
+
+        int index = 0;
+        for(int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                if(index < boardUpdate.getBoardUpdateContent().getIslands().size()) {
+                    ArrayList<PawnsColors> colors = boardUpdate.getBoardUpdateContent().getIslands().get(index).getStudents();
+                    System.out.print(" [" + index + "] : [ ");
+                    for(PawnsColors pawnsColors : colors){
+                        System.out.print(pawnsColors.getColorANSI() + "   " + ANSI_RESET + " ");
+                    }
+                    if( boardUpdate.getBoardUpdateContent().getMotherNature() == index) {
+                        System.out.print(ANSI_GREEN + "MN " + ANSI_RESET);
+                    }
+                    System.out.print("]");
+                    index++;
+                }
+                else{
+                    return;
+                }
+            }
+            System.out.println("\n");
+        }
+
+        for( int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
+            System.out.println(ANSI_RED + "             SchoolBoard di  " +  boardUpdate.getPlayersUpdate().get(i).getNickname()+ ANSI_RESET + " : \n");
+            System.out.print("ENTRANCE :  [ " );
+            ArrayList<PawnsColors> entrance = boardUpdate.getPlayersUpdate().get(i).getEntranceStudents();
+            int PawnIndex = 0;
+            for(PawnsColors pawnsColors : entrance){
+                System.out.print(pawnsColors.getColorANSI() + ANSI_BLACK +" "+PawnIndex+" " + ANSI_RESET +  ANSI_RESET + "  ");
+                PawnIndex ++;
+            }
+            System.out.print("]\n ");
+
+            // System.out.println("SALA : " + boardUpdate.getPlayersUpdate().get(i).getDiningRoom());
+            EnumMap<PawnsColors, Integer> diningRoom = boardUpdate.getPlayersUpdate().get(i).getDiningRoom();
+            for(PawnsColors color : PawnsColors.values()) {
+                System.out.print(color.getColorANSI() + ANSI_BLACK + "TABLE"+ ANSI_RESET + ANSI_RESET + ":  ");
+                for(int indexPawn = 0; indexPawn < diningRoom.get(color); indexPawn++) {
+                    System.out.print(" "+ color.getColorANSI() + "   " + ANSI_RESET + "");
+                }
+                System.out.println("");
+            }
+            System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + "\n");
+        }
     }
 
     @Override
@@ -136,9 +193,15 @@ public class CLI  implements View{
         try {
             int choice = new Scanner(System.in).nextInt();
             ClientMessage MNResponse = new MoveMNResponse(choice);
+            if(choice > movements || choice<= 0 ) {
+                System.out.println(ANSI_RED + " Hai selezionato un valore non ammesso! Ritenta! " + ANSI_RESET);
+                this.showMoveMNRequest(movements);
+            }
+            else
             this.clientController.sendObjectMessage(MNResponse);
+
         } catch (InputMismatchException error){
-            System.out.println("Hai inserito un valore non corretto, ritenta! ");
+            System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
             this.showMoveMNRequest(movements);
         }
     }
@@ -146,6 +209,25 @@ public class CLI  implements View{
     @Override
     public void showMovePawnRequest() {
 
+            System.out.println("Seleziona uno studente dall'ingresso digitando il numero presente sopra la pedina ! ");
+            int student = new Scanner(System.in).nextInt();
+            System.out.println("Dove vuoi spostare lo studente? Digita -islands per le isole o -diningRoom per diningRoom ");
+            String response = new Scanner(System.in).nextLine();
+            if(response.contains("-islands")){
+                System.out.println("Scegli l'isola digitando il numero corrispondente");
+                int isola = new Scanner(System.in).nextInt();
+                ClientMessage clientMessage = new MovePawnResponse(student, isola, false);
+                this.clientController.sendObjectMessage(clientMessage);
+                return;
+            }
+            else if(response.contains("-diningRoom")){
+                ClientMessage clientMessage = new MovePawnResponse(student, 0, true);
+                this.clientController.sendObjectMessage(clientMessage);
+                return;
+        }
+            else
+                System.out.println("Digita correttamente");
+                this.showMovePawnRequest();
     }
 
     @Override
@@ -178,26 +260,46 @@ public class CLI  implements View{
 
         System.out.println("Seleziona una carta assistente digitando il suo numero! : ");
 
+        int index = 0;
+        for(int i = 0; i <= 4; i++) {
+            for (int j = 0; j <=3 ; j++) {
+                if(index>=availableCards.size()){
+                    System.out.print("");
+                }
+                else {
+                    System.out.print("  [ " + index + " ] : " + " Valore : " + availableCards.get(index).getValue() + "  Movimenti MN " + availableCards.get(index).getMotherNatureMovements());
+                }
+                index++;
+            }
+            System.out.println("");
+        }
+        /*
         for(int i = 0; i < availableCards.size() ; i++ ){
             System.out.println("[ " + i + " ] : " + " Valore : " + availableCards.get(i).getValue() + "  Movimenti MN " + availableCards.get(i).getMotherNatureMovements());
         }
-
+        */
         try {
             int choice = new Scanner(System.in).nextInt();
             ClientMessage clientMessage = new AssistantCardResponse(availableCards.get(choice));
             this.clientController.sendObjectMessage(clientMessage);
         }
         catch (IndexOutOfBoundsException  | InputMismatchException error){
-            System.out.println("Hai selezionato una carta sbagliata! Ritenta! ");
+            System.out.println(ANSI_RED + "Hai selezionato una carta sbagliata! Ritenta! " + ANSI_RESET);
             this.showAssistantCardRequest(availableCards);
         }
     }
 
     @Override
     public void showErrorMotherNaturePosition(){
-        System.out.println("Hai scelto una posizione di Madre Natura non valida"); }
+        System.out.println(ANSI_RED + "Hai scelto una posizione di Madre Natura non valida" + ANSI_RESET); }
 
     @Override
-    public void showNotEnoughCoins(){System.out.println("Non hai abbastanza soldi");}
+    public void showNotEnoughCoins(){System.out.println(ANSI_RED + "Non hai abbastanza monete" + ANSI_RED);}
+
+    @Override
+    public void showErrorOnPawnPosition() {
+        System.out.println(ANSI_RED + "Hai selezionato una posizione scorretta! Ritenta! " + ANSI_RESET);
+        this.showMovePawnRequest();
+    }
 
 }

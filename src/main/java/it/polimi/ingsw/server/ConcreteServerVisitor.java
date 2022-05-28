@@ -1,6 +1,9 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.messages.clienttoserver.*;
+import it.polimi.ingsw.messages.servertoclient.ErrorOnPawnResponse;
+import it.polimi.ingsw.messages.servertoclient.MovePawnRequest;
+import it.polimi.ingsw.messages.servertoclient.ServerMessage;
 
 import java.io.IOException;
 
@@ -54,7 +57,13 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(MovePawnResponse movePawnResponse) {
-        this.serverController.moveStudent(movePawnResponse.getStudentIndex(), movePawnResponse.getIslandIndex(), movePawnResponse.isMoveOnSchoolBoard());
+        try {
+            this.serverController.moveStudent(movePawnResponse.getStudentIndex(), movePawnResponse.getIslandIndex(), movePawnResponse.isMoveOnSchoolBoard());
+        }
+        catch (IndexOutOfBoundsException error){
+            ServerMessage errorOnPawn = new ErrorOnPawnResponse();
+            this.player.sendObjectMessage(errorOnPawn);
+        }
     }
 
     @Override

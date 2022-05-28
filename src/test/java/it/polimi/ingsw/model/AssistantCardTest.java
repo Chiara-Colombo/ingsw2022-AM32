@@ -33,4 +33,10 @@ public class AssistantCardTest {
         magicMailmanEffectHandler.removeEffect();
         assertEquals(0,assistantCard.getExtraMotherNatureMovements());
     }
+
+    @Test
+    void TesttoString()
+    {
+        assertEquals("AssistantCard [value=3, motherNatureMovements=2]",(card.toString()));
+    }
 }

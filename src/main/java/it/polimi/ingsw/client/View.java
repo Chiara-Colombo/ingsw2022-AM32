@@ -33,4 +33,5 @@ public interface View {
     void showAssistantCardRequest(ArrayList<AssistantCard> availableCards);
     void showErrorMotherNaturePosition();
     void showNotEnoughCoins();
+    void showErrorOnPawnPosition();
 }

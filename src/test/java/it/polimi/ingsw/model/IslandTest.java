@@ -26,4 +26,12 @@ public class IslandTest {
         assertFalse(island.isNoEntry());
     }
 
+    @Test
+    void setTower(){
+        Island island = new Island(0);
+        System.out.println(island.getTower());
+        Tower tower = new Tower(TowersColors.BLACK);
+        island.setTower(tower);
+        System.out.println(island.getTower());
+    }
 }

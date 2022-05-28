@@ -35,4 +35,5 @@ public interface VisitorClient {
     void visitMessage(YourPlanningPhaseTurnEnds yourPlanningPhaseTurnEnds);
     void visitMessage(ErrorMotherNaturePosition errorMotherNaturePosition);
     void visitMessage(NotEnoughCoins notEnoughCoins);
+    void visitMessage(ErrorOnPawnResponse errorOnPawnResponse);
 }

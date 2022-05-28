@@ -202,4 +202,9 @@ public class GUI extends Application implements View{
 
     @Override
     public void showNotEnoughCoins(){}
+
+    @Override
+    public void showErrorOnPawnPosition() {
+
+    }
 }

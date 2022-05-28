@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static it.polimi.ingsw.utils.Utils.*;
+import static org.junit.Assert.*;
 
 public class GameTest {
 
@@ -104,6 +103,20 @@ public class GameTest {
     }
 
     @Test
+    void expertMode(){
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        game = new Game(2, true, jsonCards);
+        assertTrue(game.isExpertMode());
+        game = new Game(2, false, jsonCards);
+        assertFalse(game.isExpertMode());
+    }
+
+    @Test
     void getRandom(){
         PawnsColors color = PawnsColors.getRandom();
         Pawn student = new Pawn(color);
@@ -183,6 +196,31 @@ public class GameTest {
         gametest.startGame();
 
         assertEquals(GamePhase.START_PHASE,gametest.getGamePhase());
+/**
+        System.out.println(gametest.getValidCharacters().get(0).getCoinValue());
+        System.out.println(gametest.getValidCharacters().get(1).getCoinValue());
+        System.out.println(gametest.getValidCharacters().get(2).getCoinValue());
+*/
+        gametest.setGamePhase(GamePhase.ACTION_PHASE);
+        assertEquals(GamePhase.ACTION_PHASE,gametest.getGamePhase());
+    }
 
+    @Test
+    void character(){
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Game gametest = new Game(2,true, jsonCards );
+
+        Player player1 = new Player("Paolo Tommaso",7);
+        Player player2 = new Player("Gasparo Noe",7);
+
+        gametest.addPlayer(player1);
+        gametest.addPlayer(player2);
+
+        gametest.startGame();
     }
 }

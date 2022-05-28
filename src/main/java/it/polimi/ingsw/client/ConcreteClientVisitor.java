@@ -135,6 +135,11 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(NotEnoughCoins notEnoughCoins){
         this.view.showNotEnoughCoins();
     }
+
+    @Override
+    public void visitMessage(ErrorOnPawnResponse errorOnPawnResponse) {
+        this.view.showErrorOnPawnPosition();
+    }
 }
 
 
