@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public class Island implements IIsland, INoEntry {
 
+    private final int index;
     private Optional<Tower> tower;
     private int groupOfIslands;
     private boolean noEntry;
@@ -19,7 +20,8 @@ public class Island implements IIsland, INoEntry {
     /**
      * Constructor Of Island Object
      */
-    public Island(int groupOfIslands){
+    public Island(int groupOfIslands, int index){
+        this.index = index;
         this.students = new ArrayList<>();
         this.noEntry = false;
         this.groupOfIslands = groupOfIslands;
@@ -28,10 +30,10 @@ public class Island implements IIsland, INoEntry {
 
 
     /**
-     * Methods that set a tower object on a island
+     * Methods that set a tower object on an island
      * @param tower the tower to be set
      */
-    public void setTower(Tower tower){
+    void setTower(Tower tower){
         this.tower = Optional.of(tower);
     }
 
@@ -39,7 +41,7 @@ public class Island implements IIsland, INoEntry {
      *
      * @param groupOfIslands
      */
-    public void setGroupOfIslands(int groupOfIslands){
+    void setGroupOfIslands(int groupOfIslands){
        this.groupOfIslands = groupOfIslands;
     }
 
@@ -47,7 +49,7 @@ public class Island implements IIsland, INoEntry {
      * Method that adds a student pawn on the island
      * @param student the pawn needed to be added
      */
-    public void addStudent(Pawn student){
+    void addStudent(Pawn student){
         this.students.add(student);
     }
 
@@ -66,6 +68,11 @@ public class Island implements IIsland, INoEntry {
     @Override
     public int getGroupOfIslands() {
         return this.groupOfIslands;
+    }
+
+    @Override
+    public int getIndex() {
+        return this.index;
     }
 
     @Override

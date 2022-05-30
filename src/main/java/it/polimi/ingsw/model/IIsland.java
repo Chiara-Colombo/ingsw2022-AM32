@@ -12,6 +12,7 @@ public interface IIsland {
     Optional<Tower> getTower();
 
     int getGroupOfIslands();
+    int getIndex();
     boolean isNoEntry();
 
     /**

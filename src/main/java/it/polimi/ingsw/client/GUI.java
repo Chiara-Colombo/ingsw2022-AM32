@@ -25,6 +25,7 @@ public class GUI extends Application implements View{
     private static EnumMap<EnumScenes, Scene> scenes;
     private static MoveStudentsManager moveStudentsManager;
     private static MoveMNManager moveMNManager;
+    private static ChooseCloudManager chooseCloudManager;
 
     @Override
     public void start(Stage primaryStage) {
@@ -35,6 +36,7 @@ public class GUI extends Application implements View{
         GameSetupScene gameSetupScene = GameSetupScene.getInstance();
         moveStudentsManager = new MoveStudentsManager(controller, this);
         moveMNManager = new MoveMNManager(controller, this);
+        chooseCloudManager = new ChooseCloudManager(controller, this);
         gameScene = new GameScene(new Pane());
         gamesSettingsManager = new GamesSettingsManager(gameSettingsScene);
         gameSetupManager = new GameSetupManager(gameSetupScene);
@@ -94,7 +96,9 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showErrorMessage(String message) {}
+    public void showErrorMessage(String message) {
+        System.out.println(message);
+    }
 
     @Override
     public void showWaitingView() {
@@ -146,7 +150,11 @@ public class GUI extends Application implements View{
     public void showChosenWizardCard() {}
 
     @Override
-    public void showCloudRequest() {}
+    public void showCloudRequest(ArrayList<Integer> validClouds) {
+        gameScene.showGamePhaseMessage("Scegli una nuvola da cui prendere gli studenti");
+        chooseCloudManager.setValidClouds(validClouds);
+        gameScene.addChooseCloudHandler(chooseCloudManager);
+    }
 
     @Override
     public void showCoinsUpdate() {}
@@ -156,7 +164,7 @@ public class GUI extends Application implements View{
 
     @Override
     public void showMoveMNRequest(int movements) {
-        gameScene.showGamePhaseMessage("Sposta madre natura. Puoi spostarla di un massimo di " + movements + " isole in qualunque senso");
+        gameScene.showGamePhaseMessage("Sposta madre natura. Puoi spostarla di un massimo di " + movements + " isole in senso orario");
         moveMNManager.setMaxMovements(movements);
         gameScene.addMoveMNHandlers(moveMNManager);
     }

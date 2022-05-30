@@ -73,15 +73,23 @@ public class AssistantCardsManager {
      * @param discarded
      */
     public void setDiscardedForPlayer(Wizards player, boolean discarded) {
-        if (this.currentCards.get(player) >= 0)
+        if (this.currentCards.get(player) >= 0) {
             this.assistantCards.get(this.currentCards.get(player)).getDiscarded().put(player, discarded);
+        }
     }
 
     public void setCurrentCardForPlayer(Wizards player, int cardValue) {
         for (int i = 0; i<this.assistantCards.size(); i++) {
-            if (cardValue == this.assistantCards.get(i).getValue())
+            if (cardValue == this.assistantCards.get(i).getValue()) {
                 this.currentCards.put(player, i);
+            }
         }
+    }
+
+    public void resetCurrentCards() {
+        this.currentCards.forEach((key, value) -> {
+            this.currentCards.put(key, -1);
+        });
     }
 
     public void initializeCardsForPlayer(Wizards player) {

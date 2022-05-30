@@ -6,14 +6,12 @@ import java.util.Iterator;
 
 public class Cloud implements ICloud  {
 
-    private boolean empty;
-    public ArrayList<Pawn> students;
+    private final ArrayList<Pawn> students;
 
     /**
      * Constructor of Cloud Class
      */
     public Cloud(){
-        this.empty = true;
         this.students = new ArrayList<>();
     }
 
@@ -30,11 +28,11 @@ public class Cloud implements ICloud  {
      * Method for adding a student pawn to the cloud
      * @param student the student pawn that needs to be added
      */
-    public void addStudent(Pawn student){
+    void addStudent(Pawn student){
         this.students.add(student);
     }
 
-    public int studentsSize(){
+    int studentsSize(){
         return this.students.size();
     }
 

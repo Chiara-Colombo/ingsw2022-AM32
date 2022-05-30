@@ -7,11 +7,15 @@ import java.util.ArrayList;
 
 public class BoardUpdateContent implements Serializable {
     private final int motherNature, coinsSupply;
-    private final ArrayList<IslandUpdate> islands;
+    private final ArrayList<ArrayList<IslandUpdate>> islands;
     private final ArrayList<PawnsColors> availableProfessors;
     private final ArrayList<CloudUpdate> clouds;
 
-    public BoardUpdateContent(int motherNature, int coinsSupply, ArrayList<IslandUpdate> islands, ArrayList<PawnsColors> availableProfessors, ArrayList<CloudUpdate> clouds) {
+    public BoardUpdateContent(int motherNature,
+                              int coinsSupply,
+                              ArrayList<ArrayList<IslandUpdate>> islands,
+                              ArrayList<PawnsColors> availableProfessors,
+                              ArrayList<CloudUpdate> clouds) {
         this.motherNature = motherNature;
         this.coinsSupply = coinsSupply;
         this.islands = islands;
@@ -28,7 +32,7 @@ public class BoardUpdateContent implements Serializable {
         return this.coinsSupply;
     }
 
-    public ArrayList<IslandUpdate> getIslands() {
+    public ArrayList<ArrayList<IslandUpdate>> getIslands() {
         return this.islands;
     }
 

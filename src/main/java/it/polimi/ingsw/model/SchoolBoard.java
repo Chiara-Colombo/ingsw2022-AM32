@@ -68,7 +68,7 @@ public class SchoolBoard implements ISchoolBoard {
      * @param professorIndex pawn that represent the position of the pawn
      * @return the professor pawn removed
      */
-    public Pawn removeProfessor(int professorIndex){
+    Pawn removeProfessor(int professorIndex){
         return this.professorsTable.remove(professorIndex);
     }
 

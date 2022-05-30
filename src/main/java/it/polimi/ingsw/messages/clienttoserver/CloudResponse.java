@@ -5,6 +5,12 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 
 public class CloudResponse extends ClientMessage{
+    private final int cloudIndex;
+
+    public CloudResponse(int cloudIndex) {
+        this.cloudIndex = cloudIndex;
+    }
+
     @Override
     public String TypeOfMessage() {
         return "CloudResponse";
@@ -12,5 +18,9 @@ public class CloudResponse extends ClientMessage{
 
     public void accept(VisitorServer serverVisitor) throws IOException {
         serverVisitor.visitMessage(this);
+    }
+
+    public int getCloudIndex() {
+        return this.cloudIndex;
     }
 }

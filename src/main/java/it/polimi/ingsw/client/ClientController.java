@@ -30,7 +30,6 @@ public class ClientController implements Runnable{
         while(true) {
              try {
                  ServerMessage servermessage =  (ServerMessage) inputStream.readObject();
-                 System.out.println("Received message: " + servermessage.TypeOfMessage());
                  if (this.isGui) {
                      Platform.runLater(() -> {
                          try {

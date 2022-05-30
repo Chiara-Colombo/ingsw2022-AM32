@@ -10,7 +10,7 @@ public class IslandTest {
 
     @Test
     void setGroupOfIsland(){
-        Island island = new Island(0);
+        Island island = new Island(0, 0);
         int islandGroupToSet = 3;
         assertEquals(0, island.getGroupOfIslands());
         island.setGroupOfIslands(islandGroupToSet);
@@ -18,7 +18,7 @@ public class IslandTest {
     }
     @Test
     void setNoEntry(){
-        Island island = new Island(0);
+        Island island = new Island(0, 0);
         GrandmaHerbsEffectHandler handler = new GrandmaHerbsEffectHandler(island);
         handler.applyEffect();
         assertTrue(island.isNoEntry());
@@ -28,7 +28,7 @@ public class IslandTest {
 
     @Test
     void setTower(){
-        Island island = new Island(0);
+        Island island = new Island(0, 0);
         System.out.println(island.getTower());
         Tower tower = new Tower(TowersColors.BLACK);
         island.setTower(tower);

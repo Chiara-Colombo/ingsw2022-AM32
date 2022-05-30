@@ -38,7 +38,7 @@ public class ConcreteClientVisitor implements VisitorClient{
     }
     @Override
     public void visitMessage(PlayerWinner playerWinner) {
-        this.view.showErrorMessage(playerWinner.getWinner() + " vince per " + playerWinner.getReason());
+        this.view.showErrorMessage(playerWinner.getWinner() + " vince!\n" + playerWinner.getReason());
     }
 
     public void visitMessage(WizardCardRequest wizardCardRequest){
@@ -82,7 +82,7 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(CloudRequest cloudRequest) {
-        this.view.showCloudRequest();
+        this.view.showCloudRequest(cloudRequest.getValidClouds());
     }
 
     @Override

@@ -16,6 +16,7 @@ public class PlanningState implements State{
     public PlanningState(Game game, Map<String, ClientHandler> players) {
         this.game = game;
         this.players = players;
+        this.game.getCardsManager().resetCurrentCards();
     }
 
     @Override
@@ -35,7 +36,6 @@ public class PlanningState implements State{
 
     @Override
     public void drawAssistantCard() {
-        System.out.println("DRAW ASSISTANT CARD FOR " + this.game.getCurrentPlayer().getNickname());
         this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
             PlanningPhaseTurn phaseTurn = new PlanningPhaseTurn(this.game.getCurrentPlayer().getNickname());
             this.players.forEach((nickname, clientHandler) -> clientHandler.sendObjectMessage(phaseTurn));
@@ -47,7 +47,17 @@ public class PlanningState implements State{
 
     @Override
     public void fillClouds() {
-
+        for (int i = 0; i < this.game.getGameBoard().getClouds().size(); i++) {
+            if (this.game.getGameBoard().getClouds().get(i).isEmpty()) {
+                int students = this.game.getNumOfPlayers() == 2 ? 3 : 4;
+                for (int j = 0; j < students; j++) {
+                    int temp_i = i;
+                    this.game.getGameBoard().drawFromBag().ifPresent(student -> {
+                        this.game.getGameBoard().setStudentOnCloud(student, temp_i);
+                    });
+                }
+            }
+        }
     }
 
     @Override

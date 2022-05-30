@@ -20,7 +20,7 @@ public interface View {
     void showAssistantsCardUpdate();
     void showBoardUpdate(BoardUpdate boardUpdate);
     void showChosenWizardCard();
-    void showCloudRequest();
+    void showCloudRequest(ArrayList<Integer> validClouds);
     void showCoinsUpdate();
     void showMNPositionUpdate();
     void showMoveMNRequest(int movements);

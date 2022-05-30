@@ -1,9 +1,11 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.messages.servertoclient.CloudRequest;
 import it.polimi.ingsw.messages.servertoclient.MoveMNRequest;
 import it.polimi.ingsw.messages.servertoclient.MovePawnRequest;
 import it.polimi.ingsw.model.Game;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class ActionState implements State{
@@ -24,7 +26,8 @@ public class ActionState implements State{
 
     @Override
     public boolean moveStudent() {
-        if (this.studentsMoved >= 3) {
+        if ((this.game.getNumOfPlayers() == 2 && this.studentsMoved >= 3) ||
+                (this.game.getNumOfPlayers() == 3 && this.studentsMoved >= 4)) {
             this.studentsMoved = 0;
             return false;
         }
@@ -36,7 +39,14 @@ public class ActionState implements State{
 
     @Override
     public void chooseCloud() {
-
+        ArrayList<Integer> validClouds = new ArrayList<>();
+        for (int i = 0; i < this.game.getGameBoard().getClouds().size(); i++) {
+            if (!this.game.getGameBoard().getClouds().get(i).isEmpty()) {
+                validClouds.add(i);
+            }
+        }
+        CloudRequest request = new CloudRequest(validClouds);
+        this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
     }
 
     @Override
@@ -64,6 +74,6 @@ public class ActionState implements State{
 
     @Override
     public State changeState() {
-        return null;
+        return new PlanningState(game, players);
     }
 }

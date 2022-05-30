@@ -25,6 +25,13 @@ public class CLI  implements View{
     public static final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m"; // PURPLE
     public static final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
     public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
+    private static final EnumMap<PawnsColors, String> PAWNS_COLORS_ANSI_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(PawnsColors.BLUE, "\033[0;104m"),
+            Map.entry(PawnsColors.PINK, "\033[0;105m"),
+            Map.entry(PawnsColors.RED, "\033[0;101m"),
+            Map.entry(PawnsColors.GREEN, "\033[0;102m"),
+            Map.entry(PawnsColors.YELLOW, "\033[0;103m")
+    ));
 
 
     public void start() {
@@ -125,10 +132,10 @@ public class CLI  implements View{
         for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
                 if(index < boardUpdate.getBoardUpdateContent().getIslands().size()) {
-                    ArrayList<PawnsColors> colors = boardUpdate.getBoardUpdateContent().getIslands().get(index).getStudents();
+                    ArrayList<PawnsColors> colors = boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getStudents();
                     System.out.print(" [" + index + "] : [ ");
                     for(PawnsColors pawnsColors : colors){
-                        System.out.print(pawnsColors.getColorANSI() + "   " + ANSI_RESET + " ");
+                        System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
                     }
                     if( boardUpdate.getBoardUpdateContent().getMotherNature() == index) {
                         System.out.print(ANSI_GREEN + "MN " + ANSI_RESET);
@@ -149,17 +156,17 @@ public class CLI  implements View{
             ArrayList<PawnsColors> entrance = boardUpdate.getPlayersUpdate().get(i).getEntranceStudents();
             int PawnIndex = 0;
             for(PawnsColors pawnsColors : entrance){
-                System.out.print(pawnsColors.getColorANSI() + ANSI_BLACK +" "+PawnIndex+" " + ANSI_RESET +  ANSI_RESET + "  ");
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + ANSI_BLACK +" "+PawnIndex+" " + ANSI_RESET +  ANSI_RESET + "  ");
                 PawnIndex ++;
             }
-            System.out.print("]\n ");
+            System.out.print("]\n");
 
             // System.out.println("SALA : " + boardUpdate.getPlayersUpdate().get(i).getDiningRoom());
             EnumMap<PawnsColors, Integer> diningRoom = boardUpdate.getPlayersUpdate().get(i).getDiningRoom();
             for(PawnsColors color : PawnsColors.values()) {
-                System.out.print(color.getColorANSI() + ANSI_BLACK + "TABLE"+ ANSI_RESET + ANSI_RESET + ":  ");
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + ANSI_BLACK + "TABLE"+ ANSI_RESET + ANSI_RESET + ":  ");
                 for(int indexPawn = 0; indexPawn < diningRoom.get(color); indexPawn++) {
-                    System.out.print(" "+ color.getColorANSI() + "   " + ANSI_RESET + "");
+                    System.out.print(" "+ PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + "");
                 }
                 System.out.println("");
             }
@@ -173,7 +180,7 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showCloudRequest() {
+    public void showCloudRequest(ArrayList<Integer> validClouds) {
 
     }
 

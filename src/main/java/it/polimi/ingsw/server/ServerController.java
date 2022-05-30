@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static it.polimi.ingsw.utils.Utils.CARDS_RESOURCE_PATH;
 
@@ -134,10 +135,11 @@ public class ServerController  {
             }
             System.out.println(username + " disconnected");
             if (Objects.nonNull(this.game) && this.game.getGamePhase() != GamePhase.NO_PHASE) {
-                this.calculateWinner();
                 PlayerDisconnected playerDisconnectedMessage = new PlayerDisconnected(username);
                 for (ClientHandler client : this.clients)
                     client.sendObjectMessage(playerDisconnectedMessage);
+                this.stateOfTheGame = new EndState(this.game, this.usernames);
+                this.stateOfTheGame.endGame();
             } else {
                 this.numOfPlayers = -1;
                 if (isFirstPlayer && this.clients.size() > 0 && this.usernames.containsValue(this.clients.get(0)))
@@ -146,17 +148,29 @@ public class ServerController  {
         }
     }
 
-    /**
-     * This method is called when a player disconnect and calculate the winner
-     */
-    private void calculateWinner() {
-        String winner = "Vince lo sport";
-        PlayerWinner playerWinnerMessage = new PlayerWinner(winner, "giocatore disconnesso");
-        for (ClientHandler client : this.clients)
-            client.sendObjectMessage(playerWinnerMessage);
-    }
-
-    private boolean isEndOfGame() {
+    private boolean isEndOfGame(boolean endOfTurn) {
+        for (Player player : this.game.getPlayers()) {
+            if (player.getTowers() == 0) return true;
+        }
+        int differentGroup = 0, lastGroup = -1;
+        for (IIsland island : this.game.getGameBoard().getIslands()) {
+            if (lastGroup < 0 || lastGroup != island.getGroupOfIslands()) {
+                differentGroup++;
+            }
+            lastGroup = island.getGroupOfIslands();
+        }
+        if (differentGroup <= 3) return true;
+        if (endOfTurn) {
+            if (this.game.getGameBoard().isBagEmpty()) return true;
+            AtomicBoolean cardsNotAvailable = new AtomicBoolean(false);
+            for (Player player : this.game.getPlayers()) {
+                player.getWizard().ifPresent(wizard -> {
+                    if (this.game.getCardsManager().getAvailableCardsForPlayer(wizard).size() == 0)
+                        cardsNotAvailable.set(true);
+                });
+            }
+            return cardsNotAvailable.get();
+        }
         return false;
     }
 
@@ -194,6 +208,7 @@ public class ServerController  {
             this.stateOfTheGame.chooseWizard();
         } else {
             this.stateOfTheGame = this.stateOfTheGame.changeState();
+            this.stateOfTheGame.fillClouds();
             BoardUpdate boardUpdate = this.calculateBoardUpdate();
             for (ClientHandler client : this.clients) {
                 client.sendObjectMessage(boardUpdate);
@@ -204,14 +219,12 @@ public class ServerController  {
 
     public void setAssistantCard(AssistantCard card) {
         AtomicBoolean invalid = new AtomicBoolean(false);
-        this.game.getPlayers().forEach(player -> {
-            player.getWizard().flatMap(wizard -> this.game.getCardsManager().getCurrentCardForPlayer(wizard)).ifPresent(assistantCard -> {
-                if (assistantCard.getValue() == card.getValue()) {
-                    System.out.println("Invalid choice");
-                    invalid.set(true);
-                }
-            });
-        });
+        this.game.getPlayers().forEach(player -> player.getWizard().flatMap(wizard -> this.game.getCardsManager().getCurrentCardForPlayer(wizard)).ifPresent(assistantCard -> {
+            if (assistantCard.getValue() == card.getValue()) {
+                System.out.println("Invalid choice");
+                invalid.set(true);
+            }
+        }));
         if (invalid.get()) return;
         this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
             this.game.getCardsManager().setCurrentCardForPlayer(wizard, card.getValue());
@@ -242,6 +255,7 @@ public class ServerController  {
         Pawn student = this.game.getCurrentPlayer().removeStudent(pawnIndex);
         if (moveOnSchoolBoard) {
             this.game.getCurrentPlayer().addStudentInDiningRoom(student);
+            this.checkProfessor(student.getColor());
         } else {
             this.game.getGameBoard().setStudentOnIsland(student, islandIndex);
         }
@@ -254,19 +268,199 @@ public class ServerController  {
         }
     }
 
+    private void checkProfessor(PawnsColors color) {
+        final Player currentPlayer = this.game.getCurrentPlayer();
+        final int studentsOnDiningRoom = currentPlayer.getSchoolBoard().getStudentsOfColor(color).size() + currentPlayer.getExtraStudent();
+        this.game.getPlayers().forEach(player -> {
+            if (player.getNickname().equals(currentPlayer.getNickname()))
+                return;
+            for (int i = 0; i < player.getSchoolBoard().getProfessors().size(); i++) {
+                if (player.getSchoolBoard().getProfessors().get(i).getColor().equals(color)) {
+                    if (player.getSchoolBoard().getStudentsOfColor(color).size() < studentsOnDiningRoom) {
+                        Pawn professor = player.removeProfessor(i);
+                        this.game.getCurrentPlayer().addProfessor(professor);
+                        break;
+                    }
+                }
+            }
+        });
+        for (int i = 0; i < this.game.getGameBoard().getAvailableProfessors().size(); i++) {
+            if (this.game.getGameBoard().getAvailableProfessors().get(i).equals(color)) {
+                Pawn professor = this.game.getGameBoard().removeProfessor(i);
+                this.game.getCurrentPlayer().addProfessor(professor);
+            }
+        }
+    }
+
     public void moveMotherNature(int movements) {
         this.game.getGameBoard().moveMotherNature(movements);
         final BoardUpdate boardUpdate = this.calculateBoardUpdate();
         this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
-        if (!this.isEndOfGame()) {
-            this.game.nextPlayer();
+        this.checkTowers();
+        if (this.isEndOfGame(false)) {
+            this.stateOfTheGame = new EndState(this.game, this.usernames);
+            this.stateOfTheGame.endGame();
+        } else {
+            if (this.game.getGameBoard().isBagEmpty()) this.chooseCloud(-1);
+            else this.stateOfTheGame.chooseCloud();
+        }
+    }
+
+    public void chooseCloud(int index) {
+        if (index >= 0) {
+            while (!this.game.getGameBoard().getClouds().get(index).isEmpty()) {
+                Pawn student = this.game.getGameBoard().removeStudentFromCloud(index);
+                this.game.getCurrentPlayer().addStudentInEntrance(student);
+            }
+        }
+        YourActionPhaseTurnEnds turnEnds = new YourActionPhaseTurnEnds();
+        this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(turnEnds);
+        final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+        this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+        if (this.game.nextPlayer()) {
             ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
             this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
             this.stateOfTheGame.moveStudent();
+        } else {
+            System.out.println("STUDENTS ON BAG: " + this.game.getGameBoard().getBagSize());
+            if (this.isEndOfGame(true)) {
+                this.stateOfTheGame = new EndState(this.game, this.usernames);
+                this.stateOfTheGame.endGame();
+            } else {
+                this.stateOfTheGame = this.stateOfTheGame.changeState();
+                this.stateOfTheGame.fillClouds();
+                BoardUpdate update = this.calculateBoardUpdate();
+                for (ClientHandler client : this.clients) {
+                    client.sendObjectMessage(update);
+                }
+                this.stateOfTheGame.drawAssistantCard();
+            }
+        }
+    }
+
+    private void checkTowers() {
+        final int motherNature = this.game.getGameBoard().getMotherNature();
+        this.game.getGameBoard().getIslands().get(motherNature).getTower().ifPresentOrElse(tower -> {
+            int maxInfluence = 0, playerIndex = -1, actualPlayerIndex = -1;
+            ArrayList<Player> players = this.game.getPlayers();
+            for (int i = 0; i < players.size(); i++) {
+                int playerInfluence = this.influenceForPlayer(players.get(i));
+                if (players.get(i).getColor().equals(tower.getColor())) {
+                    actualPlayerIndex = i;
+                    playerInfluence++;
+                }
+                if (playerInfluence > maxInfluence) {
+                    maxInfluence = playerInfluence;
+                    playerIndex = i;
+                }
+            }
+            if (playerIndex >= 0 && this.game.getPlayers().get(playerIndex).getTowers() > 0 && playerIndex != actualPlayerIndex) {
+                final int groupOfIslands = this.game.getGameBoard().getIslands().get(motherNature).getGroupOfIslands();
+                for (int i = 0; i < this.game.getGameBoard().getIslands().size(); i++) {
+                    if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIslands){
+                        final int finalActualPlayerIndex = actualPlayerIndex;
+                        this.game.getGameBoard().getIslands().get(i).getTower().ifPresent(tower1 -> players.get(finalActualPlayerIndex).addTower(tower1));
+                        this.game.getGameBoard().setTowerOnIsland(players.get(playerIndex).removeTower(), i);
+                    }
+                }
+                final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+                this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+                this.checkIslandsMerge(groupOfIslands, players.get(playerIndex).getColor());
+            }
+        }, () -> {
+            int maxInfluence = 0, playerIndex = -1;
+            ArrayList<Player> players = this.game.getPlayers();
+            for (int i = 0; i < players.size(); i++) {
+                int playerInfluence = this.influenceForPlayer(players.get(i));
+                if (playerInfluence > maxInfluence) {
+                    maxInfluence = playerInfluence;
+                    playerIndex = i;
+                }
+            }
+            if (playerIndex >= 0 && players.get(playerIndex).getTowers() > 0) {
+                final int groupOfIslands = this.game.getGameBoard().getIslands().get(motherNature).getGroupOfIslands();
+                for (int i = 0; i < this.game.getGameBoard().getIslands().size(); i++) {
+                    if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIslands){
+                        Tower tower = this.game.getPlayers().get(playerIndex).removeTower();
+                        this.game.getGameBoard().setTowerOnIsland(tower, i);
+                    }
+                }
+                final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+                this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+                this.checkIslandsMerge(groupOfIslands, players.get(playerIndex).getColor());
+            }
+        });
+    }
+
+    private int influenceForPlayer(Player player) {
+        int playerInfluence = 0;
+        ArrayList<Pawn> professors = player.getSchoolBoard().getProfessors();
+        for (Pawn professor : professors) {
+            PawnsColors color = professor.getColor();
+            Iterator<Pawn> students = this.game.getGameBoard().getIslands().get(this.game.getGameBoard().getMotherNature()).getStudents();
+            while (students.hasNext()) {
+                if (students.next().getColor().equals(color))
+                    playerInfluence++;
+            }
+        }
+        return playerInfluence;
+    }
+
+    private void checkIslandsMerge(int groupOfIsland, TowersColors color) {
+        final int islands = this.game.getGameBoard().getIslands().size();
+        int minIndex = -1;
+        int maxIndex = -1;
+        AtomicInteger leftGroup = new AtomicInteger(-1), rightGroup = new AtomicInteger(-1);
+        for (int i = 0; i < islands; i++)
+            if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIsland) {
+                minIndex = i;
+                break;
+            }
+        for (int i = islands - 1; i >= 0; i--)
+            if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIsland) {
+                maxIndex = i;
+                break;
+            }
+        final int leftIndex = (minIndex - 1 >= 0) ? (minIndex - 1) : (minIndex + islands - 1),
+                rightIndex = (maxIndex + 1 < islands) ? (maxIndex + 1) : (maxIndex - islands + 1);
+        this.game.getGameBoard().getIslands().get(leftIndex).getTower().ifPresent(tower -> {
+            if (tower.getColor().equals(color))
+                leftGroup.set(this.game.getGameBoard().getIslands().get(leftIndex).getGroupOfIslands());
+        });
+        this.game.getGameBoard().getIslands().get(rightIndex).getTower().ifPresent(tower -> {
+            if (tower.getColor().equals(color))
+                rightGroup.set(this.game.getGameBoard().getIslands().get(rightIndex).getGroupOfIslands());
+        });
+        if (leftGroup.get() >= 0 && rightGroup.get() >= 0) {
+            this.game.getGameBoard().mergeIslands(groupOfIsland, leftGroup.get(), rightGroup.get());
+            final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+            this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+        } else {
+            if (leftGroup.get() >= 0) {
+                this.game.getGameBoard().mergeIslands(groupOfIsland, leftGroup.get());
+                final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+                this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+            } if (rightGroup.get() >= 0) {
+                this.game.getGameBoard().mergeIslands(groupOfIsland, rightGroup.get());
+                final BoardUpdate boardUpdate = this.calculateBoardUpdate();
+                this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
+            }
         }
     }
 
     private BoardUpdate calculateBoardUpdate() {
+        ArrayList<PlayerUpdate> playerUpdates = this.calculatePlayersUpdate();
+        BoardUpdateContent boardUpdateContent = this.calculateBoardUpdateContent();
+        GameUpdate gameUpdate = new GameUpdate(
+                this.game.getNumOfPlayers(),
+                this.game.isExpertMode(),
+                this.game.getCurrentPlayer().getNickname(),
+                this.game.getGamePhase()
+        );
+        return new BoardUpdate(playerUpdates, boardUpdateContent, gameUpdate);
+    }
+
+    private ArrayList<PlayerUpdate> calculatePlayersUpdate() {
         ArrayList<PlayerUpdate> playerUpdates = new ArrayList<>();
         for (Player player : this.game.getPlayers()) {
             EnumMap<PawnsColors, Integer> diningRoom = new EnumMap<>(PawnsColors.class);
@@ -288,19 +482,42 @@ public class ServerController  {
                             player.getNickname(),
                             students,
                             professors,
-                            diningRoom, player.getColor(), player.getTowers().size()
+                            diningRoom, player.getColor(), player.getTowers()
                     )
             );
         }
-        ArrayList<IslandUpdate> islandsUpdate = new ArrayList<>();
-        this.game.getGameBoard().getIslands().forEach(island -> {
+        return playerUpdates;
+    }
+
+    private BoardUpdateContent calculateBoardUpdateContent() {
+        ArrayList<ArrayList<IslandUpdate>> islandsUpdate = new ArrayList<>();
+        ArrayList<IslandUpdate> groupOfIslandsUpdate = new ArrayList<>();
+        ArrayList<IIsland> islands = this.game.getGameBoard().getIslands();
+        int lastGroup = islands.get(0).getGroupOfIslands(), firstIndex = 0;
+        for (int i = 0; i < islands.size(); i++) {
+            if (islands.get(i).getGroupOfIslands() != lastGroup) {
+                firstIndex = i;
+                break;
+            }
+        }
+        lastGroup = -1;
+        for (int i = 0; i < islands.size(); i++) {
+            IIsland island = islands.get((i + firstIndex) % islands.size());
             ArrayList<PawnsColors> students = new ArrayList<>();
             Iterator<Pawn> studentsOnIsland = island.getStudents();
             while (studentsOnIsland.hasNext()) {
                 students.add(studentsOnIsland.next().getColor());
             }
-            islandsUpdate.add(new IslandUpdate(
+            if (lastGroup >= 0) {
+                if (lastGroup != island.getGroupOfIslands()) {
+                    islandsUpdate.add(new ArrayList<>(groupOfIslandsUpdate));
+                    groupOfIslandsUpdate.clear();
+                }
+            }
+            groupOfIslandsUpdate.add(
+                    new IslandUpdate(
                             island.getGroupOfIslands(),
+                            island.getIndex(),
                             island.getTower().isPresent(),
                             island.isNoEntry(),
                             island.getTower()
@@ -310,7 +527,11 @@ public class ServerController  {
                             students
                     )
             );
-        });
+            if ((i + 1) >= islands.size()) {
+                islandsUpdate.add(new ArrayList<>(groupOfIslandsUpdate));
+            }
+            lastGroup = island.getGroupOfIslands();
+        }
         ArrayList<CloudUpdate> cloudsUpdate = new ArrayList<>();
         this.game.getGameBoard().getClouds().forEach(cloud -> {
             ArrayList<PawnsColors> students = new ArrayList<>();
@@ -320,22 +541,12 @@ public class ServerController  {
             }
             cloudsUpdate.add(new CloudUpdate(cloud.isEmpty(), students));
         });
-        BoardUpdateContent boardUpdateContent = new BoardUpdateContent(
+        return new BoardUpdateContent(
                 this.game.getGameBoard().getMotherNature(),
                 this.game.getGameBoard().getCoinsSupply(),
                 islandsUpdate,
-                new ArrayList<>(this.game.getGameBoard().getAvailableProfessors()
-                        .stream()
-                        .map(Pawn::getColor)
-                        .toList()),
+                this.game.getGameBoard().getAvailableProfessors(),
                 cloudsUpdate
         );
-        GameUpdate gameUpdate = new GameUpdate(
-                this.game.getNumOfPlayers(),
-                this.game.isExpertMode(),
-                this.game.getCurrentPlayer().getNickname(),
-                this.game.getGamePhase()
-        );
-        return new BoardUpdate(playerUpdates, boardUpdateContent, gameUpdate);
     }
 }

@@ -18,15 +18,24 @@ class BoardTest {
     @Test
     void setStudentOnCloud(){
 
-        Board gameBoard=new Board(2);
-        int studentsToadd=3;
-        for(int i=0;i<studentsToadd;i++) {
+        Board gameBoard = new Board(2);
+        int studentsToadd = 3;
+        for(int i = 0; i < studentsToadd; i++) {
             Pawn student = new Pawn(PawnsColors.getRandom());
             gameBoard.setStudentOnCloud(student, 1);
         }
-        gameBoard.removeStudentFromCloud(1,1);
-        assertEquals(2,gameBoard.getClouds().get(1).studentsSize());
-        assertEquals(0,gameBoard.getClouds().get(0).studentsSize());
+        gameBoard.removeStudentFromCloud(1);
+        int cloud0Size = 0, cloud1Size = 0;
+        while (gameBoard.getClouds().get(0).getStudents().hasNext()) {
+            cloud0Size++;
+            gameBoard.getClouds().get(0).getStudents().next();
+        }
+        while (gameBoard.getClouds().get(1).getStudents().hasNext()) {
+            cloud1Size++;
+            gameBoard.getClouds().get(1).getStudents().next();
+        }
+        assertEquals(2, cloud1Size);
+        assertEquals(0, cloud0Size);
 
     }
 

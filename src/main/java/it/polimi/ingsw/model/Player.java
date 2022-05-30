@@ -96,11 +96,10 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     public void addProfessor(Pawn professor){
         this.schoolBoard.addProfessor(professor);
     }
-/**
-    public Pawn loseProfessor(PawnsColors professorColor){
-        return;
+
+    public Pawn removeProfessor(int professorIndex){
+        return this.schoolBoard.removeProfessor(professorIndex);
     }
-*/
     /**
      * Getter method of coins
      * @return the int value of coins that a player has
@@ -194,7 +193,15 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         return this.extraStudent;
     }
 
-    public ArrayList<Tower> getTowers() {
-        return towers;
+    public int getTowers() {
+        return this.towers.size();
+    }
+
+    public Tower removeTower() {
+        return this.towers.remove(0);
+    }
+
+    public void addTower(Tower tower) {
+        this.towers.add(tower);
     }
 }

@@ -47,7 +47,7 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(CloudResponse cloudResponse) {
-
+        this.serverController.chooseCloud(cloudResponse.getCloudIndex());
     }
 
     @Override

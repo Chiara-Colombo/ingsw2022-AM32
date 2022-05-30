@@ -34,11 +34,9 @@ public class MoveMNManager {
 
     public void chooseIsland(int index) {
         if (index >= 0 && this.maxMovements >= 0 && this.currentMNPosition >= 0 && this.islands.size() > 0) {
-            int normalMNPosition = this.currentMNPosition, normalIndex = index;
-            if (index >= Math.ceil(this.islands.size() / 2)) normalIndex -= this.islands.size();
-            if (this.currentMNPosition >= Math.ceil(this.islands.size() / 2)) normalMNPosition -= this.islands.size();
-            if (Math.abs(normalIndex - normalMNPosition) <= this.maxMovements) {
-                MoveMNResponse response = new MoveMNResponse(normalIndex - normalMNPosition);
+            if (index < this.currentMNPosition) index += this.islands.size();
+            if (Math.abs(index - this.currentMNPosition) <= this.maxMovements) {
+                MoveMNResponse response = new MoveMNResponse(index - this.currentMNPosition);
                 this.controller.sendObjectMessage(response);
                 this.gui.removeEventHandlers();
             } else {

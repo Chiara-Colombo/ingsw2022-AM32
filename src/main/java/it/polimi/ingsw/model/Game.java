@@ -86,7 +86,8 @@ public class Game implements IMooshroomManHandled {
 
     private void setupPlayers() {
         this.players.forEach(player -> {
-            for (int i = 0; i < 7; i++) {
+            int students = this.numOfPlayers == 2 ? 7 : 9;
+            for (int i = 0; i < students; i++) {
                 this.gameBoard.drawFromBag().ifPresent(player::addStudentInEntrance);
             }
         });
