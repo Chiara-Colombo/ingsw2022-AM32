@@ -1,17 +1,16 @@
 package it.polimi.ingsw.utils;
 
-import it.polimi.ingsw.model.Pawn;
 import it.polimi.ingsw.model.PawnsColors;
 import it.polimi.ingsw.model.TowersColors;
 import it.polimi.ingsw.model.Wizards;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 public class Utils {
     public static final String CARDS_RESOURCE_PATH = "src\\main\\resources\\assistantCards.json";
+    public static final Image SCHOOL_BOARD = new Image("\\assets\\school_board.png");
     public static final int DEFAULT_SERVER_PORT = 30300,
             CLI_WIDTH = 80,
             CLI_HEIGHT = 80,
@@ -38,12 +37,19 @@ public class Utils {
             Map.entry(Wizards.THIRD, new Image("\\assets\\wizard_3.png")),
             Map.entry(Wizards.FOURTH, new Image("\\assets\\wizard_4.png"))
     ));
-    public static final EnumMap<PawnsColors, Paint> PAWNS_COLORS_PAINT_ENUM_MAP = new EnumMap<>(Map.ofEntries(
-            Map.entry(PawnsColors.PINK, Paint.valueOf("#f274d5")),
-            Map.entry(PawnsColors.BLUE, Paint.valueOf("#070e91")),
-            Map.entry(PawnsColors.RED, Paint.valueOf("#de2f2f")),
-            Map.entry(PawnsColors.GREEN, Paint.valueOf("#1a6302")),
-            Map.entry(PawnsColors.YELLOW, Paint.valueOf("#c9c604"))
+    public static final EnumMap<PawnsColors, Image> PAWNS_COLORS_IMAGE_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(PawnsColors.PINK, new Image("\\assets\\pawn_pink.png")),
+            Map.entry(PawnsColors.BLUE, new Image("\\assets\\pawn_blue.png")),
+            Map.entry(PawnsColors.RED, new Image("\\assets\\pawn_red.png")),
+            Map.entry(PawnsColors.GREEN, new Image("\\assets\\pawn_green.png")),
+            Map.entry(PawnsColors.YELLOW, new Image("\\assets\\pawn_yellow.png"))
+    ));
+    public static final EnumMap<PawnsColors, Image> PROFESSOR_COLORS_IMAGE_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(PawnsColors.PINK, new Image("\\assets\\professor_pink.png")),
+            Map.entry(PawnsColors.BLUE, new Image("\\assets\\professor_blue.png")),
+            Map.entry(PawnsColors.RED, new Image("\\assets\\professor_red.png")),
+            Map.entry(PawnsColors.GREEN, new Image("\\assets\\professor_green.png")),
+            Map.entry(PawnsColors.YELLOW, new Image("\\assets\\professor_yellow.png"))
     ));
     public static final EnumMap<TowersColors, Paint> TOWERS_COLORS_PAINT_ENUM_MAP = new EnumMap<>(Map.ofEntries(
             Map.entry(TowersColors.BLACK, Paint.valueOf("#101010")),
@@ -53,8 +59,22 @@ public class Utils {
     public static final EnumMap<PawnsColors, Integer> PAWNS_COLORS_INTEGER_ENUM_MAP = new EnumMap<>(Map.ofEntries(
             Map.entry(PawnsColors.BLUE, 0),
             Map.entry(PawnsColors.PINK, 1),
-            Map.entry(PawnsColors.RED, 2),
-            Map.entry(PawnsColors.GREEN, 3),
-            Map.entry(PawnsColors.YELLOW, 4)
+            Map.entry(PawnsColors.YELLOW, 2),
+            Map.entry(PawnsColors.RED, 3),
+            Map.entry(PawnsColors.GREEN, 4)
     ));
+    public static final ArrayList<Image> ASSISTANT_CARDS_IMAGES = new ArrayList<>(List.of(
+            new Image("\\assets\\assistente_1.png"),
+            new Image("\\assets\\assistente_2.png"),
+            new Image("\\assets\\assistente_3.png"),
+            new Image("\\assets\\assistente_4.png"),
+            new Image("\\assets\\assistente_5.png"),
+            new Image("\\assets\\assistente_6.png"),
+            new Image("\\assets\\assistente_7.png"),
+            new Image("\\assets\\assistente_8.png"),
+            new Image("\\assets\\assistente_9.png"),
+            new Image("\\assets\\assistente_10.png")
+    ));
+    public static final Image CLOUD_IMAGE = new Image("\\assets\\cloud.png");
+    public static final Image ISLAND_IMAGE = new Image("\\assets\\island.png");
 }

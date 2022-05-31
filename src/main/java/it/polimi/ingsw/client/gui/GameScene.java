@@ -10,20 +10,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.transform.Rotate;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static it.polimi.ingsw.utils.Utils.*;
@@ -31,9 +29,9 @@ import static it.polimi.ingsw.utils.Utils.*;
 public class GameScene extends Scene {
     private final Pane BOARD_PANE, MAIN_PANE, ASSISTANT_CARDS_PANE;
     private final Label GAME_PHASE_MESSAGE, TURN_MESSAGE;
-    private final ArrayList<TileRectangle> ISLANDS, CLOUDS;
+    private final ArrayList<TileImage> ISLANDS, CLOUDS;
     private final HashMap<String, Pane> PLAYERS_PANES;
-    private final HashMap<String, ArrayList<PawnCircle>> ENTRANCE_PAWNS;
+    private final HashMap<String, ArrayList<PawnImage>> ENTRANCE_PAWNS;
     private int currentMNPosition;
 
     public GameScene(Pane MAIN_PANE) {
@@ -89,31 +87,25 @@ public class GameScene extends Scene {
                     else
                         islandTheta -= Math.PI / 40;
                 }
-                TileRectangle islandShape = new TileRectangle(island.getIndex());
                 double x = BOARD_PANE_WIDTH / 2 + ISLANDS_ELLIPSE_X_AXIS * Math.sin(islandTheta) - ISLAND_DIMENSION / 2,
                         y = BOARD_PANE_HEIGHT / 2 - ISLANDS_ELLIPSE_Y_AXIS * Math.cos(islandTheta) - ISLAND_DIMENSION / 2;
-                islandShape.setX(x);
-                islandShape.setY(y);
-                islandShape.setWidth(ISLAND_DIMENSION);
-                islandShape.setHeight(ISLAND_DIMENSION);
-                islandShape.setFill(Paint.valueOf("#5dc092"));
+                TileImage islandShape = new TileImage(island.getIndex(), ISLAND_IMAGE, x, y, ISLAND_DIMENSION, ISLAND_DIMENSION);
                 this.ISLANDS.add(islandShape);
                 this.BOARD_PANE.getChildren().add(islandShape);
                 ArrayList<PawnsColors> students = island.getStudents();
                 for (PawnsColors student : students) {
-                    Circle studentShape = new Circle(
-                            x + (ISLAND_DIMENSION / 2),
-                            y + (ISLAND_DIMENSION / 2),
-                            ISLAND_DIMENSION / 6,
-                            PAWNS_COLORS_PAINT_ENUM_MAP.get(student)
-                    );
-                    this.BOARD_PANE.getChildren().add(studentShape);
+                    ImageView studentImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student));
+                    studentImage.setLayoutY(y + (ISLAND_DIMENSION / 3));
+                    studentImage.setLayoutX(x + (ISLAND_DIMENSION / 3));
+                    studentImage.setFitHeight(2 * ISLAND_DIMENSION / 6);
+                    studentImage.setFitWidth(2 * ISLAND_DIMENSION / 6);
+                    this.BOARD_PANE.getChildren().add(studentImage);
                 }
                 if (boardUpdate.getMotherNature() == island.getIndex()) {
                     Circle motherNatureShape = new Circle(
                             x + (ISLAND_DIMENSION / 2),
-                            y + (ISLAND_DIMENSION / 2),
-                            ISLAND_DIMENSION / 3,
+                            y,
+                            PAWNS_RADIUS,
                             Paint.valueOf("#6e3d0c")
                     );
                     this.BOARD_PANE.getChildren().add(motherNatureShape);
@@ -135,23 +127,23 @@ public class GameScene extends Scene {
             double theta = (i * Math.PI / 2) + (Math.PI / 4);
             double x = CLOUD_DIMENSION + 3 * CLOUDS_MARGIN / 2 + CLOUDS_DIST_RADIUS * Math.cos(theta),
                     y = CLOUD_DIMENSION + 3 * CLOUDS_MARGIN / 2 - CLOUDS_DIST_RADIUS * Math.sin(theta);
-            TileRectangle cloudShape = new TileRectangle(i);
-            cloudShape.setX(x - CLOUD_DIMENSION / 2);
-            cloudShape.setY(y - CLOUD_DIMENSION / 2);
-            cloudShape.setWidth(CLOUD_DIMENSION);
-            cloudShape.setHeight(CLOUD_DIMENSION);
-            cloudShape.setFill(Color.WHITE);
+            TileImage cloudShape = new TileImage(
+                    i,
+                    CLOUD_IMAGE,
+                    x - CLOUD_DIMENSION / 2,
+                    y - CLOUD_DIMENSION / 2,
+                    CLOUD_DIMENSION,
+                    CLOUD_DIMENSION);
             this.CLOUDS.add(cloudShape);
             this.BOARD_PANE.getChildren().add(cloudShape);
             ArrayList<PawnsColors> students = cloudUpdates.get(i).getStudents();
             for (PawnsColors student : students) {
-                Circle studentShape = new Circle(
-                        x,
-                        y,
-                        CLOUD_DIMENSION / 6,
-                        PAWNS_COLORS_PAINT_ENUM_MAP.get(student)
-                );
-                this.BOARD_PANE.getChildren().add(studentShape);
+                ImageView studentImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student));
+                studentImage.setLayoutY(y - (CLOUD_DIMENSION / 6));
+                studentImage.setLayoutX(x - (CLOUD_DIMENSION / 6));
+                studentImage.setFitWidth(2 * CLOUD_DIMENSION / 6);
+                studentImage.setFitHeight(2 * CLOUD_DIMENSION / 6);
+                this.BOARD_PANE.getChildren().add(studentImage);
             }
         }
         ArrayList<PawnsColors> availableProfessors = boardUpdate.getAvailableProfessors();
@@ -160,28 +152,31 @@ public class GameScene extends Scene {
             PawnsColors professor = availableProfessors.get(i);
             double x = BOARD_PANE_WIDTH / 2 + (i - (availableProfessors.size() - 1) / 2.0) * (2 * PAWNS_RADIUS + professorsMargin),
                     y = BOARD_PANE_HEIGHT / 2;
-            Rectangle pawn = new Rectangle(
-                    x - PAWNS_RADIUS / 2,
-                    y - PAWNS_RADIUS / 2,
-                    2 * PAWNS_RADIUS,
-                    2 * PAWNS_RADIUS
-            );
-            pawn.setFill(PAWNS_COLORS_PAINT_ENUM_MAP.get(professor));
-            this.BOARD_PANE.getChildren().add(pawn);
+            ImageView professorImage = new ImageView(PROFESSOR_COLORS_IMAGE_ENUM_MAP.get(professor));
+            professorImage.setLayoutY(y - PAWNS_RADIUS / 2);
+            professorImage.setLayoutX(x - PAWNS_RADIUS / 2);
+            professorImage.setFitWidth(2 * PAWNS_RADIUS);
+            professorImage.setPreserveRatio(true);
+            this.BOARD_PANE.getChildren().add(professorImage);
         }
         this.MAIN_PANE.getChildren().add(this.BOARD_PANE);
     }
 
     public void showBoard() {
         this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
-        this.MAIN_PANE.getChildren().add(this.BOARD_PANE);
     }
 
     public void showPlayers(ArrayList<PlayerUpdate> playersUpdate) {
         AtomicInteger player = new AtomicInteger(0);
         playersUpdate.forEach(playerUpdate -> {
             Pane schoolBoard = new Pane();
+            ImageView schoolBoardImage = new ImageView(SCHOOL_BOARD);
+            schoolBoardImage.setFitWidth(SCHOOL_BOARD_HEIGHT);
+            schoolBoardImage.setFitHeight(SCHOOL_BOARD_WIDTH);
             if (player.get() < 2) {
+                schoolBoardImage.getTransforms().add(new Rotate(90, 100, 100));
+                schoolBoardImage.setLayoutX(0);
+                schoolBoardImage.setLayoutY(0);
                 schoolBoard.setMaxWidth(SCHOOL_BOARD_WIDTH);
                 schoolBoard.setMinWidth(SCHOOL_BOARD_WIDTH);
                 schoolBoard.setMaxHeight(SCHOOL_BOARD_HEIGHT);
@@ -199,7 +194,7 @@ public class GameScene extends Scene {
                 schoolBoard.setLayoutX((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
                 schoolBoard.setLayoutY(GUI_HEIGHT - SCHOOL_BOARD_WIDTH);
             }
-            schoolBoard.setBackground(Background.fill(Paint.valueOf("#aaf342")));
+            schoolBoard.getChildren().add(schoolBoardImage);
             if (!this.ENTRANCE_PAWNS.containsKey(playerUpdate.getNickname()))
                 this.ENTRANCE_PAWNS.put(playerUpdate.getNickname(), new ArrayList<>());
             else
@@ -209,17 +204,19 @@ public class GameScene extends Scene {
                 double x, y = (100 / 3) * (1 + (i + 1) % 2);
                 if (player.get() < 2) {
                     x = (SCHOOL_BOARD_WIDTH / 6) * Math.floor((i + 2) / 2);
+                    y -= 8;
                 } else {
                     x = y;
                     y = (SCHOOL_BOARD_WIDTH / 6) * Math.floor(6 - (i + 2) / 2);
                 }
                 this.ENTRANCE_PAWNS.get(playerUpdate.getNickname()).add(
-                        new PawnCircle(
+                        new PawnImage(
                                 i,
-                                x,
-                                y,
-                                PAWNS_RADIUS,
-                                PAWNS_COLORS_PAINT_ENUM_MAP.get(playerUpdate.getEntranceStudents().get(i))
+                                PAWNS_COLORS_IMAGE_ENUM_MAP.get(playerUpdate.getEntranceStudents().get(i)),
+                                x - PAWNS_RADIUS / 2,
+                                y - PAWNS_RADIUS / 2,
+                                2 * PAWNS_RADIUS,
+                                2 * PAWNS_RADIUS
                         )
                 );
             }
@@ -236,13 +233,12 @@ public class GameScene extends Scene {
                         x = y + 100;
                         y = (diningRoomMarginX + PAWNS_RADIUS) * (4 - PAWNS_COLORS_INTEGER_ENUM_MAP.get(color)) + diningRoomMarginX;
                     }
-                    Circle pawn = new Circle(
-                            x,
-                            y,
-                            PAWNS_RADIUS,
-                            PAWNS_COLORS_PAINT_ENUM_MAP.get(color)
-                    );
-                    schoolBoard.getChildren().add(pawn);
+                    ImageView pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(color));
+                    pawnImage.setLayoutX(x - PAWNS_RADIUS / 2);
+                    pawnImage.setLayoutY(y - PAWNS_RADIUS / 2);
+                    pawnImage.setFitHeight(2 * PAWNS_RADIUS);
+                    pawnImage.setFitWidth(2 * PAWNS_RADIUS);
+                    schoolBoard.getChildren().add(pawnImage);
                 }
             });
             playerUpdate.getProfessors().forEach(professor -> {
@@ -254,14 +250,12 @@ public class GameScene extends Scene {
                     x = y;
                     y = (diningRoomMarginX + PAWNS_RADIUS) * (4 - PAWNS_COLORS_INTEGER_ENUM_MAP.get(professor)) + diningRoomMarginX;
                 }
-                Rectangle pawn = new Rectangle(
-                        x - PAWNS_RADIUS / 2,
-                        y - PAWNS_RADIUS / 2,
-                        2 * PAWNS_RADIUS,
-                        2 * PAWNS_RADIUS
-                );
-                pawn.setFill(PAWNS_COLORS_PAINT_ENUM_MAP.get(professor));
-                schoolBoard.getChildren().add(pawn);
+                ImageView professorImage = new ImageView(PROFESSOR_COLORS_IMAGE_ENUM_MAP.get(professor));
+                professorImage.setFitWidth(2 * PAWNS_RADIUS);
+                professorImage.setPreserveRatio(true);
+                professorImage.setLayoutY(y - PAWNS_RADIUS / 2);
+                professorImage.setLayoutX(x - PAWNS_RADIUS / 2);
+                schoolBoard.getChildren().add(professorImage);
             });
             for (int i = 0; i<playerUpdate.getTowers(); i++) {
                 double x, y = SCHOOL_BOARD_HEIGHT - 100 + (100 / 3) * (1 + i % 2);
@@ -320,8 +314,8 @@ public class GameScene extends Scene {
     }
 
     public void showAssistantCardsPane(ArrayList<AssistantCard> availableCards) {
-        this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
-        this.ASSISTANT_CARDS_PANE.setBackground(Background.fill(Paint.valueOf("#dedede")));
+        //this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
+        this.ASSISTANT_CARDS_PANE.setBackground(Background.fill(new Color(0.05, 0.05, 0.05, 0.8)));
         this.ASSISTANT_CARDS_PANE.getChildren().clear();
         this.ASSISTANT_CARDS_PANE.setMaxWidth(BOARD_PANE_WIDTH);
         this.ASSISTANT_CARDS_PANE.setMinWidth(BOARD_PANE_WIDTH);
@@ -331,29 +325,19 @@ public class GameScene extends Scene {
         for (int i = 0; i<availableCards.size(); i++) {
             double x = CARDS_MARGIN_X * (i % Math.ceil(availableCards.size() / 2.0) + 1) + (i % Math.ceil(availableCards.size() / 2.0)) * CARD_WIDTH,
                     y = CARDS_MARGIN_Y * (Math.floor((2 * i) / availableCards.size()) + 1) + Math.floor((2 * i) / availableCards.size()) * CARD_HEIGHT;
-            Rectangle cardShape = new Rectangle(
-                    x,
-                    y,
-                    CARD_WIDTH,
-                    CARD_HEIGHT
-            );
-            cardShape.setCursor(Cursor.HAND);
+            ImageView cardImage = new ImageView(ASSISTANT_CARDS_IMAGES.get(availableCards.get(i).getValue() - 1));
+            cardImage.setLayoutX(x);
+            cardImage.setLayoutY(y);
+            cardImage.setFitWidth(CARD_WIDTH);
+            cardImage.setFitHeight(CARD_HEIGHT);
+            cardImage.setCursor(Cursor.HAND);
             final int temp_i = i;
-            cardShape.setOnMouseClicked(mouseEvent -> {
+            cardImage.setOnMouseClicked(mouseEvent -> {
                 AssistantCard card = availableCards.get(temp_i);
                 AssistantCardResponse cardResponse = new AssistantCardResponse(card);
                 GUI.getController().sendObjectMessage(cardResponse);
             });
-            cardShape.setFill(Paint.valueOf("#f42e1a"));
-            this.ASSISTANT_CARDS_PANE.getChildren().add(cardShape);
-            Label value = new Label(availableCards.get(i).getValue() + "");
-            value.setLayoutX(x);
-            value.setLayoutY(y + 20);
-            value.setMinWidth(CARD_WIDTH);
-            value.setMaxWidth(CARD_WIDTH);
-            value.setFont(Font.font("Berilin Sans FB", 15));
-            value.setTextAlignment(TextAlignment.CENTER);
-            this.ASSISTANT_CARDS_PANE.getChildren().add(value);
+            this.ASSISTANT_CARDS_PANE.getChildren().add(cardImage);
         }
         this.MAIN_PANE.getChildren().add(this.ASSISTANT_CARDS_PANE);
     }
@@ -373,7 +357,7 @@ public class GameScene extends Scene {
 
     public void addMoveMNHandlers(MoveMNManager manager) {
         manager.setCurrentMNPosition(this.currentMNPosition);
-        manager.setIslands(new ArrayList<>(this.ISLANDS.stream().map(TileRectangle::getIndex).toList()));
+        manager.setIslands(new ArrayList<>(this.ISLANDS.stream().map(TileImage::getIndex).toList()));
         this.ISLANDS.forEach(island -> {
             island.setCursor(Cursor.HAND);
             island.setOnMouseClicked(new MoveMNIslandHandler(island, manager));
@@ -406,10 +390,10 @@ public class GameScene extends Scene {
 }
 
 class ActionPhaseIslandHandler implements EventHandler<MouseEvent> {
-    private final TileRectangle island;
+    private final TileImage island;
     private final MoveStudentsManager manager;
 
-    public ActionPhaseIslandHandler(TileRectangle island, MoveStudentsManager manager) {
+    public ActionPhaseIslandHandler(TileImage island, MoveStudentsManager manager) {
         this.island = island;
         this.manager = manager;
     }
@@ -421,10 +405,10 @@ class ActionPhaseIslandHandler implements EventHandler<MouseEvent> {
 }
 
 class MoveMNIslandHandler implements  EventHandler<MouseEvent> {
-    private final TileRectangle island;
+    private final TileImage island;
     private final MoveMNManager manager;
 
-    MoveMNIslandHandler(TileRectangle island, MoveMNManager manager) {
+    MoveMNIslandHandler(TileImage island, MoveMNManager manager) {
         this.island = island;
         this.manager = manager;
     }
@@ -436,10 +420,10 @@ class MoveMNIslandHandler implements  EventHandler<MouseEvent> {
 }
 
 class ChooseCloudHandler implements  EventHandler<MouseEvent> {
-    private final TileRectangle cloud;
+    private final TileImage cloud;
     private final ChooseCloudManager manager;
 
-    ChooseCloudHandler(TileRectangle cloud, ChooseCloudManager manager) {
+    ChooseCloudHandler(TileImage cloud, ChooseCloudManager manager) {
         this.cloud = cloud;
         this.manager = manager;
     }

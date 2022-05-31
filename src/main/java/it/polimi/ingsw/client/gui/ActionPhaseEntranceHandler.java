@@ -4,10 +4,10 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
 public class ActionPhaseEntranceHandler implements EventHandler<MouseEvent> {
-    private final PawnCircle pawn;
+    private final PawnImage pawn;
     private final MoveStudentsManager manager;
 
-    public ActionPhaseEntranceHandler(PawnCircle pawn, MoveStudentsManager manager) {
+    public ActionPhaseEntranceHandler(PawnImage pawn, MoveStudentsManager manager) {
         this.pawn = pawn;
         this.manager = manager;
     }

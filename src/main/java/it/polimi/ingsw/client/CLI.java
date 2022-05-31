@@ -4,6 +4,7 @@ import it.polimi.ingsw.messages.clienttoserver.*;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.PawnsColors;
+import it.polimi.ingsw.model.TowersColors;
 import it.polimi.ingsw.model.Wizards;
 
 import java.io.IOException;
@@ -31,6 +32,12 @@ public class CLI  implements View{
             Map.entry(PawnsColors.RED, "\033[0;101m"),
             Map.entry(PawnsColors.GREEN, "\033[0;102m"),
             Map.entry(PawnsColors.YELLOW, "\033[0;103m")
+    ));
+    private static final EnumMap<TowersColors, String> TOWERS_COLORS_STRING_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(TowersColors.NONE, "N"),
+            Map.entry(TowersColors.BLACK, "B"),
+            Map.entry(TowersColors.WHITE, "W"),
+            Map.entry(TowersColors.GREY, "G")
     ));
 
 
@@ -139,10 +146,10 @@ public class CLI  implements View{
                 System.out.print(ANSI_GREEN + " MN " + ANSI_RESET);
             }
             if(island.get(0).getIndex() == boardUpdate.getBoardUpdateContent().getMotherNature() && island.get(0).hasTower()){
-                System.out.print(ANSI_GREEN + "MN " + ANSI_RESET +  island.get(0).getTowerColor().getTowerSymbol() + " ");
+                System.out.print(ANSI_GREEN + "MN " + ANSI_RESET +  TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()) + " ");
             }
             if(island.get(0).getIndex() != boardUpdate.getBoardUpdateContent().getMotherNature() && island.get(0).hasTower() ){
-                System.out.print(island.get(0).getTowerColor().getTowerSymbol() + " ");
+                System.out.print(TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()) + " ");
             }
             System.out.print("] ");
             if(island.get(0).getIndex() == 4 || island.get(0).getIndex() == 8 || island.get(0).getIndex() == 0){
@@ -211,7 +218,8 @@ public class CLI  implements View{
                 }
                 System.out.println("");
             }
-            System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " + boardUpdate.getPlayersUpdate().get(i).getTowersColor().getTowerSymbol() + "\n");
+            System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " +
+                    TOWERS_COLORS_STRING_ENUM_MAP.get(boardUpdate.getPlayersUpdate().get(i).getTowersColor()) + "\n");
         }
     }
 
