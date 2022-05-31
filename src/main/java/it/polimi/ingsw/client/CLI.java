@@ -126,37 +126,78 @@ public class CLI  implements View{
     @Override
     public void showBoardUpdate(BoardUpdate boardUpdate) {
 
-        System.out.println(ANSI_RED + "                     BOARD" + ANSI_RESET + "\n");
+        System.out.println(ANSI_RED + "                     ISOLE" + ANSI_RESET + "\n");
+        ArrayList<ArrayList<IslandUpdate>> islands = boardUpdate.getBoardUpdateContent().getIslands();
 
-        int index = 0;
+        for (ArrayList<IslandUpdate> island : islands) {
+            ArrayList<PawnsColors> colors = island.get(0).getStudents();
+            System.out.print("[ " + island.get(0).getIndex() + " ] : [ ");
+            for(PawnsColors pawnsColors : colors){
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
+            }
+            if(island.get(0).getIndex() == boardUpdate.getBoardUpdateContent().getMotherNature() && !island.get(0).hasTower()){
+                System.out.print(ANSI_GREEN + " MN " + ANSI_RESET);
+            }
+            if(island.get(0).getIndex() == boardUpdate.getBoardUpdateContent().getMotherNature() && island.get(0).hasTower()){
+                System.out.print(ANSI_GREEN + "MN " + ANSI_RESET +  island.get(0).getTowerColor().getTowerSymbol() + " ");
+            }
+            if(island.get(0).getIndex() != boardUpdate.getBoardUpdateContent().getMotherNature() && island.get(0).hasTower() ){
+                System.out.print(island.get(0).getTowerColor().getTowerSymbol() + " ");
+            }
+            System.out.print("] ");
+            if(island.get(0).getIndex() == 4 || island.get(0).getIndex() == 8 || island.get(0).getIndex() == 0){
+                System.out.println("\n");
+            }
+        }
+/*
+            int index = 0;
         for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
                 if(index < boardUpdate.getBoardUpdateContent().getIslands().size()) {
                     ArrayList<PawnsColors> colors = boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getStudents();
-                    System.out.print(" [" + index + "] : [ ");
+                    System.out.print(" [" + index +  boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getIndex() + "] : [ ");
                     for(PawnsColors pawnsColors : colors){
                         System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
                     }
-                    if( boardUpdate.getBoardUpdateContent().getMotherNature() == index) {
+                    if( boardUpdate.getBoardUpdateContent().getMotherNature() == index && boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).hasTower()) {
+                        System.out.print(ANSI_GREEN + "MN " + ANSI_RESET + boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getTowerColor().getTowerSymbol());
+                    }
+                    else if(boardUpdate.getBoardUpdateContent().getMotherNature() != index && boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).hasTower()){
+                        System.out.print(" " + boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getTowerColor().getTowerSymbol());
+                    }
+                    else if(boardUpdate.getBoardUpdateContent().getMotherNature() == index && !boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).hasTower()){
                         System.out.print(ANSI_GREEN + "MN " + ANSI_RESET);
                     }
                     System.out.print("]");
                     index++;
                 }
                 else{
-                    return;
+                    System.out.println("");
                 }
             }
             System.out.println("\n");
         }
+        */
+        System.out.println(ANSI_RED + "                    NUVOLE"  + ANSI_RESET + "\n");
+        System.out.print("  ");
+        for( int i = 0 ; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++ ){
+            System.out.print("[" + i + "] : " + "[ ");
+            int PawnIndex = 0;
+            for(PawnsColors color : boardUpdate.getBoardUpdateContent().getClouds().get(i).getStudents()) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) +  "   " + ANSI_RESET +  " ");
+                PawnIndex ++ ;
+            }
+            System.out.print("] ");
+        }
+        System.out.println("\n");
 
         for( int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
             System.out.println(ANSI_RED + "             SchoolBoard di  " +  boardUpdate.getPlayersUpdate().get(i).getNickname()+ ANSI_RESET + " : \n");
-            System.out.print("ENTRANCE :  [ " );
+            System.out.print("INGRESSO :  [ " );
             ArrayList<PawnsColors> entrance = boardUpdate.getPlayersUpdate().get(i).getEntranceStudents();
             int PawnIndex = 0;
             for(PawnsColors pawnsColors : entrance){
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + ANSI_BLACK +" "+PawnIndex+" " + ANSI_RESET +  ANSI_RESET + "  ");
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + ANSI_BLACK +" "+ PawnIndex +" " + ANSI_RESET +  ANSI_RESET + "  ");
                 PawnIndex ++;
             }
             System.out.print("]\n");
@@ -170,7 +211,7 @@ public class CLI  implements View{
                 }
                 System.out.println("");
             }
-            System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + "\n");
+            System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " + boardUpdate.getPlayersUpdate().get(i).getTowersColor().getTowerSymbol() + "\n");
         }
     }
 
@@ -181,7 +222,15 @@ public class CLI  implements View{
 
     @Override
     public void showCloudRequest(ArrayList<Integer> validClouds) {
-
+        System.out.println("Seleziona una nuvola indicandone il numero!");
+        int choice = new Scanner(System.in).nextInt();
+        ClientMessage CloudResponse = new CloudResponse(choice);
+        if(!validClouds.contains(choice)){
+            System.out.println("Hai Selezionato una nuvola non valida");
+            this.showCloudRequest(validClouds);
+        }
+        else
+             this.clientController.sendObjectMessage(CloudResponse);
     }
 
     @Override
@@ -217,24 +266,30 @@ public class CLI  implements View{
     public void showMovePawnRequest() {
 
             System.out.println("Seleziona uno studente dall'ingresso digitando il numero presente sopra la pedina ! ");
-            int student = new Scanner(System.in).nextInt();
-            System.out.println("Dove vuoi spostare lo studente? Digita -islands per le isole o -diningRoom per diningRoom ");
-            String response = new Scanner(System.in).nextLine();
-            if(response.contains("-islands")){
-                System.out.println("Scegli l'isola digitando il numero corrispondente");
-                int isola = new Scanner(System.in).nextInt();
-                ClientMessage clientMessage = new MovePawnResponse(student, isola, false);
-                this.clientController.sendObjectMessage(clientMessage);
-                return;
-            }
-            else if(response.contains("-diningRoom")){
-                ClientMessage clientMessage = new MovePawnResponse(student, 0, true);
-                this.clientController.sendObjectMessage(clientMessage);
-                return;
-        }
-            else
-                System.out.println("Digita correttamente");
+            try {
+                int student = new Scanner(System.in).nextInt();
+                System.out.println("Dove vuoi spostare la pedina? Digita -isola per posizionarla in un isola o -sala per posizionarla in sala ");
+                String response = new Scanner(System.in).nextLine();
+                if(response.contains("-isola")){
+                    System.out.println("Scegli l'isola digitando il numero corrispondente");
+                    int isola = new Scanner(System.in).nextInt();
+                    ClientMessage clientMessage = new MovePawnResponse(student, isola, false);
+                    this.clientController.sendObjectMessage(clientMessage);
+                    return;
+                }
+                else if(response.contains("-sala")){
+                    ClientMessage clientMessage = new MovePawnResponse(student, 0, true);
+                    this.clientController.sendObjectMessage(clientMessage);
+                    return;
+                }
+                else
+                    System.out.println("Digita correttamente");
                 this.showMovePawnRequest();
+            }
+            catch (InputMismatchException e){
+                System.out.println("Devi digitare un numero!");
+                this.showMovePawnRequest();
+            }
     }
 
     @Override
