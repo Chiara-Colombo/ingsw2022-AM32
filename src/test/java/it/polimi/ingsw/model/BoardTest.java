@@ -25,14 +25,18 @@ class BoardTest {
             gameBoard.setStudentOnCloud(student, 1);
         }
         gameBoard.removeStudentFromCloud(1);
+
+        Iterator<Pawn> iterator0 = gameBoard.getClouds().get(0).getStudents();
+        Iterator<Pawn> iterator1 = gameBoard.getClouds().get(1).getStudents();
+
         int cloud0Size = 0, cloud1Size = 0;
-        while (gameBoard.getClouds().get(0).getStudents().hasNext()) {
+        while (iterator0.hasNext()) {
             cloud0Size++;
-            gameBoard.getClouds().get(0).getStudents().next();
+            iterator0.next();
         }
-        while (gameBoard.getClouds().get(1).getStudents().hasNext()) {
+        while (iterator1.hasNext()) {
             cloud1Size++;
-            gameBoard.getClouds().get(1).getStudents().next();
+            iterator1.next();
         }
         assertEquals(2, cloud1Size);
         assertEquals(0, cloud0Size);
