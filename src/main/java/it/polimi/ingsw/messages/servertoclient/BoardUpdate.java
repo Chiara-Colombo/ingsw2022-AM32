@@ -8,6 +8,9 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Message that sends to all players the Board Update
+ */
 public class BoardUpdate extends ServerMessage{
     private final ArrayList<PlayerUpdate> playersUpdate;
     private final BoardUpdateContent boardUpdateContent;

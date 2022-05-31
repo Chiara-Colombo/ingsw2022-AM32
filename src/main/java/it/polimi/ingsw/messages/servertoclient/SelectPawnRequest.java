@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
 
+/**
+ * Message that asks to select a pawn
+ */
 public class SelectPawnRequest extends ServerMessage{
     @Override
     public String TypeOfMessage() {

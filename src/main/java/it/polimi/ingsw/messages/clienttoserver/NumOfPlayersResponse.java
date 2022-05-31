@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Message that returns the numbers of players chosen by the first player
+ */
 public class NumOfPlayersResponse extends ClientMessage {
 
     int numOfPlayers;
