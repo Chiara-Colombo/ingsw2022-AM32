@@ -5,6 +5,9 @@ import it.polimi.ingsw.client.VisitorClient;
 import javax.swing.*;
 import java.io.IOException;
 
+/**
+ * Message that notifies tha
+ */
 public class ActionPhaseTurn extends ServerMessage{
 
     public String nickname;

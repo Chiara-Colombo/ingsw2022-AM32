@@ -5,6 +5,9 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Message that notify that the Username chosen is not valid
+ */
 public class UsernameNotAssigned extends ServerMessage{
 
     public String typeOfMessage = "UsernameNotAssigned";

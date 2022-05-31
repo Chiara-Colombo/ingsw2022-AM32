@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
 
+/**
+ * Message that sends to all players the SchoolBoard Update
+ */
 public class SchoolBoardUpdate extends ServerMessage{
     @Override
     public String TypeOfMessage() {

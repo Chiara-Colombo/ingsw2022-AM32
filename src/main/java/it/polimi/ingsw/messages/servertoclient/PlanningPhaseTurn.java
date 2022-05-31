@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
 
+/**
+ * Message that notifies that the Planning Phase is starting
+ */
 public class PlanningPhaseTurn extends ServerMessage{
 
     public String nickname;

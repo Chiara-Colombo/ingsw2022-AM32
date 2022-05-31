@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Message that return the Username chosen by the player
+ */
 public class SetUsername extends ClientMessage {
 
     public String username;

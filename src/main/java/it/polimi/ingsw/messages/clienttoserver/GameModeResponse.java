@@ -4,6 +4,9 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Message that returns if the game is in expert mode or not
+ */
 public class GameModeResponse extends ClientMessage {
 
     boolean expertmode;

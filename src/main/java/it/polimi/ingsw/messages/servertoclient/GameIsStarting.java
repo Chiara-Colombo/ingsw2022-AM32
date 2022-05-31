@@ -5,6 +5,9 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Message that notify that the Game is Starting
+ */
 public class GameIsStarting extends ServerMessage{
 
     public String typeOfMessage = "GameIsStarting";
