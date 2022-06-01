@@ -25,6 +25,7 @@ public class SchoolBoardTest {
         schoolBoard.addStudentToDiningRoom(student4);
         schoolBoard.addStudentToDiningRoom(student5);
 
+
         for (PawnsColors color : PawnsColors.values()) {
             System.out.println(schoolBoard.getDiningRoom().get(color).size());
         }
@@ -41,6 +42,8 @@ public class SchoolBoardTest {
         }
         ArrayList<Pawn> entrance = schoolBoard.getStudentsInEntrance();
         assertEquals(studentToadd, entrance.size());
+        schoolBoard.removeStudent(0);
+        assertEquals(studentToadd - 1, entrance.size());
 
     }
 
@@ -56,5 +59,7 @@ public class SchoolBoardTest {
         assertEquals(professorToadd, professorTable.size());
 
     }
+
+
 }
 

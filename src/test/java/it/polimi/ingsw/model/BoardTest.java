@@ -71,9 +71,6 @@ class BoardTest {
         int index2=1;
         gameBoard.moveMotherNature(index2);
         assertTrue(gameBoard.getMotherNature() < 12 && gameBoard.getMotherNature() >= 0);
-
-
-
     }
 
 
@@ -113,11 +110,6 @@ class BoardTest {
         assertEquals(3,i);
 
     }
-
-
-
-
-
 
 
     /**
@@ -161,5 +153,25 @@ class BoardTest {
         assertEquals(1,i);
 
     }
+
+
+    @Test
+    void Bag(){
+        Board board = new Board(3);
+        assertEquals(120,board.getBagSize());
+        assertFalse(board.isBagEmpty());
+    }
+
+    @Test
+    void Tower(){
+        Board board = new Board(2);
+        Tower tower = new Tower(TowersColors.GREY);
+        board.setTowerOnIsland(tower,3);
+        IIsland islandwithT = board.getIslands().get(3);
+        assertTrue(islandwithT.getTower().isPresent());
+        IIsland islandwithoutT = board.getIslands().get(4);
+        assertFalse(islandwithoutT.getTower().isPresent());
+    }
+
 
 }

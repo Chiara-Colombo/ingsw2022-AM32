@@ -91,12 +91,15 @@ public class PlayerTest {
         int i = 0;
         Player player = new Player("prova", 3);
         ISchoolBoard schoolBoard = player.getSchoolBoard();
-        Pawn professor = new Pawn(PawnsColors.getRandom());
+        PawnsColors color = PawnsColors.getRandom();
+        Pawn professor = new Pawn(color);
 
         player.addProfessor(professor);
 
         ArrayList<Pawn> professors = schoolBoard.getProfessors();
         assertEquals(1, professors.size());
+        player.removeProfessor(0);
+        assertEquals(0, professors.size());
     }
 
 
@@ -133,6 +136,19 @@ public class PlayerTest {
         handler.removeEffect();
         assertEquals(0,player.getExtraStudent());
 
+    }
+
+    @Test
+    void Towers(){
+
+        int towers = 7;
+        Player player = new Player("Stefano",towers);
+        assertEquals(towers, player.getTowers());
+        player.removeTower();
+        assertEquals(towers - 1,player.getTowers());
+        Tower tower = new Tower(TowersColors.NONE);
+        player.addTower(tower);
+        assertEquals(towers, player.getTowers());
     }
 }
 

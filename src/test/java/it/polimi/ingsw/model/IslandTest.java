@@ -29,9 +29,17 @@ public class IslandTest {
     @Test
     void setTower(){
         Island island = new Island(0, 0);
-        System.out.println(island.getTower());
         Tower tower = new Tower(TowersColors.BLACK);
+        assertTrue(island.getTower().isEmpty());
         island.setTower(tower);
-        System.out.println(island.getTower());
+        assertTrue(island.getTower().isPresent());
+    }
+
+    @Test
+    void Indexing(){
+        Board test = new Board(3);
+        int index = 4;
+        IIsland island = test.getIslands().get(index);
+        assertEquals(4,island.getIndex());
     }
 }
