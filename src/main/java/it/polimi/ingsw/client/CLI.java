@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.messages.clienttoserver.*;
+import it.polimi.ingsw.messages.servertoclient.AssistantsCardUpdate;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.PawnsColors;
@@ -126,7 +127,8 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showAssistantsCardUpdate() {
+    public void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {
+        System.out.println(ANSI_RED + assistantsCardUpdate.getNickname() + ANSI_RESET + " ha scelto la seguente carta: \n VALORE : " + assistantsCardUpdate.getAssistantCard().getValue() + " Movimenti MN :" + assistantsCardUpdate.getAssistantCard().getMotherNatureMovements() );
 
     }
 

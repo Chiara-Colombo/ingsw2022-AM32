@@ -229,7 +229,7 @@ public class ServerController  {
         this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
             this.game.getCardsManager().setCurrentCardForPlayer(wizard, card.getValue());
             this.game.getCardsManager().setDiscardedForPlayer(wizard, true);
-            AssistantsCardUpdate cardUpdate = new AssistantsCardUpdate();
+            AssistantsCardUpdate cardUpdate = new AssistantsCardUpdate(card,this.game.getCurrentPlayer().getNickname());
             AssistantCardChosen cardChosen = new AssistantCardChosen();
             YourPlanningPhaseTurnEnds phaseTurnEnds = new YourPlanningPhaseTurnEnds();
             this.usernames.forEach((nickname, client) -> {

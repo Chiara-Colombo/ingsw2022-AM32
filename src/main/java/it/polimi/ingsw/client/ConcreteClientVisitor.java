@@ -67,7 +67,7 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(AssistantsCardUpdate assistantsCardUpdate) {
-        this.view.showAssistantsCardUpdate();
+        this.view.showAssistantsCardUpdate(assistantsCardUpdate);
     }
 
     @Override

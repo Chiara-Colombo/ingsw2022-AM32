@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.messages.servertoclient.AssistantsCardUpdate;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Wizards;
@@ -17,7 +18,7 @@ public interface View {
     void showPlayerChoosingWizard();
     void showActionPhaseTurn(String nickname);
     void showAssistantCardChosen();
-    void showAssistantsCardUpdate();
+    void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate);
     void showBoardUpdate(BoardUpdate boardUpdate);
     void showChosenWizardCard();
     void showCloudRequest(ArrayList<Integer> validClouds);

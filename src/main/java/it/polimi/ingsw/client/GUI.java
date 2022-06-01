@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.gui.*;
+import it.polimi.ingsw.messages.servertoclient.AssistantsCardUpdate;
 import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Wizards;
@@ -136,7 +137,7 @@ public class GUI extends Application implements View{
     public void showAssistantCardChosen() {}
 
     @Override
-    public void showAssistantsCardUpdate() {}
+    public void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {}
 
     @Override
     public void showBoardUpdate(BoardUpdate boardUpdate) {
