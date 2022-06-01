@@ -59,7 +59,11 @@ public class AssistantCardTest {
         }
         AssistantCardsManager assistantCardsManager = new AssistantCardsManager(jsonCards);
 
-        assertEquals(10,assistantCardsManager.getAssistantCards().size());
+        ArrayList<AssistantCard> ascm = new ArrayList<>();
+
+        ascm = assistantCardsManager.getAssistantCards();
+
+        assertEquals(10,ascm.size());
     }
     @Test
     void assistantCarddManager(){
@@ -72,8 +76,9 @@ public class AssistantCardTest {
         }
 
         Player p1 = new Player("PROVA", 7);
-        Player p2 = new Player("PROVA1", 7);
-        Player p3 = new Player("PROVA2", 7);
+        Player p2 = new Player("PROVA2",7);
+        Player p3 = new Player("PROVA3",7);
+
 
         Game game = new Game(3,false,jsonCards);
         game.addPlayer(p1);
@@ -82,13 +87,11 @@ public class AssistantCardTest {
 
         AssistantCardsManager assistantCardsManager = new AssistantCardsManager(jsonCards);
 
+        game.startGame();
+
         game.getPlayers().get(0).setWizard(Wizards.FIRST);
-        game.getPlayers().get(1).setWizard(Wizards.SECOND);
-        game.getPlayers().get(2).setWizard(Wizards.THIRD);
 
         game.getCardsManager().initializeCardsForPlayer(Wizards.FIRST);
-        game.getCardsManager().initializeCardsForPlayer(Wizards.SECOND);
-        game.getCardsManager().initializeCardsForPlayer(Wizards.THIRD);
 
         assistantCardsManager.setCurrentCardForPlayer(Wizards.FIRST,7);
 
