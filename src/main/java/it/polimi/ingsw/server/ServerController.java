@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static it.polimi.ingsw.utils.Utils.CARDS_RESOURCE_PATH;
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.toMap;
 
 public class ServerController  {
     private Game game;
@@ -19,11 +21,13 @@ public class ServerController  {
     private final Map<String, ClientHandler> usernames;
     private int numOfPlayers;
     private State stateOfTheGame;
+    private Map<String, Integer> cardValues;
 
     public ServerController() {
         this.numOfPlayers = -1;
         this.clients = new ArrayList<>(0);
         this.usernames = new HashMap<>(0);
+        this.cardValues = new HashMap<>(0);
     }
 
     public void setupGame(ClientHandler player) {
@@ -106,6 +110,7 @@ public class ServerController  {
         }
         this.usernames.put(username, player);
         player.setNickname(username);
+        this.cardValues.put(username, 0);
         UsernameCorrectlyAssigned usernameCorrectlyAssigned = new UsernameCorrectlyAssigned();
         System.out.println("Added player " + username);
         player.sendObjectMessage(usernameCorrectlyAssigned);
@@ -229,6 +234,7 @@ public class ServerController  {
         this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
             this.game.getCardsManager().setCurrentCardForPlayer(wizard, card.getValue());
             this.game.getCardsManager().setDiscardedForPlayer(wizard, true);
+            this.cardValues.replace(this.game.getCurrentPlayer().getNickname(), card.getValue());
             AssistantsCardUpdate cardUpdate = new AssistantsCardUpdate(card,this.game.getCurrentPlayer().getNickname());
             AssistantCardChosen cardChosen = new AssistantCardChosen();
             YourPlanningPhaseTurnEnds phaseTurnEnds = new YourPlanningPhaseTurnEnds();
@@ -243,6 +249,24 @@ public class ServerController  {
             if (this.game.nextPlayer()) {
                 this.stateOfTheGame.drawAssistantCard();
             } else {
+                Map<String, Integer> sorted = cardValues .entrySet() .stream()
+                        .sorted(comparingByValue())
+                        .collect( toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
+                System.out.println(sorted);
+                ArrayList<String> keys = new ArrayList<>(sorted.keySet());
+                this.game.ChangePlayersOrder(keys);
+                System.out.print("Game --> getPlayers = ");
+                for(Player player : this.game.getPlayers()) {
+                    System.out.print( "[ " + player.getNickname() + " ] ");
+                }
+                System.out.println("");
+                System.out.print("Real order determinated through cards -->  = ");
+                for(String player : this.game.getPlayersCopyList()){
+                    System.out.print("[ " + player + " ] ");
+                }
+                System.out.println("");
+                System.out.print("Current Player --> ");
+                System.out.println(this.game.getCurrentPlayer().getNickname());
                 ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
                 this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
                 this.stateOfTheGame = this.stateOfTheGame.changeState();
