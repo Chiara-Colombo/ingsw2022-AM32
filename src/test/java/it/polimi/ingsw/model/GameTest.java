@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static it.polimi.ingsw.utils.Utils.*;
 import static org.junit.Assert.*;
@@ -24,6 +25,147 @@ public class GameTest {
     /**
      * select the number of players
      */
+
+    @Test
+    void changeOrder(){
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Game game = new Game(3, true, jsonCards);
+
+        Player player0 = new Player("Pippo", 7);
+        Player player1 = new Player("Pluto", 7);
+        Player player2 = new Player("Paperino", 7);
+
+        game.addPlayer(player0);
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+
+        game.startGame();
+
+
+        assertEquals("Pippo", game.getOrderOfPlay().get(0));
+        assertEquals("Pluto", game.getOrderOfPlay().get(1));
+        assertEquals("Paperino", game.getOrderOfPlay().get(2));
+
+        List<String> players = Arrays.asList("Pluto", "Paperino", "Pippo");
+
+        System.out.print("VETTORE GIOCATORI : [ ");
+        for(Player player : game.getPlayers()) {
+            System.out.print(player.getNickname() +  " ");
+        }
+
+
+        System.out.println("] ");
+        System.out.print("COPIA PRIMA CAMBIO ORDINE : ");
+        System.out.println(game.getOrderOfPlay());
+
+        System.out.println("current player prima dei next: " + game.getcurrentplayerindex() + " " + game.getCurrentPlayer().getNickname() + " /// playerorderIndex " + game.getPlayerOrderIndex());
+
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+
+
+        game.ChangePlayersOrder(players);
+
+        assertNotEquals("Pippo", game.getOrderOfPlay().get(0));
+        assertNotEquals("Pluto", game.getOrderOfPlay().get(1));
+        assertNotEquals("Paperino", game.getOrderOfPlay().get(2));
+
+        assertEquals("Pluto", game.getOrderOfPlay().get(0));
+        assertEquals("Paperino", game.getOrderOfPlay().get(1));
+        assertEquals("Pippo", game.getOrderOfPlay().get(2));
+
+
+
+        System.out.print("COPIA DOPO CAMBIO ORDINE : ");
+        System.out.println(game.getOrderOfPlay());
+
+        System.out.println("current player prima dei next: " + game.getcurrentplayerindex() + " " + game.getCurrentPlayer().getNickname() + " /// playerorderIndex " + game.getPlayerOrderIndex());
+
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+
+        List<String> players2 = Arrays.asList("Paperino", "Pippo", "Pluto");
+        game.ChangePlayersOrder(players2);
+
+        System.out.print("COPIA DOPO CAMBIO ORDINE : ");
+        System.out.println(game.getOrderOfPlay());
+
+        System.out.println("current player prima dei next: " + game.getcurrentplayerindex() + " " + game.getCurrentPlayer().getNickname() + " /// playerorderIndex " + game.getPlayerOrderIndex());
+
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+        game.nextPlayer();
+        System.out.println(" CURRENT PLAYER DOPO AVER FATTO NEXT : " + game.getCurrentPlayer().getNickname());
+        System.out.println("current player : " + game.getcurrentplayerindex() + " /// playerorder index : " + game.getPlayerOrderIndex());
+
+    }
+
+
 
     @Test
     void numOfPlayers() {
@@ -149,33 +291,6 @@ public class GameTest {
 
     }
 
-    @Test
-    void nextPlayer(){
-
-        String jsonCards = null;
-        try {
-            jsonCards = readCards();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Game gameTest = new Game(3,false,jsonCards);
-
-        Player player1 = new Player("Paolo Tommaso",7);
-        Player player2 = new Player("Gasparo Noe",7);
-        Player player3 = new Player("Danilo Vilnuovo",7);
-
-        gameTest.addPlayer(player1);
-        gameTest.addPlayer(player2);
-        gameTest.addPlayer(player3);
-
-        assertEquals("Paolo Tommaso",gameTest.getCurrentPlayer().getNickname());
-        gameTest.nextPlayer();
-        assertEquals("Gasparo Noe",gameTest.getCurrentPlayer().getNickname());
-        gameTest.nextPlayer();
-        assertEquals("Danilo Vilnuovo",gameTest.getCurrentPlayer().getNickname());
-        gameTest.nextPlayer();
-        assertEquals("Paolo Tommaso",gameTest.getCurrentPlayer().getNickname());
-    }
 
     @Test
     public void StarGame(){

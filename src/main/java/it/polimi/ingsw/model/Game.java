@@ -21,6 +21,8 @@ public class Game implements IMooshroomManHandled {
     private EffectHandler activeCharacter;
     private GamePhase gamePhase;
     private int grandmaHerbsNoEntryTiles;
+    private List<String> playersCopyList;
+    private int playerOrderIndex;
 
     /**
      * Game class Constructor
@@ -34,6 +36,7 @@ public class Game implements IMooshroomManHandled {
         this.gameBoard = new Board(numOfPlayers);
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>();
+        this.playersCopyList = new ArrayList<>();
         this.cardsManager = new AssistantCardsManager(jsonCards);
         this.validCharacters = new ArrayList<>();
         this.charactersValue = new EnumMap<>(Characters.class);
@@ -47,6 +50,10 @@ public class Game implements IMooshroomManHandled {
         if (this.numOfPlayers == this.players.size()) {
             this.gamePhase = GamePhase.START_PHASE;
             this.currentPlayer = 0;
+            this.playerOrderIndex = 0;
+            for(Player p : players){
+                playersCopyList.add(p.getNickname());
+            }
             final ArrayList<Characters> characters = new ArrayList<>(Arrays.asList(Characters.values()));
             for (int i = 0; i<3; i++) {
                 this.validCharacters.add(characters.remove((int) Math.floor(Math.random() * characters.size())));
@@ -57,6 +64,41 @@ public class Game implements IMooshroomManHandled {
         } else {
             System.out.println("Cannot start a new game");
         }
+    }
+
+    /**
+     * Method for Changing order of play based on the card value selected
+     * @param order New order
+     */
+    public void ChangePlayersOrder(List<String> order){
+        this.playerOrderIndex = 0;
+        for ( int i = 0; i < order.size(); i++){
+            for ( int j = 0; j < playersCopyList.size(); j++){
+                if( order.get(i) == playersCopyList.get(j)){
+                    String playerR = playersCopyList.get(j);
+                    String playerS = playersCopyList.get(i);
+                    playersCopyList.set(i,playerR);
+                    playersCopyList.set(j,playerS);
+                }
+            }
+        }
+        String playerNick = playersCopyList.get(playerOrderIndex);
+        int j= 0;
+        for(Player player : players){
+            if(player.getNickname() == playersCopyList.get(playerOrderIndex)){
+                this.currentPlayer = j;
+            }
+            j ++;
+        }
+    }
+
+    public List<String> getOrderOfPlay() {
+        return playersCopyList;
+    }
+
+    /* only for testing*/
+    public List<String> getPlayersCopyList() {
+        return playersCopyList;
     }
 
     /**
@@ -97,12 +139,37 @@ public class Game implements IMooshroomManHandled {
      * Method that calculate the next player
      */
     public boolean nextPlayer() {
-        if (this.currentPlayer + 1 >= this.players.size()){
-            this.currentPlayer = 0;
+        if (this.playerOrderIndex + 1 >= this.playersCopyList.size()){
+            this.playerOrderIndex = 0;
+            String playerNick = playersCopyList.get(playerOrderIndex);
+            int j= 0;
+            for(Player player : players){
+                if(player.getNickname() == playersCopyList.get(playerOrderIndex)){
+                    this.currentPlayer = j;
+                }
+                j ++;
+            }
             return false;
         }
-        this.currentPlayer = this.currentPlayer + 1;
+        this.playerOrderIndex ++;
+        String playerNick = playersCopyList.get(playerOrderIndex);
+        int i = 0;
+        for(Player player : players){
+            if(player.getNickname() == playersCopyList.get(playerOrderIndex)){
+                this.currentPlayer = i;
+            }
+            i ++;
+        }
         return true;
+    }
+
+    public int getPlayerOrderIndex() {
+        return playerOrderIndex;
+    }
+
+    /* only for testing*/
+    public int getcurrentplayerindex(){
+        return currentPlayer;
     }
 
     /**
