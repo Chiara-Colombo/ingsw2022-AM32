@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import it.polimi.ingsw.App;
 import it.polimi.ingsw.client.*;
 import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
@@ -7,6 +12,7 @@ import it.polimi.ingsw.model.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -70,7 +76,7 @@ public class ServerController  {
     }
 
     public void setGameMode(boolean expertMode, ClientHandler player) throws IOException {
-        BufferedReader input = new BufferedReader(new FileReader(CARDS_RESOURCE_PATH));
+        BufferedReader input = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("assistantCards.json"))));
         String jsonCards = input.readLine();
         this.game = new Game(this.numOfPlayers, expertMode, jsonCards);
         checkStartGame(player);
