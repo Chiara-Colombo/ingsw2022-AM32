@@ -139,54 +139,42 @@ public class CLI  implements View{
         ArrayList<ArrayList<IslandUpdate>> islands = boardUpdate.getBoardUpdateContent().getIslands();
 
         for (ArrayList<IslandUpdate> island : islands) {
-            ArrayList<PawnsColors> colors = island.get(0).getStudents();
-            System.out.print("[ " + island.get(0).getIndex() + " ] : [ ");
+            ArrayList<PawnsColors> colors = new ArrayList<>();
+            System.out.print("[ ");
+            for(int j = 0; j < island.size(); j++) {
+                ArrayList<PawnsColors> islandcolor = island.get(j).getStudents();
+                for (PawnsColors colorss : islandcolor) {
+                    colors.add(colorss);
+                }
+                if( j ==0){
+                    System.out.print(island.get(j).getIndex());
+                }
+                else
+                    System.out.print("/" + island.get(j).getIndex());
+            }
+            System.out.print(" ] : [ ");
+
             for(PawnsColors pawnsColors : colors){
                 System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
             }
-            if(island.get(0).getIndex() == boardUpdate.getBoardUpdateContent().getMotherNature() && !island.get(0).hasTower()){
-                System.out.print(ANSI_GREEN + " MN " + ANSI_RESET);
+            int towers = 0;
+            for(int i = 0; i < island.size(); i++){
+                if(island.get(i).getIndex() == boardUpdate.getBoardUpdateContent().getMotherNature()){
+                    System.out.print(ANSI_GREEN + "MN " + ANSI_RESET);
+                }
+                if(island.get(i).hasTower()){
+                    towers ++;
+                }
             }
-            if(island.get(0).getIndex() == boardUpdate.getBoardUpdateContent().getMotherNature() && island.get(0).hasTower()){
-                System.out.print(ANSI_GREEN + "MN " + ANSI_RESET +  TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()) + " ");
-            }
-            if(island.get(0).getIndex() != boardUpdate.getBoardUpdateContent().getMotherNature() && island.get(0).hasTower() ){
-                System.out.print(TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()) + " ");
+            if(island.get(0).hasTower()) {
+                System.out.print(towers + TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()));
             }
             System.out.print("] ");
             if(island.get(0).getIndex() == 4 || island.get(0).getIndex() == 8 || island.get(0).getIndex() == 0){
                 System.out.println("\n");
             }
         }
-/*
-            int index = 0;
-        for(int i = 0; i < 3; i++) {
-            for (int j = 0; j < 4; j++) {
-                if(index < boardUpdate.getBoardUpdateContent().getIslands().size()) {
-                    ArrayList<PawnsColors> colors = boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getStudents();
-                    System.out.print(" [" + index +  boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getIndex() + "] : [ ");
-                    for(PawnsColors pawnsColors : colors){
-                        System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
-                    }
-                    if( boardUpdate.getBoardUpdateContent().getMotherNature() == index && boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).hasTower()) {
-                        System.out.print(ANSI_GREEN + "MN " + ANSI_RESET + boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getTowerColor().getTowerSymbol());
-                    }
-                    else if(boardUpdate.getBoardUpdateContent().getMotherNature() != index && boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).hasTower()){
-                        System.out.print(" " + boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).getTowerColor().getTowerSymbol());
-                    }
-                    else if(boardUpdate.getBoardUpdateContent().getMotherNature() == index && !boardUpdate.getBoardUpdateContent().getIslands().get(index).get(0).hasTower()){
-                        System.out.print(ANSI_GREEN + "MN " + ANSI_RESET);
-                    }
-                    System.out.print("]");
-                    index++;
-                }
-                else{
-                    System.out.println("");
-                }
-            }
-            System.out.println("\n");
-        }
-        */
+
         System.out.println(ANSI_RED + "                    NUVOLE"  + ANSI_RESET + "\n");
         System.out.print("  ");
         for( int i = 0 ; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++ ){
