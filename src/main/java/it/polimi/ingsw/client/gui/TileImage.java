@@ -4,19 +4,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
-public class TileImage extends ImageView {
+public class TileImage {
     private final int index;
+    private final ImageView imageView;
 
-    public TileImage(int index, Image image, double x, double y, double width, double height) {
-        super(image);
-        this.setLayoutY(y);
-        this.setLayoutX(x);
-        this.setFitHeight(height);
-        this.setFitWidth(width);
+    public TileImage(int index, ImageView imageView) {
+        this.imageView = imageView;
         this.index = index;
     }
 
     public int getIndex() {
         return this.index;
+    }
+
+    public ImageView getImageView() {
+        return this.imageView;
     }
 }

@@ -1,14 +1,13 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.ICentaurHandled;
-import it.polimi.ingsw.model.Handled.IMonkHandled;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Board implements IMonkHandled, ICentaurHandled {
+public class Board implements ICentaurHandled {
 
-    private final ArrayList<Island> islands;
+    private final IslandsManager islandManager;
     private int motherNature;
     private final EnumMap<PawnsColors, Integer> bag;
     private final ArrayList<Cloud> clouds;
@@ -23,17 +22,19 @@ public class Board implements IMonkHandled, ICentaurHandled {
     Board(int numOfPlayers) {
 
         /**initialize motherNature value to a random value beetween 0 and 11*/
-        this.motherNature = ThreadLocalRandom.current().nextInt(0, 11);
-        this.islands = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            this.islands.add(new Island(i, i));
-        }
+        this.islandManager = new IslandsManager();
+        this.motherNature = ThreadLocalRandom.current().nextInt(0, this.islandManager.getIslandsSize() - 1);
         this.bag = new EnumMap<>(PawnsColors.class);
         this.bag.put(PawnsColors.BLUE, 26);
         this.bag.put(PawnsColors.GREEN, 26);
         this.bag.put(PawnsColors.PINK, 26);
         this.bag.put(PawnsColors.RED, 26);
         this.bag.put(PawnsColors.YELLOW, 26);
+        for (int i = 0; i < this.islandManager.getIslandsSize(); i++) {
+            if (i == this.motherNature || i == (this.motherNature + this.islandManager.getIslandsSize() / 2) % this.islandManager.getIslandsSize()) continue;
+            int tmp_i = i;
+            this.drawFromBag().ifPresent(pawn -> this.islandManager.addStudentOnIsland(pawn, tmp_i));
+        }
         this.clouds = new ArrayList<>();
         for (int i = 0; i < numOfPlayers; i++) {
             this.clouds.add(new Cloud());
@@ -44,11 +45,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
         this.availableProfessors.add(new Pawn(PawnsColors.RED));
         this.availableProfessors.add(new Pawn(PawnsColors.GREEN));
         this.availableProfessors.add(new Pawn(PawnsColors.YELLOW));
-        for (int i = 0; i < this.islands.size(); i++) {
-            if (i == this.motherNature || i % 6 == this.motherNature % 6) continue;
-            final int index = i;
-            this.drawFromBag().ifPresent(pawn -> this.setStudentOnIsland(pawn, index));
-        }
     }
 
     public int getBagSize() {
@@ -72,16 +68,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
         return clouds.get(cloud).removeStudent(0);
     }
 
-
-    /**
-     * Method that sets a Tower on an island
-     * @param tower that needs to be placed
-     * @param island index of the island where the tower needs to be placed
-     */
-    public void setTowerOnIsland(Tower tower, int island){
-        this.islands.get(island).setTower(tower);
-    }
-
     /**
      * Getter that returns the available professors pawns
      * @return collection of abailable professors pawns
@@ -102,25 +88,18 @@ public class Board implements IMonkHandled, ICentaurHandled {
         return new ArrayList<>(this.clouds);
     }
 
-    /**
-     * Getter that returns the islands
-     * @return collection of Island
-     */
-    public ArrayList<IIsland> getIslands() {
-        return new ArrayList<>(this.islands);
-    }
-
 
     /**
      * Method for moving MotherNature
      * @param index the moves Mothernature has to do
      */
     public void moveMotherNature(int index){
-        if (this.motherNature + index >= islands.size()) {
-            this.motherNature = (this.motherNature + index) % (islands.size());
-        } else {
-            this.motherNature = this.motherNature + index;
-        }
+        if (index >= 0 && index < this.islandManager.getIslandsSize())
+            this.motherNature = index;
+    }
+
+    public IslandsManager getIslandsManager() {
+        return this.islandManager;
     }
 
     /**
@@ -158,28 +137,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
         return this.coinsSupply;
     }
 
-
-    /**
-     * Method for merging islands whenever it's needed
-     */
-    public void mergeIslands(int groupOfIslands1, int groupOfIslands2){
-        int group = Math.max(groupOfIslands1, groupOfIslands2);
-        this.islands.forEach(island -> {
-            if (island.getGroupOfIslands() == groupOfIslands1 || island.getGroupOfIslands() == groupOfIslands2)
-                island.setGroupOfIslands(group);
-        });
-    }
-
-    public void mergeIslands(int groupOfIslands1, int groupOfIslands2, int groupOfIslands3){
-        int group = Math.max(Math.max(groupOfIslands1, groupOfIslands2), groupOfIslands3);
-        this.islands.forEach(island -> {
-            if (island.getGroupOfIslands() == groupOfIslands1 ||
-                    island.getGroupOfIslands() == groupOfIslands2 ||
-                    island.getGroupOfIslands() == groupOfIslands3)
-                island.setGroupOfIslands(group);
-        });
-    }
-
     /**
      * Check if the bag variable is empty
      * @return true if bag is empty
@@ -204,18 +161,6 @@ public class Board implements IMonkHandled, ICentaurHandled {
             return Optional.of(new Pawn(color));
         }
         return Optional.empty();
-    }
-
-    int getIslandSize(){
-        return islands.size();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setStudentOnIsland(Pawn student, int island) {
-        this.islands.get(island).addStudent(student);
     }
 
     /**

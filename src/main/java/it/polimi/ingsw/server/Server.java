@@ -30,7 +30,6 @@ public class Server {
         //ExecutorService executor = Executors.newCachedThreadPool();
         while (true) {
             Socket clientSocket = this.serverSocket.accept();
-            System.out.println("Client connected");
             this.match.addPlayer(clientSocket);
             //executor.submit(new ClientHandler(clientSocket, match));
         }

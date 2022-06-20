@@ -6,10 +6,10 @@ import java.io.IOException;
 
 public class MoveMNResponse extends ClientMessage{
 
-    private final int movements;
+    private final int position;
 
-    public MoveMNResponse(int movements){
-        this.movements = movements;
+    public MoveMNResponse(int position){
+        this.position = position;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class MoveMNResponse extends ClientMessage{
         serverVisitor.visitMessage(this);
     }
 
-    public int getMovements() {
-        return movements;
+    public int getPosition() {
+        return this.position;
     }
 }

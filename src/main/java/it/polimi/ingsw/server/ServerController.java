@@ -118,7 +118,6 @@ public class ServerController  {
         player.setNickname(username);
         this.cardValues.put(username, 0);
         UsernameCorrectlyAssigned usernameCorrectlyAssigned = new UsernameCorrectlyAssigned();
-        System.out.println("Added player " + username);
         player.sendObjectMessage(usernameCorrectlyAssigned);
         if (this.numOfPlayers < 0 && player.equals(this.clients.get(0))) {
             this.setupGame(player);
@@ -132,7 +131,6 @@ public class ServerController  {
      * @param player that has to be removed
      */
     public void removePlayer(ClientHandler player) {
-        System.out.println("Removing client");
         boolean isFirstPlayer = this.clients.get(0).equals(player);
         this.clients.remove(player);
         if (this.usernames.containsValue(player)) {
@@ -144,7 +142,6 @@ public class ServerController  {
                     break;
                 }
             }
-            System.out.println(username + " disconnected");
             if (Objects.nonNull(this.game) && this.game.getGamePhase() != GamePhase.NO_PHASE) {
                 PlayerDisconnected playerDisconnectedMessage = new PlayerDisconnected(username);
                 for (ClientHandler client : this.clients)
@@ -163,14 +160,14 @@ public class ServerController  {
         for (Player player : this.game.getPlayers()) {
             if (player.getTowers() == 0) return true;
         }
-        int differentGroup = 0, lastGroup = -1;
-        for (IIsland island : this.game.getGameBoard().getIslands()) {
-            if (lastGroup < 0 || lastGroup != island.getGroupOfIslands()) {
-                differentGroup++;
+        ArrayList<Integer> differentGroups = new ArrayList<>();
+        for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
+            int group = this.game.getGameBoard().getIslandsManager().getIslandGroup(i);
+            if (!differentGroups.contains(group)) {
+                differentGroups.add(group);
             }
-            lastGroup = island.getGroupOfIslands();
         }
-        if (differentGroup <= 3) return true;
+        if (differentGroups.size() <= 3) return true;
         if (endOfTurn) {
             if (this.game.getGameBoard().isBagEmpty()) return true;
             AtomicBoolean cardsNotAvailable = new AtomicBoolean(false);
@@ -287,7 +284,7 @@ public class ServerController  {
             this.game.getCurrentPlayer().addStudentInDiningRoom(student);
             this.checkProfessor(student.getColor());
         } else {
-            this.game.getGameBoard().setStudentOnIsland(student, islandIndex);
+            this.game.getGameBoard().getIslandsManager().setStudentOnIsland(student, islandIndex);
         }
         final BoardUpdate boardUpdate = this.calculateBoardUpdate();
         this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
@@ -322,8 +319,8 @@ public class ServerController  {
         }
     }
 
-    public void moveMotherNature(int movements) {
-        this.game.getGameBoard().moveMotherNature(movements);
+    public void moveMotherNature(int position) {
+        this.game.getGameBoard().moveMotherNature(position);
         final BoardUpdate boardUpdate = this.calculateBoardUpdate();
         this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
         this.checkTowers();
@@ -370,7 +367,7 @@ public class ServerController  {
 
     private void checkTowers() {
         final int motherNature = this.game.getGameBoard().getMotherNature();
-        this.game.getGameBoard().getIslands().get(motherNature).getTower().ifPresentOrElse(tower -> {
+        this.game.getGameBoard().getIslandsManager().getIsland(motherNature).getTower().ifPresentOrElse(tower -> {
             int maxInfluence = 0, playerIndex = -1, actualPlayerIndex = -1;
             ArrayList<Player> players = this.game.getPlayers();
             for (int i = 0; i < players.size(); i++) {
@@ -385,12 +382,12 @@ public class ServerController  {
                 }
             }
             if (playerIndex >= 0 && this.game.getPlayers().get(playerIndex).getTowers() > 0 && playerIndex != actualPlayerIndex) {
-                final int groupOfIslands = this.game.getGameBoard().getIslands().get(motherNature).getGroupOfIslands();
-                for (int i = 0; i < this.game.getGameBoard().getIslands().size(); i++) {
-                    if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIslands){
+                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(motherNature);
+                for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
+                    if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
                         final int finalActualPlayerIndex = actualPlayerIndex;
-                        this.game.getGameBoard().getIslands().get(i).getTower().ifPresent(tower1 -> players.get(finalActualPlayerIndex).addTower(tower1));
-                        this.game.getGameBoard().setTowerOnIsland(players.get(playerIndex).removeTower(), i);
+                        this.game.getGameBoard().getIslandsManager().getIsland(i).getTower().ifPresent(tower1 -> players.get(finalActualPlayerIndex).addTower(tower1));
+                        this.game.getGameBoard().getIslandsManager().setTowerOnIsland(players.get(playerIndex).removeTower(), i);
                     }
                 }
                 final BoardUpdate boardUpdate = this.calculateBoardUpdate();
@@ -408,11 +405,11 @@ public class ServerController  {
                 }
             }
             if (playerIndex >= 0 && players.get(playerIndex).getTowers() > 0) {
-                final int groupOfIslands = this.game.getGameBoard().getIslands().get(motherNature).getGroupOfIslands();
-                for (int i = 0; i < this.game.getGameBoard().getIslands().size(); i++) {
-                    if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIslands){
+                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(motherNature);
+                for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
+                    if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
                         Tower tower = this.game.getPlayers().get(playerIndex).removeTower();
-                        this.game.getGameBoard().setTowerOnIsland(tower, i);
+                        this.game.getGameBoard().getIslandsManager().setTowerOnIsland(tower, i);
                     }
                 }
                 final BoardUpdate boardUpdate = this.calculateBoardUpdate();
@@ -427,7 +424,7 @@ public class ServerController  {
         ArrayList<Pawn> professors = player.getSchoolBoard().getProfessors();
         for (Pawn professor : professors) {
             PawnsColors color = professor.getColor();
-            Iterator<Pawn> students = this.game.getGameBoard().getIslands().get(this.game.getGameBoard().getMotherNature()).getStudents();
+            Iterator<Pawn> students = this.game.getGameBoard().getIslandsManager().getIsland(this.game.getGameBoard().getMotherNature()).getStudents();
             while (students.hasNext()) {
                 if (students.next().getColor().equals(color))
                     playerInfluence++;
@@ -437,41 +434,41 @@ public class ServerController  {
     }
 
     private void checkIslandsMerge(int groupOfIsland, TowersColors color) {
-        final int islands = this.game.getGameBoard().getIslands().size();
+        final int islands = this.game.getGameBoard().getIslandsManager().getIslandsSize();
         int minIndex = -1;
         int maxIndex = -1;
         AtomicInteger leftGroup = new AtomicInteger(-1), rightGroup = new AtomicInteger(-1);
         for (int i = 0; i < islands; i++)
-            if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIsland) {
+            if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIsland) {
                 minIndex = i;
                 break;
             }
         for (int i = islands - 1; i >= 0; i--)
-            if (this.game.getGameBoard().getIslands().get(i).getGroupOfIslands() == groupOfIsland) {
+            if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIsland) {
                 maxIndex = i;
                 break;
             }
         final int leftIndex = (minIndex - 1 >= 0) ? (minIndex - 1) : (minIndex + islands - 1),
                 rightIndex = (maxIndex + 1 < islands) ? (maxIndex + 1) : (maxIndex - islands + 1);
-        this.game.getGameBoard().getIslands().get(leftIndex).getTower().ifPresent(tower -> {
+        this.game.getGameBoard().getIslandsManager().getIsland(leftIndex).getTower().ifPresent(tower -> {
             if (tower.getColor().equals(color))
-                leftGroup.set(this.game.getGameBoard().getIslands().get(leftIndex).getGroupOfIslands());
+                leftGroup.set(this.game.getGameBoard().getIslandsManager().getIslandGroup(leftIndex));
         });
-        this.game.getGameBoard().getIslands().get(rightIndex).getTower().ifPresent(tower -> {
+        this.game.getGameBoard().getIslandsManager().getIsland(rightIndex).getTower().ifPresent(tower -> {
             if (tower.getColor().equals(color))
-                rightGroup.set(this.game.getGameBoard().getIslands().get(rightIndex).getGroupOfIslands());
+                rightGroup.set(this.game.getGameBoard().getIslandsManager().getIslandGroup(rightIndex));
         });
         if (leftGroup.get() >= 0 && rightGroup.get() >= 0) {
-            this.game.getGameBoard().mergeIslands(groupOfIsland, leftGroup.get(), rightGroup.get());
+            this.game.getGameBoard().getIslandsManager().mergeIslands(groupOfIsland, leftGroup.get(), rightGroup.get());
             final BoardUpdate boardUpdate = this.calculateBoardUpdate();
             this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
         } else {
             if (leftGroup.get() >= 0) {
-                this.game.getGameBoard().mergeIslands(groupOfIsland, leftGroup.get());
+                this.game.getGameBoard().getIslandsManager().mergeIslands(groupOfIsland, leftGroup.get());
                 final BoardUpdate boardUpdate = this.calculateBoardUpdate();
                 this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
             } if (rightGroup.get() >= 0) {
-                this.game.getGameBoard().mergeIslands(groupOfIsland, rightGroup.get());
+                this.game.getGameBoard().getIslandsManager().mergeIslands(groupOfIsland, rightGroup.get());
                 final BoardUpdate boardUpdate = this.calculateBoardUpdate();
                 this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
             }
@@ -522,45 +519,28 @@ public class ServerController  {
     private BoardUpdateContent calculateBoardUpdateContent() {
         ArrayList<ArrayList<IslandUpdate>> islandsUpdate = new ArrayList<>();
         ArrayList<IslandUpdate> groupOfIslandsUpdate = new ArrayList<>();
-        ArrayList<IIsland> islands = this.game.getGameBoard().getIslands();
-        int lastGroup = islands.get(0).getGroupOfIslands(), firstIndex = 0;
-        for (int i = 0; i < islands.size(); i++) {
-            if (islands.get(i).getGroupOfIslands() != lastGroup) {
-                firstIndex = i;
-                break;
+        ArrayList<ArrayList<IIsland>> islands = this.game.getGameBoard().getIslandsManager().getIslands();
+        for (ArrayList<IIsland> group : islands) {
+            groupOfIslandsUpdate.clear();
+            for (IIsland island : group) {
+                ArrayList<PawnsColors> students = new ArrayList<>();
+                Iterator<Pawn> islandStudents = island.getStudents();
+                while (islandStudents.hasNext())
+                    students.add(islandStudents.next().getColor());
+                groupOfIslandsUpdate.add(
+                        new IslandUpdate(
+                                island.getIndex(),
+                                island.getTower().isPresent(),
+                                island.isNoEntry(),
+                                island.getTower()
+                                        .stream()
+                                        .map(Tower::getColor)
+                                        .reduce(null, (currentColor, towerColor) -> currentColor = towerColor),
+                                students
+                        )
+                );
             }
-        }
-        lastGroup = -1;
-        for (int i = 0; i < islands.size(); i++) {
-            IIsland island = islands.get((i + firstIndex) % islands.size());
-            ArrayList<PawnsColors> students = new ArrayList<>();
-            Iterator<Pawn> studentsOnIsland = island.getStudents();
-            while (studentsOnIsland.hasNext()) {
-                students.add(studentsOnIsland.next().getColor());
-            }
-            if (lastGroup >= 0) {
-                if (lastGroup != island.getGroupOfIslands()) {
-                    islandsUpdate.add(new ArrayList<>(groupOfIslandsUpdate));
-                    groupOfIslandsUpdate.clear();
-                }
-            }
-            groupOfIslandsUpdate.add(
-                    new IslandUpdate(
-                            island.getGroupOfIslands(),
-                            island.getIndex(),
-                            island.getTower().isPresent(),
-                            island.isNoEntry(),
-                            island.getTower()
-                                    .stream()
-                                    .map(Tower::getColor)
-                                    .reduce(null, (currentColor, towerColor) -> currentColor = towerColor),
-                            students
-                    )
-            );
-            if ((i + 1) >= islands.size()) {
-                islandsUpdate.add(new ArrayList<>(groupOfIslandsUpdate));
-            }
-            lastGroup = island.getGroupOfIslands();
+            islandsUpdate.add(new ArrayList<>(groupOfIslandsUpdate));
         }
         ArrayList<CloudUpdate> cloudsUpdate = new ArrayList<>();
         this.game.getGameBoard().getClouds().forEach(cloud -> {

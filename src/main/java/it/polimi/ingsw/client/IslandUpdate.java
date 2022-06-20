@@ -7,22 +7,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class IslandUpdate implements Serializable {
-    private final int groupOfIslands, index;
+    private final int index;
     private final boolean tower, noEntry;
     private final TowersColors towerColor;
     private final ArrayList<PawnsColors> students;
 
-    public IslandUpdate(int groupOfIslands, int index, boolean tower, boolean noEntry, TowersColors towerColor, ArrayList<PawnsColors> students) {
+    public IslandUpdate(int index, boolean tower, boolean noEntry, TowersColors towerColor, ArrayList<PawnsColors> students) {
         this.index = index;
-        this.groupOfIslands = groupOfIslands;
         this.tower = tower;
         this.noEntry = noEntry;
         this.towerColor = towerColor;
         this.students = students;
-    }
-
-    public int getGroupOfIslands() {
-        return this.groupOfIslands;
     }
 
     public int getIndex() {

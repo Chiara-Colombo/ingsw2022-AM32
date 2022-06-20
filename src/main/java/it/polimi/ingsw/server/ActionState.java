@@ -31,7 +31,7 @@ public class ActionState implements State{
             this.studentsMoved = 0;
             return false;
         }
-        MovePawnRequest request = new MovePawnRequest();
+        MovePawnRequest request = new MovePawnRequest(this.game.getNumOfPlayers() == 2 ? 3 : 4);
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
         this.studentsMoved++;
         return true;
@@ -62,7 +62,21 @@ public class ActionState implements State{
     @Override
     public void moveMN() {
         this.game.getCurrentPlayer().getWizard().flatMap(wizard -> this.game.getCardsManager().getCurrentCardForPlayer(wizard)).ifPresent(card -> {
-            MoveMNRequest request = new MoveMNRequest(card.getMotherNatureMovements() + card.getExtraMotherNatureMovements());
+            ArrayList<Integer> validIndexes = new ArrayList<>();
+            final int mnPosition = this.game.getGameBoard().getMotherNature(),
+                    movements = card.getMotherNatureMovements() + card.getExtraMotherNatureMovements(),
+                    islands = this.game.getGameBoard().getIslandsManager().getIslandsSize();
+            int moved = 0;
+            for (int i = 0; i < islands; i++) {
+                if (moved <= movements) {
+                    int index = (i + mnPosition) % islands;
+                    if (!validIndexes.contains(index)) {
+                        validIndexes.addAll(this.game.getGameBoard().getIslandsManager().getIslandsGroupIndexes(index));
+                        moved++;
+                    }
+                } else break;
+            }
+            MoveMNRequest request = new MoveMNRequest(movements, validIndexes);
             this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
         });
     }

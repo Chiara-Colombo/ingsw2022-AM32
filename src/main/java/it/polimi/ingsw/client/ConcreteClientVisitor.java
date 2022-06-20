@@ -97,12 +97,12 @@ public class ConcreteClientVisitor implements VisitorClient{
 
     @Override
     public void visitMessage(MoveMNRequest moveMNRequest) {
-        this.view.showMoveMNRequest(moveMNRequest.getMovements());
+        this.view.showMoveMNRequest(moveMNRequest.getMovements(), moveMNRequest.getValidIndexes());
     }
 
     @Override
     public void visitMessage(MovePawnRequest movePawnRequest) {
-        this.view.showMovePawnRequest();
+        this.view.showMovePawnRequest(movePawnRequest.getNumOfPawns());
     }
 
     @Override
@@ -129,9 +129,7 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(YourPlanningPhaseTurnEnds yourPlanningPhaseTurnEnds) {
         this.view.showYourPlanningPhaseTurnEnds();
     }
-    public void visitMessage(ErrorMotherNaturePosition errorMotherNaturePosition){
-        this.view.showErrorMotherNaturePosition();
-    }
+
     public void visitMessage(NotEnoughCoins notEnoughCoins){
         this.view.showNotEnoughCoins();
     }

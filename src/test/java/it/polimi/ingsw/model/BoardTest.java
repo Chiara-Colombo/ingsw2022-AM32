@@ -10,7 +10,6 @@ class BoardTest {
 
     public final Board gameBoard=new Board(2);
     public final Board gameBoard2=new Board(2);
-    ArrayList<Island> ex;
 
 
     /**Set students pawn on a selected cloud and removing one of them, check if the amount of students pawns is correct**/
@@ -76,8 +75,8 @@ class BoardTest {
 
     //initial island size
     @Test
-    void Islandsize(){
-        assertEquals(12,gameBoard.getIslandSize());
+    void IslandsSize(){
+        assertEquals(12, gameBoard.getIslandsManager().getIslandsSize());
         }
 
 
@@ -95,10 +94,10 @@ class BoardTest {
         Pawn student3=new Pawn(PawnsColors.getRandom());
         int indexOfIslandwithMotherNature = gameBoard.getMotherNature();
 
-        gameBoard.setStudentOnIsland(student1,indexOfIslandwithMotherNature);
-        gameBoard.setStudentOnIsland(student2,indexOfIslandwithMotherNature);
-        gameBoard.setStudentOnIsland(student3,indexOfIslandwithMotherNature);
-        Iterator<Pawn> iterator =gameBoard.getIslands().get(indexOfIslandwithMotherNature).getStudents();
+        gameBoard.getIslandsManager().setStudentOnIsland(student1,indexOfIslandwithMotherNature);
+        gameBoard.getIslandsManager().setStudentOnIsland(student2,indexOfIslandwithMotherNature);
+        gameBoard.getIslandsManager().setStudentOnIsland(student3,indexOfIslandwithMotherNature);
+        Iterator<Pawn> iterator = gameBoard.getIslandsManager().getIsland(indexOfIslandwithMotherNature).getStudents();
         int i=0;
         while(iterator.hasNext())
         {
@@ -125,33 +124,31 @@ class BoardTest {
             board.giveCoin();
         }
         assertEquals(0,board.getCoinsSupply());
-        int coinsToAdd=3;
+        int coinsToAdd = 3;
         board.addCoins(coinsToAdd);
-      assertEquals(3,board.getCoinsSupply());
-        int coinsToAdd2=100;
+        assertEquals(3,board.getCoinsSupply());
+        int coinsToAdd2 = 100;
         board.addCoins(coinsToAdd2);
         assertEquals(board.getCoinsSupply(),20);
     }
 
     @Test
     void monkEffectHandler(){
-        Board boardtest = new Board(3);
+        Board boardTest = new Board(3);
         Pawn pawn = new Pawn(PawnsColors.getRandom());
-        int indexOfIslandwithMotherNature = boardtest.getMotherNature();
-        MonkEffectHandler monkEffectHandler=new MonkEffectHandler(boardtest,pawn,indexOfIslandwithMotherNature);
+        int indexOfIslandWithMotherNature = boardTest.getMotherNature();
+        MonkEffectHandler monkEffectHandler = new MonkEffectHandler(boardTest.getIslandsManager(), pawn, indexOfIslandWithMotherNature);
         monkEffectHandler.applyEffect();
 
-        Iterator<Pawn> iterator =boardtest.getIslands().get(indexOfIslandwithMotherNature).getStudents();
-        int i=0;
-        while(iterator.hasNext())
-        {
+        Iterator<Pawn> iterator = boardTest.getIslandsManager().getIsland(indexOfIslandWithMotherNature).getStudents();
+        int i = 0;
+        while(iterator.hasNext()) {
             iterator.next();
             i++;
         }
 
         //when the board is created it arleady has a  student pawn on the island
         assertEquals(1,i);
-
     }
 
 
@@ -166,12 +163,10 @@ class BoardTest {
     void Tower(){
         Board board = new Board(2);
         Tower tower = new Tower(TowersColors.GREY);
-        board.setTowerOnIsland(tower,3);
-        IIsland islandwithT = board.getIslands().get(3);
-        assertTrue(islandwithT.getTower().isPresent());
-        IIsland islandwithoutT = board.getIslands().get(4);
-        assertFalse(islandwithoutT.getTower().isPresent());
+        board.getIslandsManager().setTowerOnIsland(tower,3);
+        IIsland islandWithTower = board.getIslandsManager().getIsland(3);
+        assertTrue(islandWithTower.getTower().isPresent());
+        IIsland islandWithoutTower = board.getIslandsManager().getIsland(4);
+        assertFalse(islandWithoutTower.getTower().isPresent());
     }
-
-
 }

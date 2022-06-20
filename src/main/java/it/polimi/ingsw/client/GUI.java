@@ -164,15 +164,16 @@ public class GUI extends Application implements View{
     public void showMNPositionUpdate() {}
 
     @Override
-    public void showMoveMNRequest(int movements) {
+    public void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes) {
         gameScene.showGamePhaseMessage("Sposta madre natura. Puoi spostarla di un massimo di " + movements + " isole in senso orario");
         moveMNManager.setMaxMovements(movements);
+        moveMNManager.setValidIslands(validIndexes);
         gameScene.addMoveMNHandlers(moveMNManager);
     }
 
     @Override
-    public void showMovePawnRequest() {
-        gameScene.showGamePhaseMessage("Sposta tre studenti dall'ingresso");
+    public void showMovePawnRequest(int numOfPawns) {
+        gameScene.showGamePhaseMessage("Sposta " + numOfPawns + " studenti dall'ingresso");
         gameScene.addMoveEntranceStudentsHandlers(moveStudentsManager);
     }
 
@@ -205,9 +206,6 @@ public class GUI extends Application implements View{
     public void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
         gameScene.showAssistantCardsPane(availableCards);
     }
-
-    @Override
-    public void showErrorMotherNaturePosition(){}
 
     @Override
     public void showNotEnoughCoins(){}

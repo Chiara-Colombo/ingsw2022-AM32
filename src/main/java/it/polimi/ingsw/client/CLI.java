@@ -242,26 +242,25 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showMoveMNRequest(int movements) {
-        System.out.println("Muovi madre natura: seleziona  un numero fino a " + movements);
+    public void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes) {
+        System.out.println("Muovi madre natura fino a " + movements + " isole: seleziona l'isola su cui spostare madre natura");
         try {
             int choice = new Scanner(System.in).nextInt();
             ClientMessage MNResponse = new MoveMNResponse(choice);
-            if(choice > movements || choice<= 0 ) {
+            if (choice <= 0 || !validIndexes.contains(choice)) {
                 System.out.println(ANSI_RED + " Hai selezionato un valore non ammesso! Ritenta! " + ANSI_RESET);
-                this.showMoveMNRequest(movements);
-            }
-            else
-            this.clientController.sendObjectMessage(MNResponse);
+                this.showMoveMNRequest(movements, validIndexes);
+            } else
+                this.clientController.sendObjectMessage(MNResponse);
 
         } catch (InputMismatchException error){
             System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
-            this.showMoveMNRequest(movements);
+            this.showMoveMNRequest(movements, validIndexes);
         }
     }
 
     @Override
-    public void showMovePawnRequest() {
+    public void showMovePawnRequest(int numOfPawns) {
 
             System.out.println("Seleziona uno studente dall'ingresso digitando il numero presente sopra la pedina ! ");
             try {
@@ -282,11 +281,11 @@ public class CLI  implements View{
                 }
                 else
                     System.out.println("Digita correttamente");
-                this.showMovePawnRequest();
+                this.showMovePawnRequest(numOfPawns);
             }
             catch (InputMismatchException e){
                 System.out.println("Devi digitare un numero!");
-                this.showMovePawnRequest();
+                this.showMovePawnRequest(numOfPawns);
             }
     }
 
@@ -350,16 +349,12 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showErrorMotherNaturePosition(){
-        System.out.println(ANSI_RED + "Hai scelto una posizione di Madre Natura non valida" + ANSI_RESET); }
-
-    @Override
     public void showNotEnoughCoins(){System.out.println(ANSI_RED + "Non hai abbastanza monete" + ANSI_RED);}
 
     @Override
     public void showErrorOnPawnPosition() {
         System.out.println(ANSI_RED + "Hai selezionato una posizione scorretta! Ritenta! " + ANSI_RESET);
-        this.showMovePawnRequest();
+        this.showMovePawnRequest(0);
     }
 
 }

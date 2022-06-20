@@ -52,7 +52,7 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(MoveMNResponse moveMNResponse) {
-        this.serverController.moveMotherNature(moveMNResponse.getMovements());
+        this.serverController.moveMotherNature(moveMNResponse.getPosition());
     }
 
     @Override

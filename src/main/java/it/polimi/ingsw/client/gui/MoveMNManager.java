@@ -8,13 +8,13 @@ import java.util.ArrayList;
 
 public class MoveMNManager {
     private int currentMNPosition, maxMovements;
-    private ArrayList<Integer> islands;
+    private ArrayList<Integer> validIslands;
     private final ClientController controller;
     private final GUI gui;
 
     public MoveMNManager(ClientController controller, GUI gui) {
         this.controller = controller;
-        this.islands = new ArrayList<>();
+        this.validIslands = new ArrayList<>();
         this.currentMNPosition = -1;
         this.maxMovements = -1;
         this.gui = gui;
@@ -24,8 +24,12 @@ public class MoveMNManager {
         this.currentMNPosition = currentMNPosition;
     }
 
-    public void setIslands(ArrayList<Integer> islands) {
-        this.islands = islands;
+    public void setValidIslands(ArrayList<Integer> validIslands) {
+        this.validIslands = validIslands;
+    }
+
+    public ArrayList<Integer> getValidIslands() {
+        return this.validIslands;
     }
 
     public void setMaxMovements(int maxMovements) {
@@ -33,15 +37,10 @@ public class MoveMNManager {
     }
 
     public void chooseIsland(int index) {
-        if (index >= 0 && this.maxMovements >= 0 && this.currentMNPosition >= 0 && this.islands.size() > 0) {
-            if (index < this.currentMNPosition) index += this.islands.size();
-            if (Math.abs(index - this.currentMNPosition) <= this.maxMovements) {
-                MoveMNResponse response = new MoveMNResponse(index - this.currentMNPosition);
-                this.controller.sendObjectMessage(response);
-                this.gui.removeEventHandlers();
-            } else {
-                System.out.println("Ko");
-            }
+        if (this.validIslands.contains(index)) {
+            MoveMNResponse response = new MoveMNResponse(index);
+            this.controller.sendObjectMessage(response);
+            this.gui.removeEventHandlers();
         }
     }
 }

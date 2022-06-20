@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.*;
 import it.polimi.ingsw.messages.clienttoserver.AssistantCardResponse;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.PawnsColors;
+import it.polimi.ingsw.model.TowersColors;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,22 +18,32 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Rotate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
+@SuppressWarnings("SuspiciousNameCombination")
 public class GameScene extends Scene {
     private final Pane BOARD_PANE, MAIN_PANE, ASSISTANT_CARDS_PANE;
     private final Label GAME_PHASE_MESSAGE, TURN_MESSAGE;
-    private final ArrayList<TileImage> ISLANDS, CLOUDS;
+    private final ArrayList<TileImage> CLOUDS;
+    private final HashMap<Integer, TileImage> ISLANDS;
     private final HashMap<String, Pane> PLAYERS_PANES;
-    private final HashMap<String, ArrayList<PawnImage>> ENTRANCE_PAWNS;
+    private final ImageView MOTHER_NATURE;
+    private final HashMap<TowersColors, ArrayList<ImageView>> TOWERS;
+    //private final ArrayList<ImageView> ASSISTANT_CARDS;
+    private final HashMap<PawnsColors, ImageView> professors;
+    private final HashMap<PawnsColors, ArrayList<ImageView>> students;
+    private final HashMap<PawnsColors, Integer> studentsIndexes;
+    private final HashMap<TowersColors, Integer> towersIndexes;
+    private final HashMap<Integer, HashMap<PawnsColors, Integer>> studentsOnIslands;
+    private final ArrayList<TileImage> entrance;
     private int currentMNPosition;
+    private boolean firstBoardUpdate, firstPlayersUpdate;
 
     public GameScene(Pane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
@@ -44,118 +55,233 @@ public class GameScene extends Scene {
         this.TURN_MESSAGE = new Label();
         this.MAIN_PANE.getChildren().add(TURN_MESSAGE);
         this.MAIN_PANE.getChildren().add(GAME_PHASE_MESSAGE);
-        this.ENTRANCE_PAWNS = new HashMap<>();
-        this.ISLANDS = new ArrayList<>();
+        this.ISLANDS = new HashMap<>();
         this.CLOUDS = new ArrayList<>();
         this.currentMNPosition = -1;
+        this.students = new HashMap<>();
+        this.studentsIndexes = new HashMap<>();
+        this.towersIndexes = new HashMap<>();
+        this.entrance = new ArrayList<>();
+        this.professors = new HashMap<>();
+        this.studentsOnIslands = new HashMap<>();
+        this.MOTHER_NATURE = new ImageView(MOTHER_NATURE_IMAGE);
+        this.TOWERS = new HashMap<>();
+        //this.ASSISTANT_CARDS = new ArrayList<>(ASSISTANT_CARDS_IMAGES.stream().map(ImageView::new).toList());
+        this.firstBoardUpdate = true;
+        this.firstPlayersUpdate = true;
     }
 
-    public void updateBoard(BoardUpdateContent boardUpdate) {
-        this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
-        this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
+    private void loadBoardImages(BoardUpdateContent boardUpdate) {
         this.MAIN_PANE.setBackground(Background.fill(Paint.valueOf("#69BAE9")));
-        this.ISLANDS.clear();
-        this.CLOUDS.clear();
         this.BOARD_PANE.setBackground(Background.fill(Paint.valueOf("#69BAE9")));
-        this.BOARD_PANE.getChildren().clear();
         this.BOARD_PANE.setMaxWidth(BOARD_PANE_WIDTH);
         this.BOARD_PANE.setMinWidth(BOARD_PANE_WIDTH);
         this.BOARD_PANE.setMaxHeight(BOARD_PANE_HEIGHT);
         this.BOARD_PANE.setMinHeight(BOARD_PANE_HEIGHT);
         this.BOARD_PANE.setLayoutX(SCHOOL_BOARD_WIDTH);
+        this.MOTHER_NATURE.setFitWidth(2 * PAWNS_RADIUS);
+        this.MOTHER_NATURE.setPreserveRatio(true);
+        for (PawnsColors professor : boardUpdate.getAvailableProfessors()) {
+            this.professors.put(professor, new ImageView(PROFESSOR_COLORS_IMAGE_ENUM_MAP.get(professor)));
+            this.students.put(professor, new ArrayList<>());
+            this.studentsIndexes.put(professor, 0);
+        }
+        for (ArrayList<IslandUpdate> groupOfIslands : boardUpdate.getIslands()) {
+            for (IslandUpdate island : groupOfIslands) {
+                ImageView islandImage = new ImageView(ISLAND_IMAGE);
+                islandImage.setFitWidth(ISLAND_DIMENSION);
+                islandImage.setFitHeight(ISLAND_DIMENSION);
+                this.ISLANDS.put(island.getIndex(), new TileImage(island.getIndex(), islandImage));
+                this.studentsOnIslands.put(island.getIndex(), new HashMap<>());
+                for (PawnsColors professor : boardUpdate.getAvailableProfessors()) {
+                    this.studentsOnIslands.get(island.getIndex()).put(professor, 0);
+                }
+                //island.getStudents().forEach(student -> this.students.get(student).add(new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student))));
+            }
+        }
+        for (int i = 0; i < boardUpdate.getClouds().size(); i++) {
+            ImageView cloudImage = new ImageView(CLOUD_IMAGE);
+            cloudImage.setFitHeight(CLOUD_DIMENSION);
+            cloudImage.setFitWidth(CLOUD_DIMENSION);
+            this.CLOUDS.add(new TileImage(i, cloudImage));
+            boardUpdate.getClouds().get(i).getStudents().forEach(student -> this.students.get(student).add(new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student))));
+        }
+        this.firstBoardUpdate = false;
+    }
+
+    private void loadPlayerImages(ArrayList<PlayerUpdate> playersUpdate) {
+        for (int i = 0; i < playersUpdate.size(); i++) {
+            PlayerUpdate update = playersUpdate.get(i);
+            this.TOWERS.put(update.getTowersColor(), new ArrayList<>());
+            this.towersIndexes.put(update.getTowersColor(), 0);
+            for (int j = 0; j < update.getTowers(); j++) {
+                ImageView towerImage = new ImageView(TOWERS_COLORS_IMAGE_ENUM_MAP.get(update.getTowersColor()));
+                towerImage.setFitHeight(2 * PAWNS_RADIUS);
+                towerImage.setFitWidth(2 * PAWNS_RADIUS);
+                this.TOWERS.get(update.getTowersColor()).add(towerImage);
+            }
+            Pane schoolBoard = new Pane();
+            if (i < 2) {
+                schoolBoard.setMaxWidth(SCHOOL_BOARD_WIDTH);
+                schoolBoard.setMinWidth(SCHOOL_BOARD_WIDTH);
+                schoolBoard.setMaxHeight(SCHOOL_BOARD_HEIGHT);
+                schoolBoard.setMinHeight(SCHOOL_BOARD_HEIGHT);
+                schoolBoard.setLayoutX(GUI_WIDTH - SCHOOL_BOARD_WIDTH);
+                schoolBoard.setBackground(
+                        new Background(
+                                new BackgroundImage(
+                                        SCHOOL_BOARD_ROTATED,
+                                        BackgroundRepeat.NO_REPEAT,
+                                        BackgroundRepeat.NO_REPEAT,
+                                        BackgroundPosition.CENTER,
+                                        new BackgroundSize(SCHOOL_BOARD_WIDTH, SCHOOL_BOARD_HEIGHT, false, false, true, true)
+                                )
+                        )
+                );
+                if (i < 1) {
+                    schoolBoard.setLayoutX(0);
+                }
+                schoolBoard.setLayoutY(0);
+            } else {
+                schoolBoard.setMaxWidth(SCHOOL_BOARD_HEIGHT);
+                schoolBoard.setMinWidth(SCHOOL_BOARD_HEIGHT);
+                schoolBoard.setMaxHeight(SCHOOL_BOARD_WIDTH);
+                schoolBoard.setMinHeight(SCHOOL_BOARD_WIDTH);
+                schoolBoard.setLayoutX((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+                schoolBoard.setLayoutY(GUI_HEIGHT - SCHOOL_BOARD_WIDTH);
+                schoolBoard.setBackground(
+                        new Background(
+                                new BackgroundImage(
+                                        SCHOOL_BOARD,
+                                        BackgroundRepeat.NO_REPEAT,
+                                        BackgroundRepeat.NO_REPEAT,
+                                        BackgroundPosition.CENTER,
+                                        new BackgroundSize(SCHOOL_BOARD_HEIGHT, SCHOOL_BOARD_WIDTH, false, false, true, true)
+                                )
+                        )
+                );
+            }
+            this.PLAYERS_PANES.put(playersUpdate.get(i).getNickname(), schoolBoard);
+        }
+        this.firstPlayersUpdate = false;
+    }
+
+    public void updateBoard(BoardUpdateContent boardUpdate) {
+        this.towersIndexes.forEach((key, value) -> this.towersIndexes.put(key, 0));
+        this.studentsIndexes.forEach((key, value) -> this.studentsIndexes.put(key, 0));
+        if (this.firstBoardUpdate)
+            loadBoardImages(boardUpdate);
+        this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
+        this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
+        this.MAIN_PANE.getChildren().removeAll(this.PLAYERS_PANES.values());
+        this.BOARD_PANE.getChildren().clear();
         ArrayList<ArrayList<IslandUpdate>> islands = boardUpdate.getIslands();
         for (ArrayList<IslandUpdate> groupOfIslandsUpdate : islands) {
-            double sumIndex = 0.0;
-            boolean last = false, first = false;
-            int firstHalf = 0;
-            for (IslandUpdate islandUpdate : groupOfIslandsUpdate) {
-                sumIndex += islandUpdate.getIndex();
-                if (islandUpdate.getIndex() < 6) firstHalf++;
-                if (islandUpdate.getIndex() == 11) last = true;
-                if (islandUpdate.getIndex() == 0) first = true;
-            }
-            if (last && first) sumIndex += 12 * firstHalf;
-            double theta = (Math.PI / 6) * ((sumIndex / (double) groupOfIslandsUpdate.size()) % 12.0);
+            double centerIndex = (groupOfIslandsUpdate.get((int) Math.floor(groupOfIslandsUpdate.size() / 2.0)).getIndex() - (.5 * (1 - groupOfIslandsUpdate.size() % 2))) % 12.0;
+            double theta = (Math.PI / 6) * centerIndex;
+            double centerX = BOARD_PANE_WIDTH / 2.0 + ISLANDS_ELLIPSE_X_AXIS * Math.sin(theta) - ISLAND_DIMENSION / 2.0,
+                    centerY = BOARD_PANE_HEIGHT / 2.0 - ISLANDS_ELLIPSE_Y_AXIS * Math.cos(theta) - ISLAND_DIMENSION / 2.0;
+            if ((centerIndex <= 1 || centerIndex == 11) && groupOfIslandsUpdate.size() > 2) centerY += ISLAND_DIMENSION / 2.0;
             for (int j = 0; j < groupOfIslandsUpdate.size(); j++) {
                 IslandUpdate island = groupOfIslandsUpdate.get(j);
                 if (island.getIndex() == boardUpdate.getMotherNature())
-                    this.currentMNPosition = island.getGroupOfIslands();
-                double islandTheta = theta + (Math.PI / 15) * (j - (groupOfIslandsUpdate.size() - 1) / 2.0);
-                if (islandTheta % (Math.PI / 2) > 0.1) {
-                    if (Math.signum(Math.cos(islandTheta) * Math.sin(islandTheta)) < 0)
-                        islandTheta += Math.PI / 40;
+                    this.currentMNPosition = groupOfIslandsUpdate.get((int)Math.floor(groupOfIslandsUpdate.size() / 2.0)).getIndex();
+                if (theta % (Math.PI / 2) > 0.1) {
+                    if (Math.signum(Math.cos(theta) * Math.sin(theta)) < 0)
+                        theta += Math.PI / 40;
                     else
-                        islandTheta -= Math.PI / 40;
+                        theta -= Math.PI / 40;
                 }
-                double x = BOARD_PANE_WIDTH / 2 + ISLANDS_ELLIPSE_X_AXIS * Math.sin(islandTheta) - ISLAND_DIMENSION / 2,
-                        y = BOARD_PANE_HEIGHT / 2 - ISLANDS_ELLIPSE_Y_AXIS * Math.cos(islandTheta) - ISLAND_DIMENSION / 2;
-                TileImage islandShape = new TileImage(island.getIndex(), ISLAND_IMAGE, x, y, ISLAND_DIMENSION, ISLAND_DIMENSION);
-                this.ISLANDS.add(islandShape);
-                this.BOARD_PANE.getChildren().add(islandShape);
+                double x = centerX + GROUP_OF_ISLANDS_OFSSETS[groupOfIslandsUpdate.size() - 1].get(j).get('x'),
+                        y = centerY + GROUP_OF_ISLANDS_OFSSETS[groupOfIslandsUpdate.size() - 1].get(j).get('y');
+                this.ISLANDS.get(island.getIndex()).getImageView().setLayoutX(x);
+                this.ISLANDS.get(island.getIndex()).getImageView().setLayoutY(y);
+                this.BOARD_PANE.getChildren().add(this.ISLANDS.get(island.getIndex()).getImageView());
+                HashMap<PawnsColors, Integer> studentsOnIsland = this.studentsOnIslands.get(island.getIndex());
+                studentsOnIsland.forEach((key, value) -> studentsOnIsland.put(key, 0));
                 ArrayList<PawnsColors> students = island.getStudents();
                 for (PawnsColors student : students) {
-                    ImageView studentImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student));
-                    studentImage.setLayoutY(y + (ISLAND_DIMENSION / 3));
-                    studentImage.setLayoutX(x + (ISLAND_DIMENSION / 3));
-                    studentImage.setFitHeight(2 * ISLAND_DIMENSION / 6);
-                    studentImage.setFitWidth(2 * ISLAND_DIMENSION / 6);
-                    this.BOARD_PANE.getChildren().add(studentImage);
+                    studentsOnIsland.put(student, studentsOnIsland.get(student) + 1);
                 }
+                final double PAWN_DIST_RADIUS = ISLAND_DIMENSION / 3.0;
+                studentsOnIsland.forEach((color, quantity) -> {
+                    if (quantity > 0) {
+                        ImageView pawnImage;
+                        if (this.studentsIndexes.get(color) >= this.students.get(color).size()) {
+                            pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(color));
+                            this.students.get(color).add(pawnImage);
+                        } else {
+                            pawnImage = this.students.get(color).get(this.studentsIndexes.get(color));
+                        }
+                        double pawnTheta = PAWNS_COLORS_INTEGER_ENUM_MAP.get(color) * (2 * Math.PI) / 5 + Math.PI / 2;
+                        pawnImage.setLayoutX(x + ISLAND_DIMENSION / 2.0 + PAWN_DIST_RADIUS * Math.cos(pawnTheta) - PAWNS_RADIUS);
+                        pawnImage.setLayoutY(y + ISLAND_DIMENSION / 2.0 - PAWN_DIST_RADIUS * Math.sin(pawnTheta) - PAWNS_RADIUS);
+                        pawnImage.setFitHeight(2 * PAWNS_RADIUS);
+                        pawnImage.setFitWidth(2 * PAWNS_RADIUS);
+                        this.BOARD_PANE.getChildren().add(this.students.get(color).get(this.studentsIndexes.get(color)));
+                        this.studentsIndexes.put(color, this.studentsIndexes.get(color) + 1);
+                        if (quantity > 1) {
+                            Label qtyLabel = new Label(quantity + "");
+                            qtyLabel.setLayoutX(x + ISLAND_DIMENSION / 2.0 + PAWN_DIST_RADIUS * Math.cos(pawnTheta) + PAWNS_RADIUS);
+                            qtyLabel.setLayoutY(y + ISLAND_DIMENSION / 2.0 - PAWN_DIST_RADIUS * Math.sin(pawnTheta));
+                            qtyLabel.setFont(Font.font("Berlin Sans FB", FontWeight.BOLD, 16));
+                            this.BOARD_PANE.getChildren().add(qtyLabel);
+                        }
+                    }
+                });
                 if (boardUpdate.getMotherNature() == island.getIndex()) {
-                    Circle motherNatureShape = new Circle(
-                            x + (ISLAND_DIMENSION / 2),
-                            y,
-                            PAWNS_RADIUS,
-                            Paint.valueOf("#6e3d0c")
-                    );
-                    this.BOARD_PANE.getChildren().add(motherNatureShape);
+                    this.MOTHER_NATURE.setLayoutX(x + (ISLAND_DIMENSION / 5.0));
+                    this.MOTHER_NATURE.setLayoutY(y);
+                    this.BOARD_PANE.getChildren().add(this.MOTHER_NATURE);
                 }
                 if (island.hasTower()) {
-                    Circle towerShape = new Circle(
-                            x + ISLAND_DIMENSION,
-                            y,
-                            PAWNS_RADIUS,
-                            TOWERS_COLORS_PAINT_ENUM_MAP.get(island.getTowerColor())
-                    );
-                    this.BOARD_PANE.getChildren().add(towerShape);
+                    ImageView towerImage = this.TOWERS.get(island.getTowerColor()).get(this.towersIndexes.get(island.getTowerColor()));
+                    towerImage.setLayoutY(y + ISLAND_DIMENSION / 2.0 - PAWNS_RADIUS);
+                    towerImage.setLayoutX(x + ISLAND_DIMENSION / 2.0 - PAWNS_RADIUS);
+                    this.BOARD_PANE.getChildren().add(towerImage);
+                    this.towersIndexes.put(island.getTowerColor(), this.towersIndexes.get(island.getTowerColor()) + 1);
                 }
             }
         }
         ArrayList<CloudUpdate> cloudUpdates = boardUpdate.getClouds();
-        final double CLOUDS_MARGIN = 20.0, CLOUDS_DIST_RADIUS = Math.sqrt(2) * (CLOUDS_MARGIN + CLOUD_DIMENSION) / 2;
+        final double CLOUDS_MARGIN = 15.0, CLOUDS_DIST_RADIUS = Math.sqrt(2) * (CLOUDS_MARGIN + CLOUD_DIMENSION) / 2;
         for (int i = 0; i < cloudUpdates.size(); i++) {
             double theta = (i * Math.PI / 2) + (Math.PI / 4);
             double x = CLOUD_DIMENSION + 3 * CLOUDS_MARGIN / 2 + CLOUDS_DIST_RADIUS * Math.cos(theta),
                     y = CLOUD_DIMENSION + 3 * CLOUDS_MARGIN / 2 - CLOUDS_DIST_RADIUS * Math.sin(theta);
-            TileImage cloudShape = new TileImage(
-                    i,
-                    CLOUD_IMAGE,
-                    x - CLOUD_DIMENSION / 2,
-                    y - CLOUD_DIMENSION / 2,
-                    CLOUD_DIMENSION,
-                    CLOUD_DIMENSION);
-            this.CLOUDS.add(cloudShape);
-            this.BOARD_PANE.getChildren().add(cloudShape);
+            this.CLOUDS.get(i).getImageView().setLayoutX(x - CLOUD_DIMENSION / 2.0);
+            this.CLOUDS.get(i).getImageView().setLayoutY(y - CLOUD_DIMENSION / 2.0);
+            this.BOARD_PANE.getChildren().add(this.CLOUDS.get(i).getImageView());
             ArrayList<PawnsColors> students = cloudUpdates.get(i).getStudents();
-            for (PawnsColors student : students) {
-                ImageView studentImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student));
-                studentImage.setLayoutY(y - (CLOUD_DIMENSION / 6));
-                studentImage.setLayoutX(x - (CLOUD_DIMENSION / 6));
-                studentImage.setFitWidth(2 * CLOUD_DIMENSION / 6);
-                studentImage.setFitHeight(2 * CLOUD_DIMENSION / 6);
-                this.BOARD_PANE.getChildren().add(studentImage);
+            final double STUDENTS_DIST_RADIUS = CLOUD_DIMENSION / (Math.sqrt(2.0) * 3);
+            for (int j = 0; j < students.size(); j++) {
+                PawnsColors student = students.get(j);
+                double studentTheta = (j * Math.PI / 2) + (Math.PI / 4);
+                ImageView pawnImage;
+                if (this.studentsIndexes.get(student) >= this.students.get(student).size()) {
+                    pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student));
+                    this.students.get(student).add(pawnImage);
+                } else {
+                    pawnImage = this.students.get(student).get(this.studentsIndexes.get(student));
+                }
+                pawnImage.setFitHeight(1.6 * PAWNS_RADIUS);
+                pawnImage.setFitWidth(1.6 * PAWNS_RADIUS);
+                pawnImage.setLayoutX(x + Math.cos(studentTheta) * STUDENTS_DIST_RADIUS - .8 * PAWNS_RADIUS);
+                pawnImage.setLayoutY(y - Math.sin(studentTheta) * STUDENTS_DIST_RADIUS - .8 * PAWNS_RADIUS);
+                this.BOARD_PANE.getChildren().add(this.students.get(student).get(this.studentsIndexes.get(student)));
+                this.studentsIndexes.put(student, this.studentsIndexes.get(student) + 1);
             }
         }
         ArrayList<PawnsColors> availableProfessors = boardUpdate.getAvailableProfessors();
         final int professorsMargin = 15;
         for (int i = 0; i < availableProfessors.size(); i++) {
             PawnsColors professor = availableProfessors.get(i);
-            double x = BOARD_PANE_WIDTH / 2 + (i - (availableProfessors.size() - 1) / 2.0) * (2 * PAWNS_RADIUS + professorsMargin),
-                    y = BOARD_PANE_HEIGHT / 2;
-            ImageView professorImage = new ImageView(PROFESSOR_COLORS_IMAGE_ENUM_MAP.get(professor));
-            professorImage.setLayoutY(y - PAWNS_RADIUS / 2);
-            professorImage.setLayoutX(x - PAWNS_RADIUS / 2);
-            professorImage.setFitWidth(2 * PAWNS_RADIUS);
+            double x = BOARD_PANE_WIDTH / 2.0 + (i - (availableProfessors.size() - 1) / 2.0) * (2 * PAWNS_RADIUS + professorsMargin),
+                    y = BOARD_PANE_HEIGHT / 2.0;
+            ImageView professorImage = this.professors.get(professor);
+            professorImage.setLayoutY(y - PAWNS_RADIUS / 2.0);
+            professorImage.setLayoutX(x - PAWNS_RADIUS / 2.0);
+            professorImage.setFitWidth(3 * PAWNS_RADIUS);
             professorImage.setPreserveRatio(true);
             this.BOARD_PANE.getChildren().add(professorImage);
         }
@@ -167,114 +293,93 @@ public class GameScene extends Scene {
     }
 
     public void showPlayers(ArrayList<PlayerUpdate> playersUpdate) {
-        AtomicInteger player = new AtomicInteger(0);
-        playersUpdate.forEach(playerUpdate -> {
-            Pane schoolBoard = new Pane();
-            ImageView schoolBoardImage = new ImageView(SCHOOL_BOARD);
-            schoolBoardImage.setFitWidth(SCHOOL_BOARD_HEIGHT);
-            schoolBoardImage.setFitHeight(SCHOOL_BOARD_WIDTH);
-            if (player.get() < 2) {
-                schoolBoardImage.getTransforms().add(new Rotate(90, 100, 100));
-                schoolBoardImage.setLayoutX(0);
-                schoolBoardImage.setLayoutY(0);
-                schoolBoard.setMaxWidth(SCHOOL_BOARD_WIDTH);
-                schoolBoard.setMinWidth(SCHOOL_BOARD_WIDTH);
-                schoolBoard.setMaxHeight(SCHOOL_BOARD_HEIGHT);
-                schoolBoard.setMinHeight(SCHOOL_BOARD_HEIGHT);
-                schoolBoard.setLayoutX(GUI_WIDTH - SCHOOL_BOARD_WIDTH);
-                if (player.get() < 1) {
-                    schoolBoard.setLayoutX(0);
-                }
-                schoolBoard.setLayoutY(0);
-            } else {
-                schoolBoard.setMaxWidth(SCHOOL_BOARD_HEIGHT);
-                schoolBoard.setMinWidth(SCHOOL_BOARD_HEIGHT);
-                schoolBoard.setMaxHeight(SCHOOL_BOARD_WIDTH);
-                schoolBoard.setMinHeight(SCHOOL_BOARD_WIDTH);
-                schoolBoard.setLayoutX((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
-                schoolBoard.setLayoutY(GUI_HEIGHT - SCHOOL_BOARD_WIDTH);
-            }
-            schoolBoard.getChildren().add(schoolBoardImage);
-            if (!this.ENTRANCE_PAWNS.containsKey(playerUpdate.getNickname()))
-                this.ENTRANCE_PAWNS.put(playerUpdate.getNickname(), new ArrayList<>());
-            else
-                this.ENTRANCE_PAWNS.get(playerUpdate.getNickname()).clear();
-            this.PLAYERS_PANES.put(playerUpdate.getNickname(), schoolBoard);
-            for (int i = 0; i<playerUpdate.getEntranceStudents().size(); i++) {
-                double x, y = (100 / 3) * (1 + (i + 1) % 2);
-                if (player.get() < 2) {
-                    x = (SCHOOL_BOARD_WIDTH / 6) * Math.floor((i + 2) / 2);
-                    y -= 8;
-                } else {
+        if (this.firstPlayersUpdate)
+            loadPlayerImages(playersUpdate);
+        for (int player = 0; player < playersUpdate.size(); player++) {
+            PlayerUpdate playerUpdate = playersUpdate.get(player);
+            Pane schoolBoard = this.PLAYERS_PANES.get(playerUpdate.getNickname());
+            schoolBoard.getChildren().clear();
+            if (GUI.getController().getUsername().equals(playerUpdate.getNickname()))
+                this.entrance.clear();
+            for (int i = 0; i < playerUpdate.getEntranceStudents().size(); i++) {
+                double x = ENTRANCE_X_MARGIN + Math.floor(i / 2.0) * PAWNS_RADIUS * 2 + Math.floor(i / 2.0) * ENTRANCE_X_SPACE,
+                        y = (27.0 - PAWNS_RADIUS) + (1 - (i % 2)) * 31.0;
+                if (player >= 2) {
+                    double tmp_x = x;
                     x = y;
-                    y = (SCHOOL_BOARD_WIDTH / 6) * Math.floor(6 - (i + 2) / 2);
+                    y = SCHOOL_BOARD_WIDTH - tmp_x;
                 }
-                this.ENTRANCE_PAWNS.get(playerUpdate.getNickname()).add(
-                        new PawnImage(
-                                i,
-                                PAWNS_COLORS_IMAGE_ENUM_MAP.get(playerUpdate.getEntranceStudents().get(i)),
-                                x - PAWNS_RADIUS / 2,
-                                y - PAWNS_RADIUS / 2,
-                                2 * PAWNS_RADIUS,
-                                2 * PAWNS_RADIUS
-                        )
-                );
+                PawnsColors color = playerUpdate.getEntranceStudents().get(i);
+                ImageView pawnImage;
+                if (this.studentsIndexes.get(color) >= this.students.get(color).size()) {
+                    pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(color));
+                    this.students.get(color).add(pawnImage);
+                } else {
+                    pawnImage = this.students.get(color).get(this.studentsIndexes.get(color));
+                }
+                pawnImage.setLayoutY(y);
+                pawnImage.setLayoutX(x);
+                pawnImage.setFitWidth(2 * PAWNS_RADIUS);
+                pawnImage.setFitHeight(2 * PAWNS_RADIUS);
+                if (GUI.getController().getUsername().equals(playerUpdate.getNickname()))
+                    this.entrance.add(new TileImage(i, pawnImage));
+                schoolBoard.getChildren().add(pawnImage);
+                this.studentsIndexes.put(color, this.studentsIndexes.get(color) + 1);
             }
-            schoolBoard.getChildren().addAll(this.ENTRANCE_PAWNS.get(playerUpdate.getNickname()));
-            final int diningRoomMarginX = (SCHOOL_BOARD_WIDTH - 5 * PAWNS_RADIUS) / 6,
-                    diningRoomMarginY = (SCHOOL_BOARD_HEIGHT - 2 * 100 - 50 - 10 * PAWNS_RADIUS) / 11;
+            int finalPlayer = player;
             playerUpdate.getDiningRoom().forEach((color, quantity) -> {
                 for (int i = 0; i<quantity; i++) {
-                    double x, y = (diningRoomMarginY + 2 * PAWNS_RADIUS) * i + diningRoomMarginY - PAWNS_RADIUS;
-                    if (player.get() < 2) {
-                        x = (diningRoomMarginX + PAWNS_RADIUS) * PAWNS_COLORS_INTEGER_ENUM_MAP.get(color) + diningRoomMarginX;
-                        y += 100;
-                    } else {
-                        x = y + 100;
-                        y = (diningRoomMarginX + PAWNS_RADIUS) * (4 - PAWNS_COLORS_INTEGER_ENUM_MAP.get(color)) + diningRoomMarginX;
+                    double x = (ENTRANCE_X_SPACE + 2 * PAWNS_RADIUS) * PAWNS_COLORS_INTEGER_ENUM_MAP.get(color) + ENTRANCE_X_MARGIN,
+                            y = 99.0 - PAWNS_RADIUS / 2.0 + i * (3.7 + 2 * PAWNS_RADIUS);
+                    if (finalPlayer >= 2) {
+                        double tmp_x = x;
+                        x = y;
+                        y = SCHOOL_BOARD_WIDTH - tmp_x;
                     }
-                    ImageView pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(color));
-                    pawnImage.setLayoutX(x - PAWNS_RADIUS / 2);
-                    pawnImage.setLayoutY(y - PAWNS_RADIUS / 2);
-                    pawnImage.setFitHeight(2 * PAWNS_RADIUS);
+                    ImageView pawnImage;
+                    if (this.studentsIndexes.get(color) >= this.students.get(color).size()) {
+                        pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(color));
+                        this.students.get(color).add(pawnImage);
+                    } else {
+                        pawnImage = this.students.get(color).get(this.studentsIndexes.get(color));
+                    }
                     pawnImage.setFitWidth(2 * PAWNS_RADIUS);
+                    pawnImage.setFitHeight(2 * PAWNS_RADIUS);
+                    pawnImage.setLayoutY(y);
+                    pawnImage.setLayoutX(x);
                     schoolBoard.getChildren().add(pawnImage);
+                    this.studentsIndexes.put(color, this.studentsIndexes.get(color) + 1);
                 }
             });
             playerUpdate.getProfessors().forEach(professor -> {
-                double x,
-                        y = SCHOOL_BOARD_HEIGHT - 125;
-                if (player.get() < 2) {
-                    x = (diningRoomMarginX + PAWNS_RADIUS) * PAWNS_COLORS_INTEGER_ENUM_MAP.get(professor) + diningRoomMarginX;
-                } else {
+                double x = (ENTRANCE_X_SPACE + 2 * PAWNS_RADIUS) * PAWNS_COLORS_INTEGER_ENUM_MAP.get(professor) + 30.0 - PAWNS_RADIUS / 2.0,
+                        y = SCHOOL_BOARD_HEIGHT - 144.5;
+                if (finalPlayer >= 2) {
+                    double tmp_x = x;
                     x = y;
-                    y = (diningRoomMarginX + PAWNS_RADIUS) * (4 - PAWNS_COLORS_INTEGER_ENUM_MAP.get(professor)) + diningRoomMarginX;
+                    y = SCHOOL_BOARD_WIDTH - tmp_x - 5.0;
                 }
-                ImageView professorImage = new ImageView(PROFESSOR_COLORS_IMAGE_ENUM_MAP.get(professor));
-                professorImage.setFitWidth(2 * PAWNS_RADIUS);
+                ImageView professorImage = this.professors.get(professor);
+                professorImage.setFitWidth(2.4 * PAWNS_RADIUS);
                 professorImage.setPreserveRatio(true);
-                professorImage.setLayoutY(y - PAWNS_RADIUS / 2);
-                professorImage.setLayoutX(x - PAWNS_RADIUS / 2);
+                professorImage.setLayoutY(y);
+                professorImage.setLayoutX(x);
                 schoolBoard.getChildren().add(professorImage);
             });
             for (int i = 0; i<playerUpdate.getTowers(); i++) {
-                double x, y = SCHOOL_BOARD_HEIGHT - 100 + (100 / 3) * (1 + i % 2);
-                if (player.get() < 2) {
-                    x = (200 / 5) * Math.floor((i + 2) / 2);
-                } else {
+                double x = TOWERS_X_MARGIN + Math.floor(i / 2.0) * (9.0 + 2 * PAWNS_RADIUS), y = SCHOOL_BOARD_HEIGHT - 115.0 + (100 / 3.0) * (1 + i % 2);
+                if (finalPlayer >= 2) {
+                    double tmp_x = x;
                     x = y;
-                    y = (200 / 5) * Math.floor(5 - (i + 2) / 2);
+                    y = SCHOOL_BOARD_WIDTH - tmp_x;
                 }
-                Circle tower = new Circle(
-                        x,
-                        y,
-                        PAWNS_RADIUS,
-                        TOWERS_COLORS_PAINT_ENUM_MAP.get(playerUpdate.getTowersColor())
-                );
-                schoolBoard.getChildren().add(tower);
+                ImageView towerImage = this.TOWERS.get(playerUpdate.getTowersColor()).get(this.towersIndexes.get(playerUpdate.getTowersColor()));
+                towerImage.setLayoutY(y);
+                towerImage.setLayoutX(x);
+                schoolBoard.getChildren().add(towerImage);
+                this.towersIndexes.put(playerUpdate.getTowersColor(), this.towersIndexes.get(playerUpdate.getTowersColor()) + 1);
             }
-            player.getAndIncrement();
-        });
+        }
         this.MAIN_PANE.getChildren().addAll(this.PLAYERS_PANES.values());
     }
 
@@ -291,9 +396,9 @@ public class GameScene extends Scene {
     public void showTurnMessage(String message) {
         TURN_MESSAGE.setText(message);
         TURN_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
-        TURN_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
-        TURN_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
-        TURN_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
+        TURN_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        TURN_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        TURN_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
         TURN_MESSAGE.setAlignment(Pos.CENTER);
         TURN_MESSAGE.setTextAlignment(TextAlignment.CENTER);
         TURN_MESSAGE.setLayoutY(GUI_HEIGHT - 150);
@@ -304,9 +409,9 @@ public class GameScene extends Scene {
         GAME_PHASE_MESSAGE.setWrapText(true);
         GAME_PHASE_MESSAGE.setText(message);
         GAME_PHASE_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
-        GAME_PHASE_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
-        GAME_PHASE_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
-        GAME_PHASE_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2);
+        GAME_PHASE_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        GAME_PHASE_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        GAME_PHASE_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
         GAME_PHASE_MESSAGE.setAlignment(Pos.CENTER);
         GAME_PHASE_MESSAGE.setTextAlignment(TextAlignment.CENTER);
         GAME_PHASE_MESSAGE.setLayoutY(GUI_HEIGHT - 125);
@@ -314,7 +419,6 @@ public class GameScene extends Scene {
     }
 
     public void showAssistantCardsPane(ArrayList<AssistantCard> availableCards) {
-        //this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
         this.ASSISTANT_CARDS_PANE.setBackground(Background.fill(new Color(0.05, 0.05, 0.05, 0.8)));
         this.ASSISTANT_CARDS_PANE.getChildren().clear();
         this.ASSISTANT_CARDS_PANE.setMaxWidth(BOARD_PANE_WIDTH);
@@ -324,7 +428,7 @@ public class GameScene extends Scene {
         this.ASSISTANT_CARDS_PANE.setLayoutX(SCHOOL_BOARD_WIDTH);
         for (int i = 0; i<availableCards.size(); i++) {
             double x = CARDS_MARGIN_X * (i % Math.ceil(availableCards.size() / 2.0) + 1) + (i % Math.ceil(availableCards.size() / 2.0)) * CARD_WIDTH,
-                    y = CARDS_MARGIN_Y * (Math.floor((2 * i) / availableCards.size()) + 1) + Math.floor((2 * i) / availableCards.size()) * CARD_HEIGHT;
+                    y = CARDS_MARGIN_Y * (Math.floor((2.0 * i) / availableCards.size()) + 1) + Math.floor((2.0 * i) / availableCards.size()) * CARD_HEIGHT;
             ImageView cardImage = new ImageView(ASSISTANT_CARDS_IMAGES.get(availableCards.get(i).getValue() - 1));
             cardImage.setLayoutX(x);
             cardImage.setLayoutY(y);
@@ -343,48 +447,49 @@ public class GameScene extends Scene {
     }
 
     public void addMoveEntranceStudentsHandlers(MoveStudentsManager manager) {
-        this.ENTRANCE_PAWNS.get(GUI.getController().getUsername()).forEach(circle -> {
-            circle.setCursor(Cursor.HAND);
-            circle.setOnMouseClicked(new ActionPhaseEntranceHandler(circle, manager));
+        this.entrance.forEach(pawnImage -> {
+            pawnImage.getImageView().setCursor(Cursor.HAND);
+            pawnImage.getImageView().setOnMouseClicked(new ActionPhaseEntranceHandler(pawnImage, manager));
         });
         this.PLAYERS_PANES.get(GUI.getController().getUsername()).setCursor(Cursor.HAND);
         this.PLAYERS_PANES.get(GUI.getController().getUsername()).setOnMouseClicked(new DiningRoomHandler(manager));
-        this.ISLANDS.forEach(island -> {
-            island.setCursor(Cursor.HAND);
-            island.setOnMouseClicked(new ActionPhaseIslandHandler(island, manager));
+        this.ISLANDS.forEach((index, island) -> {
+            island.getImageView().setCursor(Cursor.HAND);
+            island.getImageView().setOnMouseClicked(new ActionPhaseIslandHandler(island, manager));
         });
     }
 
     public void addMoveMNHandlers(MoveMNManager manager) {
         manager.setCurrentMNPosition(this.currentMNPosition);
-        manager.setIslands(new ArrayList<>(this.ISLANDS.stream().map(TileImage::getIndex).toList()));
-        this.ISLANDS.forEach(island -> {
-            island.setCursor(Cursor.HAND);
-            island.setOnMouseClicked(new MoveMNIslandHandler(island, manager));
+        this.ISLANDS.forEach((index, island) -> {
+            if (manager.getValidIslands().contains(index)) {
+                island.getImageView().setCursor(Cursor.HAND);
+                island.getImageView().setOnMouseClicked(new MoveMNIslandHandler(island, manager));
+            }
         });
     }
 
     public void addChooseCloudHandler(ChooseCloudManager manager) {
         this.CLOUDS.forEach(cloud -> {
-            cloud.setCursor(Cursor.HAND);
-            cloud.setOnMouseClicked(new ChooseCloudHandler(cloud, manager));
+            cloud.getImageView().setCursor(Cursor.HAND);
+            cloud.getImageView().setOnMouseClicked(new ChooseCloudHandler(cloud, manager));
         });
     }
 
     public void removeHandlers() {
-        this.ENTRANCE_PAWNS.get(GUI.getController().getUsername()).forEach(circle -> {
-            circle.setCursor(Cursor.DEFAULT);
-            circle.setOnMouseClicked(null);
+        this.entrance.forEach(pawnImage -> {
+            pawnImage.getImageView().setCursor(Cursor.DEFAULT);
+            pawnImage.getImageView().setOnMouseClicked(null);
         });
         this.PLAYERS_PANES.get(GUI.getController().getUsername()).setOnMouseClicked(null);
         this.PLAYERS_PANES.get(GUI.getController().getUsername()).setCursor(Cursor.DEFAULT);
-        this.ISLANDS.forEach(island -> {
-            island.setCursor(Cursor.DEFAULT);
-            island.setOnMouseClicked(null);
+        this.ISLANDS.forEach((index, island) -> {
+            island.getImageView().setCursor(Cursor.DEFAULT);
+            island.getImageView().setOnMouseClicked(null);
         });
         this.CLOUDS.forEach(cloud -> {
-            cloud.setCursor(Cursor.DEFAULT);
-            cloud.setOnMouseClicked(null);
+            cloud.getImageView().setCursor(Cursor.DEFAULT);
+            cloud.getImageView().setOnMouseClicked(null);
         });
     }
 }

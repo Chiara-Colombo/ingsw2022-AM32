@@ -13,18 +13,16 @@ public class Island implements IIsland, INoEntry {
 
     private final int index;
     private Optional<Tower> tower;
-    private int groupOfIslands;
     private boolean noEntry;
     private final ArrayList<Pawn> students;
 
     /**
      * Constructor Of Island Object
      */
-    public Island(int groupOfIslands, int index){
+    public Island(int index){
         this.index = index;
         this.students = new ArrayList<>();
         this.noEntry = false;
-        this.groupOfIslands = groupOfIslands;
         this.tower = Optional.empty();
     }
 
@@ -35,14 +33,6 @@ public class Island implements IIsland, INoEntry {
      */
     void setTower(Tower tower){
         this.tower = Optional.of(tower);
-    }
-
-    /**
-     *
-     * @param groupOfIslands
-     */
-    void setGroupOfIslands(int groupOfIslands){
-       this.groupOfIslands = groupOfIslands;
     }
 
     /**
@@ -59,15 +49,6 @@ public class Island implements IIsland, INoEntry {
     @Override
     public Optional<Tower> getTower() {
         return this.tower;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public int getGroupOfIslands() {
-        return this.groupOfIslands;
     }
 
     @Override

@@ -24,15 +24,14 @@ public interface View {
     void showCloudRequest(ArrayList<Integer> validClouds);
     void showCoinsUpdate();
     void showMNPositionUpdate();
-    void showMoveMNRequest(int movements);
-    void showMovePawnRequest();
+    void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes);
+    void showMovePawnRequest(int numOfPawns);
     void showPlanningPhaseTurn(String nickname);
     void showSchoolBoardUpdate();
     void showSelectPawnRequest();
     void showYourActionPhaseTurnEnds();
     void showYourPlanningPhaseTurnEnds();
     void showAssistantCardRequest(ArrayList<AssistantCard> availableCards);
-    void showErrorMotherNaturePosition();
     void showNotEnoughCoins();
     void showErrorOnPawnPosition();
 }
