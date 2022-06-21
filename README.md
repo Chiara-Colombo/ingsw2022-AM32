@@ -9,7 +9,7 @@
 
 | Functionality    |                       State                        |
 |:-----------------|:--------------------------------------------------:|
-| Basic rules      | 🟡 |
+| Basic rules      | 🟢 |
 | Complete rules   | 🟡 |
 | Socket           | 🟡 |
 | GUI              | 🟡 |
