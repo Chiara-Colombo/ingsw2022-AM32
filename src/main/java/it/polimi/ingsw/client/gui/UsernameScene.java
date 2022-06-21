@@ -19,24 +19,21 @@ import javafx.scene.text.Font;
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class UsernameScene extends Scene {
-    private UsernameScene(Parent root) {
-        super(root, GUI_WIDTH, GUI_HEIGHT);
+    private final AnchorPane MAIN_PANE;
+    public UsernameScene(AnchorPane MAIN_PANE) {
+        super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
+        this.MAIN_PANE = MAIN_PANE;
+        this.initialize();
     }
 
-    public static UsernameScene getInstance(){
-        AnchorPane root = new AnchorPane();
-        initialize(root);
-        return new UsernameScene(root);
-    }
-
-    private static void initialize(AnchorPane anchorPane) {
+    private void initialize() {
         Button continueBtn = new Button("Continua");
         continueBtn.setFont(Font.font("Berlin Sans FB", 20));
         continueBtn.setCursor(Cursor.HAND);
         continueBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
         AnchorPane.setBottomAnchor(continueBtn, 55.0);
         AnchorPane.setRightAnchor(continueBtn, 80.0);
-        anchorPane.setBackground(Background.fill(Paint.valueOf("#dedede")));
+        this.MAIN_PANE.setBackground(Background.fill(Paint.valueOf("#dedede")));
         VBox usernamePane = new VBox();
         usernamePane.setAlignment(Pos.CENTER);
         usernamePane.setFillWidth(true);
@@ -52,7 +49,7 @@ public class UsernameScene extends Scene {
         usernameInput.setPadding(new Insets(10, 15, 10, 15));
         usernamePane.getChildren().addAll(title, usernameInput);
         AnchorPane.setTopAnchor(usernamePane, 80.0);
-        anchorPane.getChildren().addAll(usernamePane, continueBtn);
+        this.MAIN_PANE.getChildren().addAll(usernamePane, continueBtn);
         continueBtn.addEventHandler(ActionEvent.ACTION, event -> {
             String username = usernameInput.getText();
             SetUsername setUsername = new SetUsername(username);

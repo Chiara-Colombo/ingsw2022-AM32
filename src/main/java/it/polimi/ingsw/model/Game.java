@@ -21,7 +21,7 @@ public class Game implements IMooshroomManHandled {
     private EffectHandler activeCharacter;
     private GamePhase gamePhase;
     private int grandmaHerbsNoEntryTiles;
-    private List<String> playersCopyList;
+    private final List<String> playersCopyList;
     private int playerOrderIndex;
 
     /**
@@ -72,9 +72,9 @@ public class Game implements IMooshroomManHandled {
      */
     public void ChangePlayersOrder(List<String> order){
         this.playerOrderIndex = 0;
-        for ( int i = 0; i < order.size(); i++){
-            for ( int j = 0; j < playersCopyList.size(); j++){
-                if( order.get(i) == playersCopyList.get(j)){
+        for (int i = 0; i < order.size(); i++){
+            for (int j = 0; j < playersCopyList.size(); j++){
+                if (order.get(i).equals(playersCopyList.get(j))){
                     String playerR = playersCopyList.get(j);
                     String playerS = playersCopyList.get(i);
                     playersCopyList.set(i,playerR);
@@ -82,10 +82,9 @@ public class Game implements IMooshroomManHandled {
                 }
             }
         }
-        String playerNick = playersCopyList.get(playerOrderIndex);
-        int j= 0;
+        int j = 0;
         for(Player player : players){
-            if(player.getNickname() == playersCopyList.get(playerOrderIndex)){
+            if(player.getNickname().equals(playersCopyList.get(playerOrderIndex))){
                 this.currentPlayer = j;
             }
             j ++;
@@ -132,6 +131,7 @@ public class Game implements IMooshroomManHandled {
             for (int i = 0; i < students; i++) {
                 this.gameBoard.drawFromBag().ifPresent(player::addStudentInEntrance);
             }
+            if (this.expertMode) player.earnCoin();
         });
     }
 
@@ -254,7 +254,7 @@ public class Game implements IMooshroomManHandled {
     /**
      * Method that get valid characters
      */
-    private ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
+    public ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
 
 
 

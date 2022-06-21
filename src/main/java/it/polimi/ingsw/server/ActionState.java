@@ -25,7 +25,8 @@ public class ActionState implements State{
     }
 
     @Override
-    public boolean moveStudent() {
+    public boolean moveStudent(boolean error) {
+        if (error) this.studentsMoved--;
         if ((this.game.getNumOfPlayers() == 2 && this.studentsMoved >= 3) ||
                 (this.game.getNumOfPlayers() == 3 && this.studentsMoved >= 4)) {
             this.studentsMoved = 0;

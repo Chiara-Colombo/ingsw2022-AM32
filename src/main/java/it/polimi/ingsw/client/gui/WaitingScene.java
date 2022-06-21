@@ -14,17 +14,14 @@ import javafx.scene.text.Font;
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class WaitingScene extends Scene {
-    private WaitingScene(Parent root) {
-        super(root, GUI_WIDTH, GUI_HEIGHT);
+    private final AnchorPane MAIN_PANE;
+    public WaitingScene(AnchorPane MAIN_PANE) {
+        super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
+        this.MAIN_PANE = MAIN_PANE;
+        this.initialize();
     }
 
-    public static WaitingScene getInstance() {
-        AnchorPane root = new AnchorPane();
-        initialize(root);
-        return new WaitingScene(root);
-    }
-
-    private static void initialize(AnchorPane anchorPane) {
+    private void initialize() {
         VBox loadingPane = new VBox();
         loadingPane.setSpacing(80.0);
         loadingPane.setPrefWidth(GUI_WIDTH);
@@ -35,6 +32,6 @@ public class WaitingScene extends Scene {
         title.setAlignment(Pos.CENTER);
         ProgressIndicator progressIndicator = new ProgressIndicator(-1.0);
         loadingPane.getChildren().addAll(title, progressIndicator);
-        anchorPane.getChildren().add(loadingPane);
+        this.MAIN_PANE.getChildren().add(loadingPane);
     }
 }

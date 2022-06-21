@@ -30,6 +30,9 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         for (int i = 0; i<towers; i++) {
             this.towers.add(new Tower(TowersColors.NONE));
         }
+        this.coins = 0;
+        this.extraInfluence = 0;
+        this.extraStudent = 0;
     }
 
     /**
@@ -111,7 +114,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     /**
      * Method that decrease the coins of a player when he uses a Character Card
      */
-    public boolean payCoins(int value){
+    boolean payCoins(int value){
         if (this.coins - value >= 0) {
             this.coins -= value;
             return true;
@@ -122,7 +125,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     /**
      * Method which increase the coins of the player
      */
-    public void earnCoin(){
+    void earnCoin(){
         this.coins++;
     }
 

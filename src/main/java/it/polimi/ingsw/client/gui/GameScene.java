@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.*;
 import it.polimi.ingsw.messages.clienttoserver.AssistantCardResponse;
 import it.polimi.ingsw.model.AssistantCard;
+import it.polimi.ingsw.model.Characters;
 import it.polimi.ingsw.model.PawnsColors;
 import it.polimi.ingsw.model.TowersColors;
 import javafx.event.EventHandler;
@@ -16,12 +17,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 
 import static it.polimi.ingsw.utils.Utils.*;
@@ -42,8 +43,9 @@ public class GameScene extends Scene {
     private final HashMap<TowersColors, Integer> towersIndexes;
     private final HashMap<Integer, HashMap<PawnsColors, Integer>> studentsOnIslands;
     private final ArrayList<TileImage> entrance;
+    private final EnumMap<Characters, CharacterCardImage> characterCards;
     private int currentMNPosition;
-    private boolean firstBoardUpdate, firstPlayersUpdate;
+    private boolean firstBoardUpdate, firstPlayersUpdate, firstGameUpdate;
 
     public GameScene(Pane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
@@ -64,11 +66,13 @@ public class GameScene extends Scene {
         this.entrance = new ArrayList<>();
         this.professors = new HashMap<>();
         this.studentsOnIslands = new HashMap<>();
+        this.characterCards = new EnumMap<>(Characters.class);
         this.MOTHER_NATURE = new ImageView(MOTHER_NATURE_IMAGE);
         this.TOWERS = new HashMap<>();
         //this.ASSISTANT_CARDS = new ArrayList<>(ASSISTANT_CARDS_IMAGES.stream().map(ImageView::new).toList());
         this.firstBoardUpdate = true;
         this.firstPlayersUpdate = true;
+        this.firstGameUpdate = true;
     }
 
     private void loadBoardImages(BoardUpdateContent boardUpdate) {
@@ -164,6 +168,13 @@ public class GameScene extends Scene {
             this.PLAYERS_PANES.put(playersUpdate.get(i).getNickname(), schoolBoard);
         }
         this.firstPlayersUpdate = false;
+    }
+
+    private void loadCharactersImages(ArrayList<Characters> validCharacters) {
+        for (Characters character : validCharacters) {
+            this.characterCards.put(character, new CharacterCardImage(character, new ImageView(CHARACTERS_IMAGE_ENUM_MAP.get(character))));
+        }
+        this.firstGameUpdate = false;
     }
 
     public void updateBoard(BoardUpdateContent boardUpdate) {
@@ -292,7 +303,7 @@ public class GameScene extends Scene {
         this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
     }
 
-    public void showPlayers(ArrayList<PlayerUpdate> playersUpdate) {
+    void updatePlayers(ArrayList<PlayerUpdate> playersUpdate, boolean isExpertMode) {
         if (this.firstPlayersUpdate)
             loadPlayerImages(playersUpdate);
         for (int player = 0; player < playersUpdate.size(); player++) {
@@ -379,11 +390,46 @@ public class GameScene extends Scene {
                 schoolBoard.getChildren().add(towerImage);
                 this.towersIndexes.put(playerUpdate.getTowersColor(), this.towersIndexes.get(playerUpdate.getTowersColor()) + 1);
             }
+            if (isExpertMode) {
+                ImageView coinImage = new ImageView(COIN_IMAGE);
+                coinImage.setFitWidth(3.2 * PAWNS_RADIUS);
+                coinImage.setPreserveRatio(true);
+                double x = SCHOOL_BOARD_WIDTH - 1.6 * PAWNS_RADIUS, y = SCHOOL_BOARD_HEIGHT - 115.0;
+                if (player > 1) {
+                    x = y;
+                    y = 0.0;
+                } else if (player > 0) {
+                    x = 0.0 - 1.6 * PAWNS_RADIUS;
+                }
+                coinImage.setLayoutX(x);
+                coinImage.setLayoutY(y);
+                Label qty = new Label(playerUpdate.getCoins() + "");
+                qty.setLayoutX(x + 3 * PAWNS_RADIUS);
+                qty.setLayoutY(y + 1.6 * PAWNS_RADIUS);
+                qty.setFont(Font.font("Berlin Sans FB", FontWeight.BOLD, 16));
+                schoolBoard.getChildren().addAll(coinImage, qty);
+            }
         }
         this.MAIN_PANE.getChildren().addAll(this.PLAYERS_PANES.values());
     }
 
-    public void showGameUpdate(GameUpdate gameUpdate) {
+    public void updateGame(GameUpdate gameUpdate) {
+        if (gameUpdate.isExpertMode()) {
+            if (this.firstGameUpdate) loadCharactersImages(gameUpdate.getValidCharacters());
+            ArrayList<Characters> validCharacters = gameUpdate.getValidCharacters();
+            final double CARDS_MARGIN_Y = 20.0,
+                    CARDS_HEIGHT = SCHOOL_BOARD_WIDTH - 2 * CARDS_MARGIN_Y,
+                    CARDS_MARGIN_X = 20.0, CARDS_SPACE_X = 10.0,
+                    CARDS_WIDTH = (((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0) - 2 * CARDS_MARGIN_X - 2 * CARDS_SPACE_X) / 3.0;
+            for (int i = 0; i < validCharacters.size(); i++) {
+                ImageView cardImage = this.characterCards.get(validCharacters.get(i)).getImageView();
+                cardImage.setFitHeight(CARDS_HEIGHT);
+                cardImage.setFitWidth(CARDS_WIDTH);
+                cardImage.setLayoutY(GUI_HEIGHT - CARDS_HEIGHT - CARDS_MARGIN_Y);
+                cardImage.setLayoutX(CARDS_MARGIN_X + (CARDS_SPACE_X + CARDS_WIDTH) * i);
+                this.MAIN_PANE.getChildren().add(cardImage);
+            }
+        }
         String message;
         if (GUI.getController().getUsername().equals(gameUpdate.getCurrentPlayer())) {
             message = "È il tuo turno";
@@ -394,28 +440,28 @@ public class GameScene extends Scene {
     }
 
     public void showTurnMessage(String message) {
-        TURN_MESSAGE.setText(message);
-        TURN_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
-        TURN_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
-        TURN_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
-        TURN_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
-        TURN_MESSAGE.setAlignment(Pos.CENTER);
-        TURN_MESSAGE.setTextAlignment(TextAlignment.CENTER);
-        TURN_MESSAGE.setLayoutY(GUI_HEIGHT - 150);
-        TURN_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
+        this.TURN_MESSAGE.setText(message);
+        this.TURN_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
+        this.TURN_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        this.TURN_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        this.TURN_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        this.TURN_MESSAGE.setAlignment(Pos.CENTER);
+        this.TURN_MESSAGE.setTextAlignment(TextAlignment.CENTER);
+        this.TURN_MESSAGE.setLayoutY(GUI_HEIGHT - 150);
+        this.TURN_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
     }
 
     public void showGamePhaseMessage(String message) {
-        GAME_PHASE_MESSAGE.setWrapText(true);
-        GAME_PHASE_MESSAGE.setText(message);
-        GAME_PHASE_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
-        GAME_PHASE_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
-        GAME_PHASE_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
-        GAME_PHASE_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
-        GAME_PHASE_MESSAGE.setAlignment(Pos.CENTER);
-        GAME_PHASE_MESSAGE.setTextAlignment(TextAlignment.CENTER);
-        GAME_PHASE_MESSAGE.setLayoutY(GUI_HEIGHT - 125);
-        GAME_PHASE_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
+        this.GAME_PHASE_MESSAGE.setWrapText(true);
+        this.GAME_PHASE_MESSAGE.setText(message);
+        this.GAME_PHASE_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
+        this.GAME_PHASE_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        this.GAME_PHASE_MESSAGE.setMaxWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        this.GAME_PHASE_MESSAGE.setLayoutX(GUI_WIDTH - (GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
+        this.GAME_PHASE_MESSAGE.setAlignment(Pos.CENTER);
+        this.GAME_PHASE_MESSAGE.setTextAlignment(TextAlignment.CENTER);
+        this.GAME_PHASE_MESSAGE.setLayoutY(GUI_HEIGHT - 125);
+        this.GAME_PHASE_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
     }
 
     public void showAssistantCardsPane(ArrayList<AssistantCard> availableCards) {

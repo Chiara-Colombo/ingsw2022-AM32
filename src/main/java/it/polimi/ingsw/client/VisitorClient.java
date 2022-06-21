@@ -35,4 +35,5 @@ public interface VisitorClient {
     void visitMessage(YourPlanningPhaseTurnEnds yourPlanningPhaseTurnEnds);
     void visitMessage(NotEnoughCoins notEnoughCoins);
     void visitMessage(ErrorOnPawnResponse errorOnPawnResponse);
+    void visitMessage(ConnectionLost connectionLost);
 }

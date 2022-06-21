@@ -25,7 +25,7 @@ public class PlanningState implements State{
     }
 
     @Override
-    public boolean moveStudent() {
+    public boolean moveStudent(boolean error) {
         return false;
     }
 

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.utils;
 
+import it.polimi.ingsw.model.Characters;
 import it.polimi.ingsw.model.PawnsColors;
 import it.polimi.ingsw.model.TowersColors;
 import it.polimi.ingsw.model.Wizards;
@@ -114,7 +115,7 @@ public class Utils {
                     )),
                     new HashMap<>(Map.ofEntries(
                             Map.entry('x', 0.0),
-                            Map.entry('y', ISLAND_DIMENSION * .45)
+                            Map.entry('y', ISLAND_DIMENSION * .415)
                     )),
                     new HashMap<>(Map.ofEntries(
                             Map.entry('x', ISLAND_DIMENSION * .8),
@@ -329,4 +330,15 @@ public class Utils {
     public static final Image CLOUD_IMAGE = new Image("\\assets\\cloud.png");
     public static final Image ISLAND_IMAGE = new Image("\\assets\\island.png");
     public static final Image MOTHER_NATURE_IMAGE = new Image("\\assets\\mother_nature.png");
+    public static final EnumMap<Characters, Image> CHARACTERS_IMAGE_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(Characters.MONK, new Image("\\assets\\character_monk.jpg")),
+            Map.entry(Characters.CENTAUR, new Image("\\assets\\character_centaur.jpg")),
+            Map.entry(Characters.FARMER, new Image("\\assets\\character_farmer.jpg")),
+            Map.entry(Characters.GRANDMA_HERBS, new Image("\\assets\\character_grandma_herbs.jpg")),
+            Map.entry(Characters.KNIGHT, new Image("\\assets\\character_knight.jpg")),
+            Map.entry(Characters.MAGIC_MAILMAN, new Image("\\assets\\character_magic_mailman.jpg")),
+            Map.entry(Characters.MUSHROOMS_MAN, new Image("\\assets\\character_mushroom_man.jpg")),
+            Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess.jpg"))
+    ));
+    public static final Image COIN_IMAGE = new Image("\\assets\\coin.png");
 }

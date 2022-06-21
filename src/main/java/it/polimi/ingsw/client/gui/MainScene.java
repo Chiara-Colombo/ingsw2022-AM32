@@ -17,36 +17,24 @@ import javafx.scene.text.Font;
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class MainScene extends Scene {
-    private MainScene(Parent root) {
-        super(root, GUI_WIDTH, GUI_HEIGHT);
+    private final GridPane MAIN_PANE;
+    private final ScenesManager scenesManager;
+    public MainScene(GridPane MAIN_PANE, ScenesManager scenesManager) {
+        super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
+        this.MAIN_PANE = MAIN_PANE;
+        this.scenesManager = scenesManager;
+        this.initialize();
     }
 
-    public static MainScene getInstance() {
-        GridPane root = new GridPane();
-        initialize(root);
-        return new MainScene(root);
-    }
-
-    private static void initialize(GridPane gridPane) {
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
-        gridPane.setBackground(Background.fill(Paint.valueOf("#dedede")));
+    private void initialize() {
+        final int COLUMNS = 10, ROWS = 8;
+        for (int i = 0; i < COLUMNS; i++) {
+            this.MAIN_PANE.getColumnConstraints().add(new ColumnConstraints(10, 500, 1000, Priority.ALWAYS, HPos.CENTER, true));
+        }
+        for (int i = 0; i < ROWS; i++) {
+            this.MAIN_PANE.getRowConstraints().add(new RowConstraints(10, 50, 100, Priority.ALWAYS, VPos.CENTER, true));
+        }
+        this.MAIN_PANE.setBackground(Background.fill(Paint.valueOf("#dedede")));
         Label title = new Label("Benvenuto su Eriantys");
         title.setPrefWidth(GUI_WIDTH);
         title.setAlignment(Pos.CENTER);
@@ -67,7 +55,7 @@ public class MainScene extends Scene {
         rulesBtn.setPrefWidth(GUI_WIDTH);
         rulesBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
         playGameBtn.addEventHandler(ActionEvent.ACTION, event -> {
-            GUI.startGame();
+            this.scenesManager.playOnline();
         });
         exitBtn.addEventHandler(ActionEvent.ACTION, event -> {
             GUI.exit();
@@ -75,9 +63,9 @@ public class MainScene extends Scene {
         rulesBtn.addEventHandler(ActionEvent.ACTION, event -> {
             System.out.println("Rules");
         });
-        gridPane.add(title, 1, 1, 8, 1);
-        gridPane.add(playGameBtn, 2, 3, 6, 1);
-        gridPane.add(rulesBtn, 1, 5, 2, 1);
-        gridPane.add(exitBtn, 7, 5, 2,1);
+        this.MAIN_PANE.add(title, 1, 1, 8, 1);
+        this.MAIN_PANE.add(playGameBtn, 2, 3, 6, 1);
+        this.MAIN_PANE.add(rulesBtn, 1, 5, 2, 1);
+        this.MAIN_PANE.add(exitBtn, 7, 5, 2,1);
     }
 }

@@ -57,13 +57,7 @@ public class ConcreteServerVisitor implements VisitorServer{
 
     @Override
     public void visitMessage(MovePawnResponse movePawnResponse) {
-        try {
-            this.serverController.moveStudent(movePawnResponse.getStudentIndex(), movePawnResponse.getIslandIndex(), movePawnResponse.isMoveOnSchoolBoard());
-        }
-        catch (IndexOutOfBoundsException error){
-            ServerMessage errorOnPawn = new ErrorOnPawnResponse();
-            this.player.sendObjectMessage(errorOnPawn);
-        }
+        this.serverController.moveStudent(movePawnResponse.getStudentIndex(), movePawnResponse.getIslandIndex(), movePawnResponse.isMoveOnSchoolBoard());
     }
 
     @Override

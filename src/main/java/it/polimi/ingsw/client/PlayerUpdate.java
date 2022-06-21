@@ -12,15 +12,21 @@ public class PlayerUpdate implements Serializable {
     private final ArrayList<PawnsColors> entranceStudents, professors;
     private final EnumMap<PawnsColors, Integer> diningRoom;
     private final TowersColors towersColor;
-    private final int towers;
+    private final int towers, coins;
 
-    public PlayerUpdate(String nickname, ArrayList<PawnsColors> entranceStudents, ArrayList<PawnsColors> professors, EnumMap<PawnsColors, Integer> diningRoom, TowersColors towersColor, int towers) {
+    public PlayerUpdate(String nickname,
+                        ArrayList<PawnsColors> entranceStudents,
+                        ArrayList<PawnsColors> professors,
+                        EnumMap<PawnsColors, Integer> diningRoom,
+                        TowersColors towersColor,
+                        int towers, int coins) {
         this.nickname = nickname;
         this.entranceStudents = entranceStudents;
         this.professors = professors;
         this.diningRoom = diningRoom;
         this.towersColor = towersColor;
         this.towers = towers;
+        this.coins = coins;
     }
 
     public String getNickname() {
@@ -41,6 +47,10 @@ public class PlayerUpdate implements Serializable {
 
     public int getTowers() {
         return this.towers;
+    }
+
+    public int getCoins() {
+        return this.coins;
     }
 
     public TowersColors getTowersColor() {

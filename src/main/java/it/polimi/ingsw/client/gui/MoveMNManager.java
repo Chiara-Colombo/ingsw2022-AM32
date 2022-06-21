@@ -10,14 +10,14 @@ public class MoveMNManager {
     private int currentMNPosition, maxMovements;
     private ArrayList<Integer> validIslands;
     private final ClientController controller;
-    private final GUI gui;
+    private final ScenesManager scenesManager;
 
-    public MoveMNManager(ClientController controller, GUI gui) {
+    public MoveMNManager(ClientController controller, ScenesManager scenesManager) {
         this.controller = controller;
         this.validIslands = new ArrayList<>();
         this.currentMNPosition = -1;
         this.maxMovements = -1;
-        this.gui = gui;
+        this.scenesManager = scenesManager;
     }
 
     public void setCurrentMNPosition(int currentMNPosition) {
@@ -40,7 +40,7 @@ public class MoveMNManager {
         if (this.validIslands.contains(index)) {
             MoveMNResponse response = new MoveMNResponse(index);
             this.controller.sendObjectMessage(response);
-            this.gui.removeEventHandlers();
+            this.scenesManager.removeEventHandlers();
         }
     }
 }

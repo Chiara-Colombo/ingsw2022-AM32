@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 public class ChooseCloudManager {
     private final ClientController controller;
-    private final GUI gui;
+    private final ScenesManager scenesManager;
     private ArrayList<Integer> validClouds;
 
-    public ChooseCloudManager(ClientController controller, GUI gui) {
+    public ChooseCloudManager(ClientController controller, ScenesManager scenesManager) {
         this.controller = controller;
-        this.gui = gui;
+        this.scenesManager = scenesManager;
         this.validClouds = new ArrayList<>();
     }
 
@@ -26,7 +26,7 @@ public class ChooseCloudManager {
             if (this.validClouds.contains(index)) {
                 CloudResponse response = new CloudResponse(index);
                 this.controller.sendObjectMessage(response);
-                this.gui.removeEventHandlers();
+                this.scenesManager.removeEventHandlers();
             }
         }
     }

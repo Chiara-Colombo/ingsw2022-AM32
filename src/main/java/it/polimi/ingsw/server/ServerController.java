@@ -271,24 +271,40 @@ public class ServerController  {
                 ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
                 this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
                 this.stateOfTheGame = this.stateOfTheGame.changeState();
-                this.stateOfTheGame.moveStudent();
+                this.stateOfTheGame.moveStudent(false);
             }
         });
     }
 
     public void moveStudent(int pawnIndex, int islandIndex, boolean moveOnSchoolBoard) {
-        Pawn student = this.game.getCurrentPlayer().removeStudent(pawnIndex);
+        Pawn student;
+        try {
+            student = this.game.getCurrentPlayer().removeStudent(pawnIndex);
+        } catch (IndexOutOfBoundsException e) {
+            ServerMessage errorOnPawn = new ErrorOnPawnResponse();
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(errorOnPawn);
+            this.stateOfTheGame.moveStudent(true);
+            return;
+        }
         if (moveOnSchoolBoard) {
             this.game.getCurrentPlayer().addStudentInDiningRoom(student);
             this.checkProfessor(student.getColor());
         } else {
-            this.game.getGameBoard().getIslandsManager().setStudentOnIsland(student, islandIndex);
+            try {
+                this.game.getGameBoard().getIslandsManager().setStudentOnIsland(student, islandIndex);
+            } catch (IndexOutOfBoundsException e) {
+                this.game.getCurrentPlayer().addStudentInEntrance(student);
+                ServerMessage errorOnPawn = new ErrorOnPawnResponse();
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(errorOnPawn);
+                this.stateOfTheGame.moveStudent(true);
+                return;
+            }
         }
         final BoardUpdate boardUpdate = this.calculateBoardUpdate();
         this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
         ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
         this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
-        if (!this.stateOfTheGame.moveStudent()) {
+        if (!this.stateOfTheGame.moveStudent(false)) {
             this.stateOfTheGame.moveMN();
         }
     }
@@ -345,7 +361,7 @@ public class ServerController  {
         if (this.game.nextPlayer()) {
             ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
             this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
-            this.stateOfTheGame.moveStudent();
+            this.stateOfTheGame.moveStudent(false);
         } else {
             System.out.println("STUDENTS ON BAG: " + this.game.getGameBoard().getBagSize());
             if (this.isEndOfGame(true)) {
@@ -480,7 +496,8 @@ public class ServerController  {
                 this.game.getNumOfPlayers(),
                 this.game.isExpertMode(),
                 this.game.getCurrentPlayer().getNickname(),
-                this.game.getGamePhase()
+                this.game.getGamePhase(),
+                this.game.getValidCharacters()
         );
         return new BoardUpdate(playerUpdates, boardUpdateContent, gameUpdate);
     }
@@ -507,7 +524,7 @@ public class ServerController  {
                             player.getNickname(),
                             students,
                             professors,
-                            diningRoom, player.getColor(), player.getTowers()
+                            diningRoom, player.getColor(), player.getTowers(), player.getCoins()
                     )
             );
         }

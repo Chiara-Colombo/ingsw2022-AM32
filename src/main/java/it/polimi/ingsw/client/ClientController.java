@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.clienttoserver.Pong;
+import it.polimi.ingsw.messages.servertoclient.ConnectionLost;
 import it.polimi.ingsw.messages.servertoclient.ServerMessage;
 import javafx.application.Platform;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -63,13 +65,29 @@ public class ClientController implements Runnable{
                  e.printStackTrace();
                  break;
              }
-         }
+        }
+        System.out.println("Ending Thread");
     }
 
-    public void connect() throws IOException {
-        Socket server = new Socket(this.serverAddress, this.serverPort);
-        this.outputStream = new ObjectOutputStream(server.getOutputStream());
-        this.inputStream = new ObjectInputStream(server.getInputStream());
+    void connect() {
+        Socket server;
+        try {
+            server = new Socket(this.serverAddress, this.serverPort);
+        } catch (IOException e) {
+            this.timer.cancel();
+            throw new RuntimeException(e);
+        }
+        try {
+            this.outputStream = new ObjectOutputStream(server.getOutputStream());
+            this.inputStream = new ObjectInputStream(server.getInputStream());
+        } catch (IOException e) {
+            this.timer.cancel();
+            try {
+                server.close();
+                System.out.println("Server closed");
+            } catch (IOException ignored) {}
+            throw new RuntimeException(e);
+        }
     }
 
     public void sendObjectMessage(ClientMessage message){
@@ -96,7 +114,24 @@ public class ClientController implements Runnable{
     }
 
     private void connectionLost() {
-        System.out.println("Lost Connection");
+        this.timer.cancel();
+        try {
+            this.outputStream.close();
+            this.inputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.clientVisitor.visitMessage(new ConnectionLost());
+    }
+
+    void close() {
+        try {
+            this.outputStream.close();
+            this.inputStream.close();
+        } catch (IOException e) {
+            this.timer.cancel();
+            throw new RuntimeException(e);
+        }
     }
 }
 class ConnectionTask extends TimerTask {

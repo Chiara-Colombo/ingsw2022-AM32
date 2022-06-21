@@ -3,7 +3,7 @@ package it.polimi.ingsw.server;
 public interface State {
 
     void chooseWizard();
-    boolean moveStudent();
+    boolean moveStudent(boolean error);
     void chooseCloud();
     void drawAssistantCard();
     void fillClouds();

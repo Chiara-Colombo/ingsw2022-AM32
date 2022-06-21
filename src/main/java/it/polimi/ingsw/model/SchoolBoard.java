@@ -36,12 +36,12 @@ public class SchoolBoard implements ISchoolBoard {
      * @return the removed student Pawn
      */
     Pawn removeStudent(int studentIndex) {
-        if (studentIndex >= 0) {
-            Pawn student = entrance.get(studentIndex);
-            entrance.remove(studentIndex);
+        if (studentIndex >= 0 && studentIndex < this.entrance.size()) {
+            Pawn student = this.entrance.get(studentIndex);
+            this.entrance.remove(studentIndex);
             return student;
         }
-        return null;
+        throw new IndexOutOfBoundsException();
     }
 
     /**

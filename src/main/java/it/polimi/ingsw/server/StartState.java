@@ -29,7 +29,7 @@ public class StartState implements  State {
     }
 
     @Override
-    public boolean moveStudent() {
+    public boolean moveStudent(boolean error) {
         return false;
     }
 
