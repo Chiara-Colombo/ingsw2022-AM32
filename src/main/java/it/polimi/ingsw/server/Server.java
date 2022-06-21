@@ -27,12 +27,9 @@ public class Server {
      */
     public void start() throws IOException {
         System.out.println("Server started...");
-        //ExecutorService executor = Executors.newCachedThreadPool();
         while (true) {
             Socket clientSocket = this.serverSocket.accept();
             this.match.addPlayer(clientSocket);
-            //executor.submit(new ClientHandler(clientSocket, match));
         }
-        //executor.shutdown();
     }
 }

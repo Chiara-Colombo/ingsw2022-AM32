@@ -14,6 +14,8 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,13 +29,15 @@ public class ServerController  {
     private final Map<String, ClientHandler> usernames;
     private int numOfPlayers;
     private State stateOfTheGame;
-    private Map<String, Integer> cardValues;
+    private final Map<String, Integer> cardValues;
+    private final ExecutorService executor;
 
     public ServerController() {
         this.numOfPlayers = -1;
         this.clients = new ArrayList<>(0);
         this.usernames = new HashMap<>(0);
         this.cardValues = new HashMap<>(0);
+        this.executor = Executors.newCachedThreadPool();
     }
 
     public void setupGame(ClientHandler player) {
@@ -59,7 +63,7 @@ public class ServerController  {
             player.close();
         }
         ClientHandler client = new ClientHandler(player, this);
-        new Thread(client).start();
+        executor.submit(client);
         this.clients.add(client);
         ServerMessage RequestUsername = new RequestUsername();
         client.sendObjectMessage(RequestUsername);
@@ -132,16 +136,10 @@ public class ServerController  {
      */
     public void removePlayer(ClientHandler player) {
         boolean isFirstPlayer = this.clients.get(0).equals(player);
+        String username = player.getNickname();
         this.clients.remove(player);
-        if (this.usernames.containsValue(player)) {
-            String username = null;
-            for (Map.Entry<String, ClientHandler> entry : this.usernames.entrySet()) {
-                if (player.equals(entry.getValue())) {
-                    username = entry.getKey();
-                    this.usernames.remove(username);
-                    break;
-                }
-            }
+        if (this.usernames.containsKey(username)) {
+            this.usernames.remove(username);
             if (Objects.nonNull(this.game) && this.game.getGamePhase() != GamePhase.NO_PHASE) {
                 PlayerDisconnected playerDisconnectedMessage = new PlayerDisconnected(username);
                 for (ClientHandler client : this.clients)
