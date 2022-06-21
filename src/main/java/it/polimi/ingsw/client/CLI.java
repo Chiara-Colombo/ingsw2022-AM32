@@ -229,6 +229,12 @@ public class CLI  implements View{
     }
 
     @Override
+    public void showConnectionLost() {
+        System.out.println("Connessione con il server persa!");
+        this.closeConnection();
+    }
+
+    @Override
     public void showErrorMessage(String message) {
         System.out.println('\n' + message + '\n');
     }

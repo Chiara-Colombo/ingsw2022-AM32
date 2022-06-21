@@ -90,7 +90,7 @@ class ImageViewHandler implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent event) {
         WizardCardResponse wizardCardResponse = new WizardCardResponse(this.wizard);
-        GUI.getController().sendObjectMessage(wizardCardResponse);
+        this.gui.getController().sendObjectMessage(wizardCardResponse);
         this.gui.showPlayerChoosingWizard();
     }
 }

@@ -9,11 +9,10 @@ import java.util.ArrayList;
 public class MoveMNManager {
     private int currentMNPosition, maxMovements;
     private ArrayList<Integer> validIslands;
-    private final ClientController controller;
+    private ClientController controller;
     private final ScenesManager scenesManager;
 
-    public MoveMNManager(ClientController controller, ScenesManager scenesManager) {
-        this.controller = controller;
+    public MoveMNManager(ScenesManager scenesManager) {
         this.validIslands = new ArrayList<>();
         this.currentMNPosition = -1;
         this.maxMovements = -1;
@@ -42,5 +41,9 @@ public class MoveMNManager {
             this.controller.sendObjectMessage(response);
             this.scenesManager.removeEventHandlers();
         }
+    }
+
+    void setController(ClientController controller) {
+        this.controller = controller;
     }
 }

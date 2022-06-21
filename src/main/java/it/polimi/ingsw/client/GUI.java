@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Wizards;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -23,13 +25,15 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.Objects;
+import java.util.function.Function;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class GUI extends Application implements View{
 
     private static Stage stage;
-    private static ClientController controller;
+    private ClientController controller;
     private ScenesManager scenesManager;
 
     @Override
@@ -47,8 +51,8 @@ public class GUI extends Application implements View{
         System.exit(0);
     }
 
-    public static ClientController getController() {
-        return controller;
+    public ClientController getController() {
+        return this.controller;
     }
 
     public static void exit() {
@@ -56,15 +60,49 @@ public class GUI extends Application implements View{
     }
 
     public void startGame(String address, int port) {
-        controller = new ClientController(port, address, this, true);
+        this.controller = new ClientController(port, address, this, true);
         try {
-            controller.connect();
+            this.controller.connect();
         } catch (RuntimeException e) {
             this.showErrorMessage("Impossibile connettersi al server");
             stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
             return;
         }
-        new Thread(controller).start();
+        new Thread(this.controller).start();
+        this.scenesManager.setController();
+    }
+
+    private void showDialogBox(String title, String message, EventHandler<ActionEvent> callback) {
+        Platform.runLater(() -> {
+            final double WIDTH = 500, HEIGHT = 220;
+            Stage dialogStage = new Stage();
+            Pane dialogPane = new Pane();
+            Scene dialogScene = new Scene(dialogPane, WIDTH, HEIGHT);
+            dialogStage.setTitle(title);
+            Label dialogText = new Label(message);
+            dialogText.setFont(Font.font("Berlin Sans FB", 20));
+            dialogText.setAlignment(Pos.CENTER);
+            dialogText.setTextAlignment(TextAlignment.CENTER);
+            dialogText.setPrefWidth(WIDTH);
+            dialogText.setLayoutY(HEIGHT / 2.0 - 35);
+            Button dialogBtn = new Button("Chiudi");
+            dialogBtn.setLayoutX(WIDTH / 2.0 - 40);
+            dialogBtn.setLayoutY(HEIGHT - 80);
+            dialogBtn.setMinHeight(50.0);
+            dialogBtn.setMaxHeight(50.0);
+            dialogBtn.setMinWidth(80.0);
+            dialogBtn.setFont(Font.font("Berlin Sans FB", 18));
+            dialogBtn.setCursor(Cursor.HAND);
+            dialogBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
+            dialogPane.setBackground(Background.fill(Paint.valueOf("#dedede")));
+            dialogPane.getChildren().addAll(dialogBtn, dialogText);
+            dialogStage.setScene(dialogScene);
+            dialogStage.show();
+            dialogBtn.setOnAction(actionEvent -> {
+                callback.handle(actionEvent);
+                dialogStage.close();
+            });
+        });
     }
 
     public void showServerScene() {
@@ -105,36 +143,15 @@ public class GUI extends Application implements View{
     public void showCoinsUpdate() {}
 
     @Override
-    public void showErrorMessage(String message) {
-        Platform.runLater(() -> {
-            final double WIDTH = 500, HEIGHT = 220;
-            Stage errorStage = new Stage();
-            Pane errorPane = new Pane();
-            Scene errorScene = new Scene(errorPane, WIDTH, HEIGHT);
-            errorStage.setTitle("Errore!");
-            Label errorText = new Label(message);
-            errorText.setFont(Font.font("Berlin Sans FB", 20));
-            errorText.setAlignment(Pos.CENTER);
-            errorText.setTextAlignment(TextAlignment.CENTER);
-            errorText.setPrefWidth(WIDTH);
-            errorText.setLayoutY(HEIGHT / 2.0 - 35);
-            Button errorBtn = new Button("Chiudi");
-            errorBtn.setLayoutX(WIDTH / 2.0 - 40);
-            errorBtn.setLayoutY(HEIGHT - 80);
-            errorBtn.setMinHeight(50.0);
-            errorBtn.setMaxHeight(50.0);
-            errorBtn.setMinWidth(80.0);
-            errorBtn.setFont(Font.font("Berlin Sans FB", 18));
-            errorBtn.setCursor(Cursor.HAND);
-            errorBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
-            errorPane.setBackground(Background.fill(Paint.valueOf("#dedede")));
-            errorPane.getChildren().addAll(errorBtn, errorText);
-            errorStage.setScene(errorScene);
-            errorStage.show();
-            errorBtn.setOnAction((event) -> {
-                errorStage.close();
-            });
+    public void showConnectionLost() {
+        this.showDialogBox("Errore!", "Connessione con il server persa!", (event) -> {
+            stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
         });
+    }
+
+    @Override
+    public void showErrorMessage(String message) {
+        this.showDialogBox("Errore", message, (event) -> {});
     }
 
     @Override
@@ -203,35 +220,8 @@ public class GUI extends Application implements View{
 
     @Override
     public void showWinnerMessage(String winner, String reason) {
-        Platform.runLater(() -> {
-            final double WIDTH = 500, HEIGHT = 220;
-            Stage winnerStage = new Stage();
-            Pane winnerPane = new Pane();
-            Scene winnerScene = new Scene(winnerPane, WIDTH, HEIGHT);
-            winnerStage.setTitle("Vittoria!");
-            Label winnerText = new Label(winner + " vince la partita: " + reason + "!");
-            Button winnerBtn = new Button("Chiudi");
-            winnerText.setFont(Font.font("Berlin Sans FB", 20));
-            winnerText.setAlignment(Pos.CENTER);
-            winnerText.setTextAlignment(TextAlignment.CENTER);
-            winnerText.setPrefWidth(WIDTH);
-            winnerText.setLayoutY(HEIGHT / 2.0 - 35);
-            winnerBtn.setLayoutX(WIDTH / 2.0 - 40);
-            winnerBtn.setLayoutY(HEIGHT - 80);
-            winnerBtn.setMaxHeight(50.0);
-            winnerBtn.setMinHeight(50.0);
-            winnerBtn.setMinWidth(80.0);
-            winnerBtn.setFont(Font.font("Berlin Sans FB", 18));
-            winnerBtn.setCursor(Cursor.HAND);
-            winnerBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
-            winnerPane.getChildren().addAll(winnerBtn, winnerText);
-            winnerPane.setBackground(Background.fill(Paint.valueOf("#dedede")));
-            winnerStage.setScene(winnerScene);
-            winnerStage.show();
-            winnerBtn.setOnAction((event) -> {
-                stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
-                winnerStage.close();
-            });
+        this.showDialogBox("Vittoria!", winner + " vince la partita: " + reason + "!", (event) -> {
+            stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
         });
     }
 

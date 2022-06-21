@@ -7,12 +7,11 @@ import it.polimi.ingsw.messages.clienttoserver.CloudResponse;
 import java.util.ArrayList;
 
 public class ChooseCloudManager {
-    private final ClientController controller;
+    private ClientController controller;
     private final ScenesManager scenesManager;
     private ArrayList<Integer> validClouds;
 
-    public ChooseCloudManager(ClientController controller, ScenesManager scenesManager) {
-        this.controller = controller;
+    public ChooseCloudManager(ScenesManager scenesManager) {
         this.scenesManager = scenesManager;
         this.validClouds = new ArrayList<>();
     }
@@ -29,5 +28,9 @@ public class ChooseCloudManager {
                 this.scenesManager.removeEventHandlers();
             }
         }
+    }
+
+    void setController(ClientController controller) {
+        this.controller = controller;
     }
 }

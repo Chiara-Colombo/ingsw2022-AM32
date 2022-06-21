@@ -16,6 +16,7 @@ public interface View {
     void showChosenWizardCard();
     void showCloudRequest(ArrayList<Integer> validClouds);
     void showCoinsUpdate();
+    void showConnectionLost();
     void showErrorMessage(String message);
     void showErrorOnPawnPosition();
     void showGameStartingView();

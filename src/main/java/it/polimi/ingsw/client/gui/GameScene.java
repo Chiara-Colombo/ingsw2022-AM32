@@ -44,6 +44,7 @@ public class GameScene extends Scene {
     private final HashMap<Integer, HashMap<PawnsColors, Integer>> studentsOnIslands;
     private final ArrayList<TileImage> entrance;
     private final EnumMap<Characters, CharacterCardImage> characterCards;
+    private ClientController controller;
     private int currentMNPosition;
     private boolean firstBoardUpdate, firstPlayersUpdate, firstGameUpdate;
 
@@ -69,10 +70,13 @@ public class GameScene extends Scene {
         this.characterCards = new EnumMap<>(Characters.class);
         this.MOTHER_NATURE = new ImageView(MOTHER_NATURE_IMAGE);
         this.TOWERS = new HashMap<>();
-        //this.ASSISTANT_CARDS = new ArrayList<>(ASSISTANT_CARDS_IMAGES.stream().map(ImageView::new).toList());
         this.firstBoardUpdate = true;
         this.firstPlayersUpdate = true;
         this.firstGameUpdate = true;
+    }
+
+    void setController(ClientController controller) {
+        this.controller = controller;
     }
 
     private void loadBoardImages(BoardUpdateContent boardUpdate) {
@@ -100,7 +104,6 @@ public class GameScene extends Scene {
                 for (PawnsColors professor : boardUpdate.getAvailableProfessors()) {
                     this.studentsOnIslands.get(island.getIndex()).put(professor, 0);
                 }
-                //island.getStudents().forEach(student -> this.students.get(student).add(new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student))));
             }
         }
         for (int i = 0; i < boardUpdate.getClouds().size(); i++) {
@@ -185,6 +188,7 @@ public class GameScene extends Scene {
         this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
         this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
         this.MAIN_PANE.getChildren().removeAll(this.PLAYERS_PANES.values());
+        this.MAIN_PANE.getChildren().removeAll(this.characterCards.values().stream().map(CharacterCardImage::getImageView).toList());
         this.BOARD_PANE.getChildren().clear();
         ArrayList<ArrayList<IslandUpdate>> islands = boardUpdate.getIslands();
         for (ArrayList<IslandUpdate> groupOfIslandsUpdate : islands) {
@@ -310,7 +314,7 @@ public class GameScene extends Scene {
             PlayerUpdate playerUpdate = playersUpdate.get(player);
             Pane schoolBoard = this.PLAYERS_PANES.get(playerUpdate.getNickname());
             schoolBoard.getChildren().clear();
-            if (GUI.getController().getUsername().equals(playerUpdate.getNickname()))
+            if (this.controller.getUsername().equals(playerUpdate.getNickname()))
                 this.entrance.clear();
             for (int i = 0; i < playerUpdate.getEntranceStudents().size(); i++) {
                 double x = ENTRANCE_X_MARGIN + Math.floor(i / 2.0) * PAWNS_RADIUS * 2 + Math.floor(i / 2.0) * ENTRANCE_X_SPACE,
@@ -332,7 +336,7 @@ public class GameScene extends Scene {
                 pawnImage.setLayoutX(x);
                 pawnImage.setFitWidth(2 * PAWNS_RADIUS);
                 pawnImage.setFitHeight(2 * PAWNS_RADIUS);
-                if (GUI.getController().getUsername().equals(playerUpdate.getNickname()))
+                if (this.controller.getUsername().equals(playerUpdate.getNickname()))
                     this.entrance.add(new TileImage(i, pawnImage));
                 schoolBoard.getChildren().add(pawnImage);
                 this.studentsIndexes.put(color, this.studentsIndexes.get(color) + 1);
@@ -431,7 +435,7 @@ public class GameScene extends Scene {
             }
         }
         String message;
-        if (GUI.getController().getUsername().equals(gameUpdate.getCurrentPlayer())) {
+        if (this.controller.getUsername().equals(gameUpdate.getCurrentPlayer())) {
             message = "È il tuo turno";
         } else {
             message = "È il turno di " + gameUpdate.getCurrentPlayer();
@@ -485,7 +489,7 @@ public class GameScene extends Scene {
             cardImage.setOnMouseClicked(mouseEvent -> {
                 AssistantCard card = availableCards.get(temp_i);
                 AssistantCardResponse cardResponse = new AssistantCardResponse(card);
-                GUI.getController().sendObjectMessage(cardResponse);
+                this.controller.sendObjectMessage(cardResponse);
             });
             this.ASSISTANT_CARDS_PANE.getChildren().add(cardImage);
         }
@@ -497,8 +501,8 @@ public class GameScene extends Scene {
             pawnImage.getImageView().setCursor(Cursor.HAND);
             pawnImage.getImageView().setOnMouseClicked(new ActionPhaseEntranceHandler(pawnImage, manager));
         });
-        this.PLAYERS_PANES.get(GUI.getController().getUsername()).setCursor(Cursor.HAND);
-        this.PLAYERS_PANES.get(GUI.getController().getUsername()).setOnMouseClicked(new DiningRoomHandler(manager));
+        this.PLAYERS_PANES.get(this.controller.getUsername()).setCursor(Cursor.HAND);
+        this.PLAYERS_PANES.get(this.controller.getUsername()).setOnMouseClicked(new DiningRoomHandler(manager));
         this.ISLANDS.forEach((index, island) -> {
             island.getImageView().setCursor(Cursor.HAND);
             island.getImageView().setOnMouseClicked(new ActionPhaseIslandHandler(island, manager));
@@ -527,8 +531,8 @@ public class GameScene extends Scene {
             pawnImage.getImageView().setCursor(Cursor.DEFAULT);
             pawnImage.getImageView().setOnMouseClicked(null);
         });
-        this.PLAYERS_PANES.get(GUI.getController().getUsername()).setOnMouseClicked(null);
-        this.PLAYERS_PANES.get(GUI.getController().getUsername()).setCursor(Cursor.DEFAULT);
+        this.PLAYERS_PANES.get(this.controller.getUsername()).setOnMouseClicked(null);
+        this.PLAYERS_PANES.get(this.controller.getUsername()).setCursor(Cursor.DEFAULT);
         this.ISLANDS.forEach((index, island) -> {
             island.getImageView().setCursor(Cursor.DEFAULT);
             island.getImageView().setOnMouseClicked(null);

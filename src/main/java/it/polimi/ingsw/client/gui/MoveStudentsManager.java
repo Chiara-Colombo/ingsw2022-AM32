@@ -5,13 +5,12 @@ import it.polimi.ingsw.client.GUI;
 import it.polimi.ingsw.messages.clienttoserver.MovePawnResponse;
 
 public class MoveStudentsManager {
-    private final ClientController controller;
+    private ClientController controller;
     private final ScenesManager scenesManager;
     private int studentIndex, islandIndex;
     private boolean moveOnSchoolBoard;
 
-    public MoveStudentsManager(ClientController controller, ScenesManager scenesManager) {
-        this.controller = controller;
+    public MoveStudentsManager(ScenesManager scenesManager) {
         this.scenesManager = scenesManager;
         this.studentIndex = -1;
         this.islandIndex = -1;
@@ -47,5 +46,9 @@ public class MoveStudentsManager {
         this.studentIndex = -1;
         this.islandIndex = -1;
         this.moveOnSchoolBoard = true;
+    }
+
+    void setController(ClientController controller) {
+        this.controller = controller;
     }
 }

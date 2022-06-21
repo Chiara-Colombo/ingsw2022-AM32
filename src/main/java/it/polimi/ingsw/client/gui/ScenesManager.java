@@ -18,6 +18,7 @@ public class ScenesManager {
     private final GameSettingsScene gameSettingsScene;
     private final GameSetupScene gameSetupScene;
     private final GameScene gameScene;
+    private final UsernameScene usernameScene;
     private final MoveStudentsManager moveStudentsManager;
     private final MoveMNManager moveMNManager;
     private final ChooseCloudManager chooseCloudManager;
@@ -26,11 +27,12 @@ public class ScenesManager {
     public ScenesManager(GUI gui) {
         this.scenes = new EnumMap<>(EnumScenes.class);
         this.gameSetupScene = new GameSetupScene(new Pane());
+        this.usernameScene = new UsernameScene(new AnchorPane());
         this.gameSettingsScene = new GameSettingsScene(new AnchorPane());
         this.gameScene = new GameScene(new Pane());
-        this.moveStudentsManager = new MoveStudentsManager(GUI.getController(), this);
-        this.moveMNManager = new MoveMNManager(GUI.getController(), this);
-        this.chooseCloudManager = new ChooseCloudManager(GUI.getController(), this);
+        this.moveStudentsManager = new MoveStudentsManager(this);
+        this.moveMNManager = new MoveMNManager(this);
+        this.chooseCloudManager = new ChooseCloudManager(this);
         this.gui = gui;
         this.initialize();
     }
@@ -39,7 +41,7 @@ public class ScenesManager {
         scenes.put(EnumScenes.MAIN_SCENE, new MainScene(new GridPane(), this));
         scenes.put(EnumScenes.GAME_SETTINGS_SCENE, this.gameSettingsScene);
         scenes.put(EnumScenes.CONNECTION_SCENE, new ServerScene(new AnchorPane(), this));
-        scenes.put(EnumScenes.USERNAME_SCENE, new UsernameScene(new AnchorPane()));
+        scenes.put(EnumScenes.USERNAME_SCENE, this.usernameScene);
         scenes.put(EnumScenes.WAITING_SCENE, new WaitingScene(new AnchorPane()));
         scenes.put(EnumScenes.GAME_STARTING_SCENE, this.gameSetupScene);
         scenes.put(EnumScenes.GAME_SCENE, this.gameScene);
@@ -47,6 +49,15 @@ public class ScenesManager {
 
     void connect(String address, int port) {
         this.gui.startGame(address, port);
+    }
+
+    public void setController() {
+        this.gameSettingsScene.setController(this.gui.getController());
+        this.gameScene.setController(this.gui.getController());
+        this.moveStudentsManager.setController(this.gui.getController());
+        this.moveMNManager.setController(this.gui.getController());
+        this.chooseCloudManager.setController(this.gui.getController());
+        this.usernameScene.setController(this.gui.getController());
     }
 
     void playOnline() {

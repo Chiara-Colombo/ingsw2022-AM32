@@ -1,5 +1,7 @@
 package it.polimi.ingsw.client.gui;
 
+import it.polimi.ingsw.client.CLI;
+import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.GUI;
 import it.polimi.ingsw.messages.clienttoserver.SetUsername;
 import javafx.event.ActionEvent;
@@ -16,10 +18,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
+import java.util.Objects;
+
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class UsernameScene extends Scene {
     private final AnchorPane MAIN_PANE;
+    private ClientController controller;
     public UsernameScene(AnchorPane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
@@ -53,8 +58,12 @@ public class UsernameScene extends Scene {
         continueBtn.addEventHandler(ActionEvent.ACTION, event -> {
             String username = usernameInput.getText();
             SetUsername setUsername = new SetUsername(username);
-            GUI.getController().setUsername(username);
-            GUI.getController().sendObjectMessage(setUsername);
+            this.controller.setUsername(username);
+            this.controller.sendObjectMessage(setUsername);
         });
+    }
+
+    void setController(ClientController controller) {
+        this.controller = controller;
     }
 }

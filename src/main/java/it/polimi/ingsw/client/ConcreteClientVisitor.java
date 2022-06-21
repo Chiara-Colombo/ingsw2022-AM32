@@ -44,7 +44,7 @@ public class ConcreteClientVisitor implements VisitorClient{
     }
     @Override
     public void visitMessage(ConnectionLost connectionLost) {
-        this.view.showErrorMessage("Connessione con il server persa!");
+        this.view.showConnectionLost();
     }
     @Override
     public void visitMessage(ConnectionRefused connectionRefused) {

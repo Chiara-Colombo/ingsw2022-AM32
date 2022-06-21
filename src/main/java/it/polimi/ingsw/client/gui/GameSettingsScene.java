@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.gui;
 
+import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.GUI;
 import it.polimi.ingsw.messages.clienttoserver.ClientMessage;
 import it.polimi.ingsw.messages.clienttoserver.GameModeResponse;
@@ -28,6 +29,7 @@ public class GameSettingsScene extends Scene {
     private final RadioButton expertModeOption;
     private final Button continueBtn;
     private final VBox numOfPlayersPane;
+    private ClientController controller;
     private boolean isNumOfPlayersOptions;
 
     public GameSettingsScene(AnchorPane MAIN_PANE) {
@@ -51,11 +53,11 @@ public class GameSettingsScene extends Scene {
             if (this.isNumOfPlayersOptions) {
                 int numOfPlayers = this.twoPlayersOption.isSelected() ? 2 : this.threePlayersOption.isSelected() ? 3 : 0;
                 ClientMessage numOfPlayersMessage = new NumOfPlayersResponse(numOfPlayers);
-                GUI.getController().sendObjectMessage(numOfPlayersMessage);
+                this.controller.sendObjectMessage(numOfPlayersMessage);
             } else {
                 boolean expertMode = this.expertModeOption.isSelected();
                 ClientMessage expertModeMessage = new GameModeResponse(expertMode);
-                GUI.getController().sendObjectMessage(expertModeMessage);
+                this.controller.sendObjectMessage(expertModeMessage);
             }
         });
         this.isNumOfPlayersOptions = true;
@@ -140,5 +142,9 @@ public class GameSettingsScene extends Scene {
         expertModePane.getChildren().addAll(title, expertModeOptions);
         AnchorPane.setBottomAnchor(expertModePane, 100.0);
         this.MAIN_PANE.getChildren().add(expertModePane);
+    }
+
+    void setController(ClientController controller) {
+        this.controller = controller;
     }
 }
