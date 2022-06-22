@@ -107,8 +107,9 @@ public class PlayerTest {
     void SpoiledPrincessEffectHandler() {
         Player player = new Player("player", 7);
         Pawn student = new Pawn(PawnsColors.BLUE);
+        Board board = new Board(2);
         int i = 0;
-        SpoiledPrincessEffectHandler handler = new SpoiledPrincessEffectHandler(student, player);
+        SpoiledPrincessEffectHandler handler = new SpoiledPrincessEffectHandler(student, player, board);
         handler.applyEffect();
 
         ArrayList<Pawn> students = player.getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE);
