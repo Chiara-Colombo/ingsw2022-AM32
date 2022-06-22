@@ -19,9 +19,11 @@ public class ClientHandler implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ConcreteServerVisitor visitorServer;
-    private int pingSent;
-    private String nickname;
     private final Timer timer;
+    private final TimerTask task;
+    private int pingSent;
+    private boolean closed;
+    private String nickname;
 
     public ClientHandler(Socket client, ServerController controller) throws IOException {
         this.controller = controller;
@@ -30,24 +32,57 @@ public class ClientHandler implements Runnable {
         this.visitorServer = new ConcreteServerVisitor(this.controller,this);
         this.pingSent = 0;
         this.timer = new Timer();
+        this.task = new ConnectionTask(this);
+        this.closed = false;
     }
 
     @Override
     public void run() {
         this.startPing();
         while(true) {
-            try {
-                ClientMessage clientMessage = (ClientMessage) inputStream.readObject();
-                if (clientMessage.TypeOfMessage().equals("PongMessage")) {
-                    this.pingSent = 0;
-                } else {
-                    clientMessage.accept(visitorServer);
+            synchronized (this.inputStream) {
+                if (this.closed) {
+                    this.inputStream.notifyAll();
+                    return;
                 }
-            } catch (SocketException e) {
-                this.controller.removePlayer(this);
-                break;
-            } catch (ClassNotFoundException | IOException e) {
-                break;
+                try {
+                    ClientMessage clientMessage = (ClientMessage) this.inputStream.readObject();
+                    if (clientMessage.TypeOfMessage().equals("PongMessage")) {
+                        this.pingSent = 0;
+                    } else {
+                        clientMessage.accept(visitorServer);
+                    }
+                } catch (SocketException e) {
+                    this.inputStream.notifyAll();
+                    this.controller.removePlayer(this);
+                    break;
+                } catch (ClassNotFoundException | IOException e) {
+                    break;
+                } finally {
+                    this.inputStream.notifyAll();
+                }
+            }
+        }
+    }
+
+    void close() {
+        this.timer.cancel();
+        this.task.cancel();
+        synchronized (this.inputStream) {
+            try {
+                this.inputStream.close();
+            } catch (IOException ignored){}
+            finally {
+                this.closed = true;
+                this.inputStream.notifyAll();
+            }
+        }
+        synchronized (this.outputStream) {
+            try {
+                this.outputStream.close();
+            } catch (IOException ignored){}
+            finally {
+                this.outputStream.notifyAll();
             }
         }
     }
@@ -74,7 +109,7 @@ public class ClientHandler implements Runnable {
     }
 
     void startPing() {
-        timer.scheduleAtFixedRate(new ConnectionTask(this), 1000, 1000);
+        this.timer.scheduleAtFixedRate(this.task, 1000, 1000);
     }
 
     void newPingSent() {
@@ -82,18 +117,7 @@ public class ClientHandler implements Runnable {
         if (this.pingSent >= 5) {
             System.out.println("Lost connection from " + nickname);
             this.controller.removePlayer(this);
-            timer.cancel();
-            try {
-                this.inputStream.close();
-            } catch (IOException ignored) {}
-            synchronized (this.outputStream) {
-                try {
-                    this.outputStream.close();
-                } catch (IOException ignored) {}
-                finally {
-                    this.outputStream.notifyAll();
-                }
-            }
+            this.close();
         }
     }
 }

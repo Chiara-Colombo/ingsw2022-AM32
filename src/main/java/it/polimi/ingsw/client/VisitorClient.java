@@ -8,6 +8,8 @@ public interface VisitorClient {
     void visitMessage(AssistantCardRequest assistantCardRequest);
     void visitMessage(AssistantsCardUpdate assistantsCardUpdate);
     void visitMessage(BoardUpdate boardUpdate);
+    void visitMessage(CharacterCardError characterCardError);
+    void visitMessage(CharacterCardUsed characterCardUsed);
     void visitMessage(ChosenWizardCard chosenWizardCard);
     void visitMessage(CloudRequest cloudRequest);
     void visitMessage(CoinsUpdate coinsUpdate);
@@ -28,6 +30,8 @@ public interface VisitorClient {
     void visitMessage(PlayerWinner playerWinner);
     void visitMessage(RequestUsername requestUsername);
     void visitMessage(SchoolBoardUpdate schoolBoardUpdate);
+    void visitMessage(SelectColorRequest selectColorRequest);
+    void visitMessage(SelectIslandRequest selectIslandRequest);
     void visitMessage(SelectPawnRequest selectPawnRequest);
     void visitMessage(UsernameNotAssigned usernameNotAssigned);
     void visitMessage(WaitingForPlayers waitingForPlayers);

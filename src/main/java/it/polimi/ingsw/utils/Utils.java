@@ -340,6 +340,21 @@ public class Utils {
             Map.entry(Characters.MUSHROOMS_MAN, new Image("\\assets\\character_mushroom_man.jpg")),
             Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess.jpg"))
     ));
+    public static final EnumMap<Characters, Image> EMPTY_CHARACTERS_IMAGE_ENUM_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(Characters.MONK, new Image("\\assets\\character_monk_empty.jpg")),
+            Map.entry(Characters.MUSHROOMS_MAN, new Image("\\assets\\character_mushroom_man_empty.jpg")),
+            Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess_empty.jpg"))
+    ));
     public static final Image COIN_IMAGE = new Image("\\assets\\coin.png");
     public static final Image NO_ENTRY_TILE_IMAGE = new Image("\\assets\\no_entry_tile.png");
+    public static final EnumMap<Characters, String> CHARACTERS_NAME_MAP = new EnumMap<>(Map.ofEntries(
+            Map.entry(Characters.MONK, "Monaco"),
+            Map.entry(Characters.CENTAUR, "Centauro"),
+            Map.entry(Characters.FARMER, "Contadino"),
+            Map.entry(Characters.GRANDMA_HERBS, "Nonna Erbe"),
+            Map.entry(Characters.KNIGHT, "Cavaliere"),
+            Map.entry(Characters.MAGIC_MAILMAN, "Postino Magico"),
+            Map.entry(Characters.MUSHROOMS_MAN, "Fungaro"),
+            Map.entry(Characters.SPOILED_PRINCESS, "Principessa Viziata")
+    ));
 }

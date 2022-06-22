@@ -1,20 +1,19 @@
 package it.polimi.ingsw.messages.clienttoserver;
 
-import it.polimi.ingsw.model.Characters;
 import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
-public class SelectPawnResponse extends ClientMessage{
-    private final int pawnIndex;
+public class SelectIslandResponse extends ClientMessage {
+    private final int islandIndex;
 
-    public SelectPawnResponse(int pawnIndex) {
-        this.pawnIndex = pawnIndex;
+    public SelectIslandResponse(int islandIndex) {
+        this.islandIndex = islandIndex;
     }
 
     @Override
     public String TypeOfMessage() {
-        return "SelectPawnResponse";
+        return "SelectIslandResponse";
     }
 
     @Override
@@ -22,7 +21,7 @@ public class SelectPawnResponse extends ClientMessage{
         serverVisitor.visitMessage(this);
     }
 
-    public int getPawnIndex() {
-        return this.pawnIndex;
+    public int getIslandIndex() {
+        return this.islandIndex;
     }
 }

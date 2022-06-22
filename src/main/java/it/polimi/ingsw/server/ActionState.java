@@ -3,16 +3,17 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.messages.servertoclient.CloudRequest;
 import it.polimi.ingsw.messages.servertoclient.MoveMNRequest;
 import it.polimi.ingsw.messages.servertoclient.MovePawnRequest;
+import it.polimi.ingsw.messages.servertoclient.ServerMessage;
 import it.polimi.ingsw.model.Game;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class ActionState implements State{
-    private int studentsMoved;
     private final Game game;
     private final Map<String, ClientHandler> players;
-
+    private int studentsMoved;
+    private ServerMessage lastMessageSent;
     public ActionState(Game game, Map<String, ClientHandler> players) {
         this.game = game;
         this.players = players;
@@ -33,6 +34,7 @@ public class ActionState implements State{
             return false;
         }
         MovePawnRequest request = new MovePawnRequest(this.game.getNumOfPlayers() == 2 ? 3 : 4);
+        this.lastMessageSent = request;
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
         this.studentsMoved++;
         return true;
@@ -47,6 +49,7 @@ public class ActionState implements State{
             }
         }
         CloudRequest request = new CloudRequest(validClouds);
+        this.lastMessageSent = request;
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
     }
 
@@ -78,6 +81,7 @@ public class ActionState implements State{
                 } else break;
             }
             MoveMNRequest request = new MoveMNRequest(movements, validIndexes);
+            this.lastMessageSent = request;
             this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
         });
     }
@@ -85,6 +89,11 @@ public class ActionState implements State{
     @Override
     public void endGame() {
 
+    }
+
+    @Override
+    public void resumeState() {
+        this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(this.lastMessageSent);
     }
 
     @Override

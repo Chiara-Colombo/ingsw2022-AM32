@@ -1,28 +1,26 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Handled.IMooshroomManHandled;
-import org.junit.jupiter.api.Test;
+import it.polimi.ingsw.model.Handled.IMushroomManHandled;
 
 import java.util.*;
 
-public class Game implements IMooshroomManHandled {
+public class Game implements IMushroomManHandled {
 
     private final ArrayList<Player> players;
-    private int currentPlayer;
     private final Board gameBoard;
     private final int numOfPlayers;
     private final boolean expertMode;
     private final AssistantCardsManager cardsManager;
     private final ArrayList<Characters> validCharacters;
-    private final EnumMap<Characters,Integer> charactersValue;
-    private final EnumMap<PawnsColors,Integer> colorsInfluenceMultiplier;
-    private Collection<Pawn> monkStudents;
-    private Collection<Pawn> spoiledPrincessStudents;
-    private EffectHandler activeCharacter;
-    private GamePhase gamePhase;
-    private int grandmaHerbsNoEntryTiles;
+    private final EnumMap<Characters, Integer> charactersValue;
+    private final EnumMap<PawnsColors, Integer> colorsInfluenceMultiplier;
+    private final ArrayList<Pawn> monkStudents, spoiledPrincessStudents;
     private final List<String> playersCopyList;
-    private int playerOrderIndex;
+    private int grandmaHerbsNoEntryTiles, playerOrderIndex, currentPlayer;
+    private boolean characterActive;
+    private Characters activeCharacter;
+    private EffectHandler activeEffect;
+    private GamePhase gamePhase;
 
     /**
      * Game class Constructor
@@ -44,6 +42,7 @@ public class Game implements IMooshroomManHandled {
         this.grandmaHerbsNoEntryTiles = 0;
         this.charactersValue = new EnumMap<>(Characters.class);
         this.colorsInfluenceMultiplier = new EnumMap<>(PawnsColors.class);
+        this.characterActive = false;
     }
 
     /**
@@ -58,16 +57,10 @@ public class Game implements IMooshroomManHandled {
                 playersCopyList.add(p.getNickname());
             }
             final ArrayList<Characters> characters = new ArrayList<>(Arrays.asList(Characters.values()));
-            /*for (int i = 0; i<3; i++) {
+            for (int i = 0; i < 3; i++) {
                 this.validCharacters.add(characters.remove((int) Math.floor(Math.random() * characters.size())));
                 this.charactersValue.put(this.validCharacters.get(i), this.validCharacters.get(i).getCoinValue());
-            }*/
-            this.validCharacters.add(Characters.GRANDMA_HERBS);
-            this.validCharacters.add(Characters.MONK);
-            this.validCharacters.add(Characters.SPOILED_PRINCESS);
-            this.charactersValue.put(Characters.GRANDMA_HERBS, Characters.GRANDMA_HERBS.getCoinValue());
-            this.charactersValue.put(Characters.MONK, Characters.MONK.getCoinValue());
-            this.charactersValue.put(Characters.SPOILED_PRINCESS, Characters.SPOILED_PRINCESS.getCoinValue());
+            }
             this.setupCharacters();
             this.setupPlayers();
         } else {
@@ -109,26 +102,29 @@ public class Game implements IMooshroomManHandled {
         return playersCopyList;
     }
 
+    public boolean isCharacterActive() {
+        return this.characterActive;
+    }
+
     /**
      * Method that sets up Characters
      */
     private void setupCharacters() {
         if (this.validCharacters.contains(Characters.MONK)) {
             for (int i = 0; i<4; i++) {
-                this.gameBoard.drawFromBag().ifPresent(pawn -> {
-                    this.monkStudents.add(pawn);
-                });
+                this.gameBoard.drawFromBag().ifPresent(this.monkStudents::add);
             }
         }
         if (this.validCharacters.contains(Characters.SPOILED_PRINCESS)) {
             for (int i = 0; i<4; i++) {
-                this.gameBoard.drawFromBag().ifPresent(pawn -> {
-                    this.spoiledPrincessStudents.add(pawn);
-                });
+                this.gameBoard.drawFromBag().ifPresent(this.spoiledPrincessStudents::add);
             }
         }
         if (this.validCharacters.contains(Characters.GRANDMA_HERBS)) {
             this.grandmaHerbsNoEntryTiles = 4;
+        }
+        for (PawnsColors color : PawnsColors.values()) {
+            this.colorsInfluenceMultiplier.put(color, 1);
         }
     }
 
@@ -237,26 +233,35 @@ public class Game implements IMooshroomManHandled {
      */
     public AssistantCardsManager getCardsManager() { return this.cardsManager; }
 
-    /**
-     * Method endGame that ends the Game when the conditions are satisfied
-     */
-    private void endGame() {
+    public void activateCharacter(Characters character) {
+        this.characterActive = true;
+        this.activeCharacter = character;
+        this.charactersValue.put(character, character.getCoinValue() + 1);
+    }
+
+    public Characters getActiveCharacter() {
+        return this.activeCharacter;
     }
 
     /**
      * Method used for calling the effects of Characters cards
-     * @param character
+     * @param effect
      */
-    private void useCharacterEffect(EffectHandler character){
-        this.activeCharacter = character;
-        this.activeCharacter.applyEffect();
+    public void useCharacterEffect(EffectHandler effect){
+        if (this.characterActive) {
+            this.activeEffect = effect;
+            this.activeEffect.applyEffect();
+        }
     }
 
     /**
      * Method that removes the Character card effect
      */
-    private void removeCharacterEffect(){
-        this.activeCharacter.removeEffect();
+    public void removeCharacterEffect(){
+        if (this.characterActive) {
+            this.characterActive = false;
+            this.activeEffect.removeEffect();
+        }
     }
 
 
@@ -266,30 +271,38 @@ public class Game implements IMooshroomManHandled {
      */
     public ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
 
+    public boolean takeGrandmaHerbsNoEntryTile() {
+        if (this.grandmaHerbsNoEntryTiles > 0) {
+            this.grandmaHerbsNoEntryTiles--;
+            return true;
+        }
+        return false;
+    }
 
-
+    public void putGrandmaHerbsNoEntryTile() {
+        this.grandmaHerbsNoEntryTiles++;
+    }
 
     public int getGrandmaHerbsNoEntryTiles(){
         return this.grandmaHerbsNoEntryTiles;
     }
 
-    public Collection<Pawn> getMonkStudents() {
-        System.out.println("GETTING MONK STUDENTS");
+    public ArrayList<Pawn> getMonkStudents() {
         return this.monkStudents;
     }
 
-    public Collection<Pawn> getSpoiledPrincessStudents() {
+    public ArrayList<Pawn> getSpoiledPrincessStudents() {
         return this.spoiledPrincessStudents;
     }
 
     /**
      * Method that gets the Coinvalue of the Character card selected
-     * @param characters the character card selected
+     * @param character the character card selected
      * @return  coinvalue of character card
      */
 
-   public int getCharacterCost(Characters characters){
-       return characters.getCoinValue();
+   public int getCharacterCost(Characters character){
+       return this.charactersValue.get(character);
    }
 
 
@@ -304,11 +317,6 @@ public class Game implements IMooshroomManHandled {
     public int getNumOfPlayers() {
         return numOfPlayers;
     }
-
-
-
-
-
 
     /**
      * Method that adds a selected player to the game
@@ -347,6 +355,6 @@ public class Game implements IMooshroomManHandled {
      * @return expertMode variable
      */
     public boolean isExpertMode() {
-        return expertMode;
+        return this.expertMode;
     }
 }

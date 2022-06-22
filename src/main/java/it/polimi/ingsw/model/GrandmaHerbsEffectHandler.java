@@ -25,6 +25,10 @@ public class GrandmaHerbsEffectHandler implements EffectHandler{
      */
     @Override
     public void removeEffect() {
+
+    }
+
+    public void restoreIsland() {
         this.island.setNoEntry(false);
     }
 }

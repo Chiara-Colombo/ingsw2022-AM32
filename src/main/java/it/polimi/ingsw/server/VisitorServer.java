@@ -2,6 +2,7 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.messages.clienttoserver.*;
 import it.polimi.ingsw.messages.servertoclient.NumOfPlayersRequest;
+import it.polimi.ingsw.messages.servertoclient.SelectIslandRequest;
 
 public interface VisitorServer {
 
@@ -12,6 +13,8 @@ public interface VisitorServer {
     void visitMessage(CloudResponse cloudResponse);
     void visitMessage(MoveMNResponse moveMNResponse);
     void visitMessage(MovePawnResponse movePawnResponse);
+    void visitMessage(SelectColorResponse selectColorResponse);
+    void visitMessage(SelectIslandResponse selectIslandResponse);
     void visitMessage(SelectPawnResponse selectPawnResponse);
     void visitMessage(UseCharacterCard useCharacterCard);
     void visitMessage(WizardCardResponse wizardCardResponse);

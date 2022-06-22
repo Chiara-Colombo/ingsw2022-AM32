@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.gui.*;
-import it.polimi.ingsw.messages.servertoclient.AssistantsCardUpdate;
-import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
+import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.AssistantCard;
+import it.polimi.ingsw.model.Characters;
 import it.polimi.ingsw.model.Wizards;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,6 +21,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GUI extends Application implements View{
@@ -53,10 +54,9 @@ public class GUI extends Application implements View{
     }
 
     public void startGame(String address, int port) {
-        this.controller = new ClientController(port, address, this, true);
         try {
-            this.controller.connect();
-        } catch (RuntimeException e) {
+            this.controller = new ClientController(port, address, this, true);
+        } catch (IOException e) {
             this.showErrorMessage("Impossibile connettersi al server");
             stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
             return;
@@ -125,6 +125,11 @@ public class GUI extends Application implements View{
     }
 
     @Override
+    public void showCharacterCardUsed(Characters character, String username) {
+        this.scenesManager.showCharacterUsed(character, username);
+    }
+
+    @Override
     public void showChosenWizardCard() {}
 
     @Override
@@ -172,7 +177,9 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showNotEnoughCoins(){}
+    public void showNotEnoughCoins(){
+        this.showDialogBox("Attenzione!", "Non hai abbastanza monete per usare questo personaggio!", (event) -> {});
+    }
 
     @Override
     public void showPlanningPhaseTurn(String nickname) {
@@ -201,10 +208,23 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showSchoolBoardUpdate() {}
+    public void showSchoolBoardUpdate() {
+    }
 
     @Override
-    public void showSelectPawnRequest() {}
+    public void showSelectColorRequest(SelectColorRequest selectColorRequest) {
+        this.scenesManager.showColorRequest(selectColorRequest);
+    }
+
+    @Override
+    public void showSelectIslandRequest(SelectIslandRequest selectIslandRequest) {
+        this.scenesManager.showIslandRequest(selectIslandRequest);
+    }
+
+    @Override
+    public void showSelectPawnRequest(SelectPawnRequest selectPawnRequest) {
+        this.scenesManager.showPawnRequest(selectPawnRequest);
+    }
 
     @Override
     public void showWaitingView() {
@@ -214,8 +234,10 @@ public class GUI extends Application implements View{
     @Override
     public void showWinnerMessage(String winner, String reason) {
         this.showDialogBox("Vittoria!", winner + " vince la partita: " + reason + "!", (event) -> {
+            this.scenesManager.resetScenes();
             stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
         });
+        this.controller.close();
     }
 
     @Override
@@ -224,7 +246,9 @@ public class GUI extends Application implements View{
     }
 
     @Override
-    public void showYourActionPhaseTurnEnds() {}
+    public void showYourActionPhaseTurnEnds() {
+        this.scenesManager.actionTurnEnds();
+    }
 
     @Override
     public void showYourPlanningPhaseTurnEnds() {

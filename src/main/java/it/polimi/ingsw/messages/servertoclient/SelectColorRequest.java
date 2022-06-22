@@ -7,21 +7,17 @@ import it.polimi.ingsw.model.PawnsColors;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Message that asks to select a pawn
- */
-public class SelectPawnRequest extends ServerMessage {
+public class SelectColorRequest extends ServerMessage {
     private final Characters character;
-    private final ArrayList<PawnsColors> validPawns;
-
-    public SelectPawnRequest(Characters character, ArrayList<PawnsColors> validPawns) {
+    private final ArrayList<PawnsColors> values;
+    public SelectColorRequest(Characters character, ArrayList<PawnsColors> values) {
         this.character = character;
-        this.validPawns = validPawns;
+        this.values = values;
     }
 
     @Override
     public String TypeOfMessage() {
-        return "SelectPawnRequest";
+        return "SelectColorRequest";
     }
 
     @Override
@@ -29,8 +25,8 @@ public class SelectPawnRequest extends ServerMessage {
         visitorClient.visitMessage(this);
     }
 
-    public ArrayList<PawnsColors> getValidPawns() {
-        return this.validPawns;
+    public ArrayList<PawnsColors> getValues() {
+        return this.values;
     }
 
     public Characters getCharacter() {

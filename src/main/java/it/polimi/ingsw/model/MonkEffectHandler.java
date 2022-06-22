@@ -16,8 +16,6 @@ public class MonkEffectHandler implements EffectHandler{
         this.island = island;
     }
 
-    /*Methods that apply the Monk Character card Effects*/
-
     /**
      * Method that applies MonkMailman Character card Effects
      */
@@ -31,6 +29,6 @@ public class MonkEffectHandler implements EffectHandler{
      */
     @Override
     public void removeEffect() {
-        return;
+
     }
 }

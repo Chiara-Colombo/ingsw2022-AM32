@@ -12,8 +12,7 @@ public class Board implements ICentaurHandled, ICoinsSupply {
     private final EnumMap<PawnsColors, Integer> bag;
     private final ArrayList<Cloud> clouds;
     private final ArrayList<Pawn> availableProfessors;
-    private int coinsSupply = 20;
-    private HashMap<Integer,Integer> islandsTowerMultiplier;
+    private int coinsSupply = 20, islandsTowersMultiplier;
 
     /**
      * Constructor of Board class
@@ -45,6 +44,7 @@ public class Board implements ICentaurHandled, ICoinsSupply {
         this.availableProfessors.add(new Pawn(PawnsColors.RED));
         this.availableProfessors.add(new Pawn(PawnsColors.GREEN));
         this.availableProfessors.add(new Pawn(PawnsColors.YELLOW));
+        this.islandsTowersMultiplier = 1;
     }
 
     public int getBagSize() {
@@ -170,15 +170,15 @@ public class Board implements ICentaurHandled, ICoinsSupply {
      * {@inheritDoc}
      */
     @Override
-    public void setTowerInfluenceForIslands(int groupOfIslands, int influence) {
-        this.islandsTowerMultiplier.replace(groupOfIslands, influence);
+    public void setTowersInfluence(int influence) {
+        this.islandsTowersMultiplier = influence;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int getTowerInfluenceForIslands(int groupOfIslands) {
-        return this.islandsTowerMultiplier.get(groupOfIslands);
+    public int getTowersInfluence() {
+        return this.islandsTowersMultiplier;
     }
 }

@@ -83,6 +83,11 @@ public class EndState implements State{
     }
 
     @Override
+    public void resumeState() {
+
+    }
+
+    @Override
     public State changeState() {
         return null;
     }

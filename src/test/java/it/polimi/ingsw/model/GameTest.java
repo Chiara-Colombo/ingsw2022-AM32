@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -275,14 +274,14 @@ public class GameTest {
         }
         Game game = new Game(2, false, jsonCards);
         PawnsColors color= PawnsColors.getRandom();
-        MooshroomManEffectHandler handler = new MooshroomManEffectHandler(color,game);
+        MushroomManEffectHandler handler = new MushroomManEffectHandler(color,game);
         handler.applyEffect();
         assertEquals(0,game.getInfluenceForColor(color));
         handler.removeEffect();
         assertEquals(1,game.getInfluenceForColor(color));
 
         PawnsColors color2= PawnsColors.getRandom();
-        MooshroomManEffectHandler handler2 = new MooshroomManEffectHandler(color2,game);
+        MushroomManEffectHandler handler2 = new MushroomManEffectHandler(color2,game);
         handler2.applyEffect();
         assertEquals(0,game.getInfluenceForColor(color2));
         handler2.removeEffect();

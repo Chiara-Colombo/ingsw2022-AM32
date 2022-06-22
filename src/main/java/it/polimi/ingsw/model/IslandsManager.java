@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMonkHandled;
+import it.polimi.ingsw.model.Handled.INoEntry;
 
 import java.util.*;
 
@@ -31,6 +32,9 @@ public class IslandsManager implements IMonkHandled {
     public IIsland getIsland(int islandIndex) {
         return this.islands.get(islandIndex);
     }
+    public INoEntry getNoEntryIsland(int islandIndex) {
+        return this.islands.get(islandIndex);
+    }
 
     public ArrayList<ArrayList<IIsland>> getIslands() {
         int startIndex = 0, zGroup = this.groupOfIslands.get(0);
@@ -56,6 +60,10 @@ public class IslandsManager implements IMonkHandled {
         }
         groups.add(new ArrayList<>(islandsList));
         return groups;
+    }
+
+    public ArrayList<IIsland> getAllIslands() {
+        return new ArrayList<>(this.islands);
     }
 
     /**

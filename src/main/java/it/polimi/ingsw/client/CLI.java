@@ -1,13 +1,10 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.messages.clienttoserver.*;
-import it.polimi.ingsw.messages.servertoclient.AssistantsCardUpdate;
-import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
-import it.polimi.ingsw.model.AssistantCard;
-import it.polimi.ingsw.model.PawnsColors;
-import it.polimi.ingsw.model.TowersColors;
-import it.polimi.ingsw.model.Wizards;
+import it.polimi.ingsw.messages.servertoclient.*;
+import it.polimi.ingsw.model.*;
 
+import java.io.IOException;
 import java.util.*;
 
 import static it.polimi.ingsw.utils.Utils.*;
@@ -62,12 +59,10 @@ public class CLI  implements View{
     }
 
     private void connect(String address, int port) {
-        this.clientController = new ClientController(port, address, this, false);
         try {
-            this.clientController.connect();
-            System.out.println("Controller initialized");
-        } catch (RuntimeException e) {
-            System.out.println("Cannot instantiate connection towards server");
+            this.clientController = new ClientController(port, address, this, false);
+        } catch (IOException e) {
+            this.showErrorMessage("Impossibile connettersi al server");
             return;
         }
         new Thread(this.clientController).start();
@@ -199,6 +194,11 @@ public class CLI  implements View{
             System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " +
                     TOWERS_COLORS_STRING_ENUM_MAP.get(boardUpdate.getPlayersUpdate().get(i).getTowersColor()) + "\n");
         }
+    }
+
+    @Override
+    public void showCharacterCardUsed(Characters character, String username) {
+
     }
 
     @Override
@@ -360,7 +360,17 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showSelectPawnRequest() {
+    public void showSelectColorRequest(SelectColorRequest selectColorRequest) {
+
+    }
+
+    @Override
+    public void showSelectIslandRequest(SelectIslandRequest selectIslandRequest) {
+
+    }
+
+    @Override
+    public void showSelectPawnRequest(SelectPawnRequest selectPawnRequest) {
 
     }
 

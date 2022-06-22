@@ -1,15 +1,15 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Handled.IMooshroomManHandled;
+import it.polimi.ingsw.model.Handled.IMushroomManHandled;
 
-public class MooshroomManEffectHandler implements EffectHandler{
+public class MushroomManEffectHandler implements EffectHandler{
     private final PawnsColors color;
-    private final IMooshroomManHandled game;
+    private final IMushroomManHandled game;
 
     /**
      * Constructor of MooshroomManEffectHandler Class
      */
-    public MooshroomManEffectHandler(PawnsColors color, IMooshroomManHandled game) {
+    public MushroomManEffectHandler(PawnsColors color, IMushroomManHandled game) {
         this.color = color;
         this.game = game;
     }

@@ -71,6 +71,11 @@ public class PlanningState implements State{
     }
 
     @Override
+    public void resumeState() {
+
+    }
+
+    @Override
     public State changeState() {
         return new ActionState(game, players);
     }

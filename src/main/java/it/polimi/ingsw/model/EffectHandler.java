@@ -5,10 +5,10 @@ public interface EffectHandler {
     /**
      * Method that applies the Character card effect
      */
-    public void applyEffect();
+    void applyEffect();
 
     /**
      * Method that removes the Character card effect
      */
-    public void removeEffect();
+    void removeEffect();
 }

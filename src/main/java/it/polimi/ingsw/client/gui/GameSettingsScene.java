@@ -49,7 +49,7 @@ public class GameSettingsScene extends Scene {
         this.continueBtn.setFont(Font.font("Berlin Sans FB", 20));
         this.continueBtn.setCursor(Cursor.HAND);
         this.continueBtn.setBackground(Background.fill(Paint.valueOf("#fafafa")));
-        this.continueBtn.addEventHandler(ActionEvent.ACTION, event -> {
+        this.continueBtn.setOnAction(event -> {
             if (this.isNumOfPlayersOptions) {
                 int numOfPlayers = this.twoPlayersOption.isSelected() ? 2 : this.threePlayersOption.isSelected() ? 3 : 0;
                 ClientMessage numOfPlayersMessage = new NumOfPlayersResponse(numOfPlayers);
@@ -65,6 +65,14 @@ public class GameSettingsScene extends Scene {
         AnchorPane.setRightAnchor(this.continueBtn, 80.0);
         this.MAIN_PANE.setBackground(Background.fill(Paint.valueOf("#dedede")));
         this.MAIN_PANE.getChildren().add(this.continueBtn);
+    }
+
+    void reset() {
+        this.MAIN_PANE.getChildren().clear();
+        this.continueBtn.setOnAction(null);
+        this.numOfPlayersPane.getChildren().clear();
+        this.numOfPlayersPane.setDisable(false);
+        this.initialize();
     }
 
     public void showNumOfPlayersOptions() {

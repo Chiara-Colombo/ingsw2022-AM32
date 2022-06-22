@@ -114,7 +114,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     /**
      * Method that decrease the coins of a player when he uses a Character Card
      */
-    boolean payCoins(int value){
+    public boolean payCoins(int value){
         if (this.coins - value >= 0) {
             this.coins -= value;
             return true;

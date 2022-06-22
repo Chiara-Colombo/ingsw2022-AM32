@@ -9,5 +9,6 @@ public interface State {
     void fillClouds();
     void moveMN();
     void endGame();
+    void resumeState();
     State changeState();
 }

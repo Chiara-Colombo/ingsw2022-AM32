@@ -29,6 +29,6 @@ public enum Characters {
      * @return the value of the coinValue
      */
     public int getCoinValue() {
-        return coinValue;
+        return this.coinValue;
     }
 }

@@ -30,6 +30,17 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(BoardUpdate boardUpdate) {
         this.view.showBoardUpdate(boardUpdate);
     }
+
+    @Override
+    public void visitMessage(CharacterCardError characterCardError) {
+        this.view.showErrorMessage(characterCardError.getError());
+    }
+
+    @Override
+    public void visitMessage(CharacterCardUsed characterCardUsed) {
+        this.view.showCharacterCardUsed(characterCardUsed.getCharacter(), characterCardUsed.getUsername());
+    }
+
     @Override
     public void visitMessage(ChosenWizardCard chosenWizardCard) {
         this.view.showChosenWizardCard();
@@ -76,7 +87,7 @@ public class ConcreteClientVisitor implements VisitorClient{
     }
     @Override
     public void visitMessage(NotEnoughCoins notEnoughCoins){
-        this.view.showNotEnoughCoins();
+        this.view.showErrorMessage("Non hai abbastanza monete!");
     }
     @Override
     public void visitMessage(NumOfPlayersRequest numOfPlayersRequest) {
@@ -106,9 +117,20 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(SchoolBoardUpdate schoolBoardUpdate) {
         this.view.showSchoolBoardUpdate();
     }
+
+    @Override
+    public void visitMessage(SelectColorRequest selectColorRequest) {
+        this.view.showSelectColorRequest(selectColorRequest);
+    }
+
+    @Override
+    public void visitMessage(SelectIslandRequest selectIslandRequest) {
+        this.view.showSelectIslandRequest(selectIslandRequest);
+    }
+
     @Override
     public void visitMessage(SelectPawnRequest selectPawnRequest) {
-        this.view.showSelectPawnRequest();
+        this.view.showSelectPawnRequest(selectPawnRequest);
     }
     @Override
     public void visitMessage(UsernameNotAssigned usernameNotAssigned) { this.view.showErrorMessage("Lo username deve essere univoco!"); }

@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.messages.servertoclient.AssistantsCardUpdate;
-import it.polimi.ingsw.messages.servertoclient.BoardUpdate;
+import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.AssistantCard;
+import it.polimi.ingsw.model.Characters;
 import it.polimi.ingsw.model.Wizards;
 
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ public interface View {
     void showAssistantCardRequest(ArrayList<AssistantCard> availableCards);
     void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate);
     void showBoardUpdate(BoardUpdate boardUpdate);
+    void showCharacterCardUsed(Characters character, String username);
     void showChosenWizardCard();
     void showCloudRequest(ArrayList<Integer> validClouds);
     void showCoinsUpdate();
@@ -30,7 +31,9 @@ public interface View {
     void showRequestNumOfPlayers();
     void showRequestUsername();
     void showSchoolBoardUpdate();
-    void showSelectPawnRequest();
+    void showSelectColorRequest(SelectColorRequest selectColorRequest);
+    void showSelectIslandRequest(SelectIslandRequest selectIslandRequest);
+    void showSelectPawnRequest(SelectPawnRequest selectPawnRequest);
     void showWaitingView();
     void showWinnerMessage(String winner, String reason);
     void showWizardCardRequest(ArrayList<Wizards> validWizards);

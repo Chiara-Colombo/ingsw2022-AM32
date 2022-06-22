@@ -17,20 +17,24 @@ import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
 public class ServerController  {
-    private Game game;
+    private final ExecutorService executor;
+    private final EffectsManager effectsManager;
     private final ArrayList<ClientHandler> clients;
     private final Map<String, ClientHandler> usernames;
-    private int numOfPlayers;
-    private State stateOfTheGame;
     private final Map<String, Integer> cardValues;
-    private final ExecutorService executor;
+    private final EnumMap<Characters, ISetCharacterParameters> charactersParameters;
+    private int numOfPlayers;
+    private Game game;
+    private State stateOfTheGame;
 
     public ServerController() {
         this.numOfPlayers = -1;
-        this.clients = new ArrayList<>(0);
-        this.usernames = new HashMap<>(0);
-        this.cardValues = new HashMap<>(0);
+        this.clients = new ArrayList<>();
+        this.usernames = new HashMap<>();
+        this.cardValues = new HashMap<>();
         this.executor = Executors.newCachedThreadPool();
+        this.charactersParameters = new EnumMap<>(Characters.class);
+        this.effectsManager = new EffectsManager();
     }
 
     public void setupGame(ClientHandler player) {
@@ -52,7 +56,6 @@ public class ServerController  {
     public synchronized void addPlayer(Socket player) throws IOException {
         if (this.clients.size() >= this.numOfPlayers && this.numOfPlayers > 0) {
             new ClientHandler(player, this).sendObjectMessage(new ConnectionRefused());
-            System.out.println("Too many players");
             player.close();
         }
         ClientHandler client = new ClientHandler(player, this);
@@ -80,7 +83,91 @@ public class ServerController  {
         );
         String jsonCards = input.readLine();
         this.game = new Game(this.numOfPlayers, expertMode, jsonCards);
+        if (expertMode) {
+            this.setCharactersParameters();
+        }
         checkStartGame(player);
+    }
+
+    private void setCharactersParameters() {
+        this.charactersParameters.put(Characters.GRANDMA_HERBS, () -> {
+            if (this.game.takeGrandmaHerbsNoEntryTile()) {
+                SelectIslandRequest selectIslandRequest = new SelectIslandRequest(
+                        Characters.GRANDMA_HERBS, new ArrayList<>(this.game.getGameBoard().getIslandsManager().getAllIslands()
+                        .stream()
+                        .filter(island -> !island.isNoEntry())
+                        .map(IIsland::getIndex)
+                        .toList()
+                )
+                );
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
+            } else {
+                CharacterCardError message = new CharacterCardError("Non ci sono altre tessere disponibili!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            }
+        });
+        this.charactersParameters.put(Characters.CENTAUR, () -> {
+            this.effectsManager.setBoard(this.game.getGameBoard());
+            this.applyEffect();
+        });
+        this.charactersParameters.put(Characters.FARMER, () -> {
+            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+            this.applyEffect();
+        });
+        this.charactersParameters.put(Characters.KNIGHT, () -> {
+            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+            this.applyEffect();
+        });
+        this.charactersParameters.put(Characters.MONK, () -> {
+            if (this.game.getMonkStudents().size() > 0) {
+                SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                        Characters.MONK, new ArrayList<>(
+                        this.game.getMonkStudents()
+                                .stream()
+                                .map(Pawn::getColor)
+                                .toList()
+                )
+                );
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+            } else {
+                CharacterCardError message = new CharacterCardError("Non ci sono più studenti!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            }
+        });
+        this.charactersParameters.put(Characters.MUSHROOMS_MAN, () -> {
+            SelectColorRequest selectColorRequest = new SelectColorRequest(Characters.MUSHROOMS_MAN, new ArrayList<>(List.of(PawnsColors.values())));
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
+        });
+        this.charactersParameters.put(Characters.MAGIC_MAILMAN, () -> {
+            this.game.getCurrentPlayer().getWizard().ifPresentOrElse(wizard -> {
+                this.game.getCardsManager().getCurrentCardForPlayer(wizard).ifPresentOrElse(card -> {
+                    this.effectsManager.setCard(card);
+                    this.applyEffect();
+                }, () -> {
+                    CharacterCardError message = new CharacterCardError("Non hai una assistente!");
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+                });
+            }, () -> {
+                CharacterCardError message = new CharacterCardError("Non hai un mazzo di carte!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            });
+        });
+        this.charactersParameters.put(Characters.SPOILED_PRINCESS, () -> {
+            if (this.game.getSpoiledPrincessStudents().size() > 0) {
+                SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                        Characters.SPOILED_PRINCESS, new ArrayList<>(
+                        this.game.getSpoiledPrincessStudents()
+                                .stream()
+                                .map(Pawn::getColor)
+                                .toList()
+                )
+                );
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+            } else {
+                CharacterCardError message = new CharacterCardError("Non ci sono più studenti!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            }
+        });
     }
 
     private void checkStartGame(ClientHandler player) {
@@ -134,6 +221,7 @@ public class ServerController  {
     public void removePlayer(ClientHandler player) {
         boolean isFirstPlayer = this.clients.get(0).equals(player);
         String username = player.getNickname();
+        player.close();
         this.clients.remove(player);
         if (this.usernames.containsKey(username)) {
             this.usernames.remove(username);
@@ -143,6 +231,7 @@ public class ServerController  {
                     client.sendObjectMessage(playerDisconnectedMessage);
                 this.stateOfTheGame = new EndState(this.game, this.usernames);
                 this.stateOfTheGame.endGame();
+                this.endController();
             } else {
                 this.numOfPlayers = -1;
                 if (isFirstPlayer && this.clients.size() > 0 && this.usernames.containsValue(this.clients.get(0)))
@@ -228,11 +317,35 @@ public class ServerController  {
                 player -> player.getWizard().flatMap(wizard -> this.game.getCardsManager().getCurrentCardForPlayer(wizard)).ifPresent(
                         assistantCard -> {
                             if (assistantCard.getValue() == card.getValue()) {
-                                System.out.println("Invalid choice");
                                 invalid.set(true);
                             }
                         })
         );
+        if (invalid.get()) {
+            invalid.set(false);
+            this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
+                for (AssistantCard differentValidCard : this.game.getCardsManager().getAvailableCardsForPlayer(wizard)) {
+                    if (differentValidCard.getValue() != card.getValue()) {
+                        AtomicBoolean valid = new AtomicBoolean(true);
+                        for (Player player : this.game.getPlayers()) {
+                            player.getWizard().ifPresent(playerWizard -> {
+                                if (!playerWizard.equals(wizard)) {
+                                    this.game.getCardsManager().getCurrentCardForPlayer(playerWizard).ifPresent(playerCard -> {
+                                        if (playerCard.getValue() == differentValidCard.getValue())
+                                            valid.set(false);
+                                    });
+                                }
+                            });
+                            if (!valid.get()) break;
+                        }
+                        if (valid.get()) {
+                            invalid.set(true);
+                            return;
+                        }
+                    }
+                }
+            });
+        }
         if (invalid.get()) return;
         this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
             this.game.getCardsManager().setCurrentCardForPlayer(wizard, card.getValue());
@@ -342,10 +455,16 @@ public class ServerController  {
     public void moveMotherNature(int position) {
         this.game.getGameBoard().moveMotherNature(position);
         this.sendUpdate();
-        this.checkTowers();
+        if (this.game.getGameBoard().getIslandsManager().getIsland(position).isNoEntry()) {
+            new GrandmaHerbsEffectHandler(this.game.getGameBoard().getIslandsManager().getNoEntryIsland(position)).restoreIsland();
+            this.game.putGrandmaHerbsNoEntryTile();
+        } else {
+            this.checkTowers();
+        }
         if (this.isEndOfGame(false)) {
             this.stateOfTheGame = new EndState(this.game, this.usernames);
             this.stateOfTheGame.endGame();
+            this.endController();
         } else {
             if (this.game.getGameBoard().isBagEmpty()) this.chooseCloud(-1);
             else this.stateOfTheGame.chooseCloud();
@@ -361,16 +480,17 @@ public class ServerController  {
         }
         YourActionPhaseTurnEnds turnEnds = new YourActionPhaseTurnEnds();
         this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(turnEnds);
+        this.game.removeCharacterEffect();
         this.sendUpdate();
         if (this.game.nextPlayer()) {
             ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
             this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
             this.stateOfTheGame.moveStudent(false);
         } else {
-            System.out.println("STUDENTS ON BAG: " + this.game.getGameBoard().getBagSize());
             if (this.isEndOfGame(true)) {
                 this.stateOfTheGame = new EndState(this.game, this.usernames);
                 this.stateOfTheGame.endGame();
+                this.endController();
             } else {
                 this.stateOfTheGame = this.stateOfTheGame.changeState();
                 this.stateOfTheGame.fillClouds();
@@ -380,22 +500,35 @@ public class ServerController  {
         }
     }
 
+    void endController() {
+        this.clients.forEach(ClientHandler::close);
+        this.clients.clear();
+        this.usernames.clear();
+        this.numOfPlayers = -1;
+        this.cardValues.clear();
+        this.game = null;
+    }
+
     private void checkTowers() {
         final int motherNature = this.game.getGameBoard().getMotherNature();
         this.game.getGameBoard().getIslandsManager().getIsland(motherNature).getTower().ifPresentOrElse(tower -> {
             int maxInfluence = 0, playerIndex = -1, actualPlayerIndex = -1;
+            boolean equalsInfluences = true;
             ArrayList<Player> players = this.game.getPlayers();
             for (int i = 0; i < players.size(); i++) {
                 int playerInfluence = this.influenceForPlayer(players.get(i));
                 if (players.get(i).getColor().equals(tower.getColor())) {
                     actualPlayerIndex = i;
-                    playerInfluence++;
+                    playerInfluence += this.game.getGameBoard().getTowersInfluence();
                 }
+                if (playerInfluence == maxInfluence) equalsInfluences = true;
                 if (playerInfluence > maxInfluence) {
+                    equalsInfluences = false;
                     maxInfluence = playerInfluence;
                     playerIndex = i;
                 }
             }
+            if (equalsInfluences) playerIndex = -1;
             if (playerIndex >= 0 && this.game.getPlayers().get(playerIndex).getTowers() > 0 && playerIndex != actualPlayerIndex) {
                 final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(motherNature);
                 for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
@@ -411,13 +544,17 @@ public class ServerController  {
         }, () -> {
             int maxInfluence = 0, playerIndex = -1;
             ArrayList<Player> players = this.game.getPlayers();
+            boolean equalsInfluence = true;
             for (int i = 0; i < players.size(); i++) {
                 int playerInfluence = this.influenceForPlayer(players.get(i));
+                if (playerInfluence == maxInfluence) equalsInfluence = true;
                 if (playerInfluence > maxInfluence) {
+                    equalsInfluence = false;
                     maxInfluence = playerInfluence;
                     playerIndex = i;
                 }
             }
+            if (equalsInfluence) playerIndex = -1;
             if (playerIndex >= 0 && players.get(playerIndex).getTowers() > 0) {
                 final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(motherNature);
                 for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
@@ -432,6 +569,66 @@ public class ServerController  {
         });
     }
 
+    synchronized void useCharacterCard(Characters character) {
+        if (this.game.getCurrentPlayer().getCoins() >= this.game.getCharacterCost(character)) {
+            if (!this.game.isCharacterActive()) {
+                this.charactersParameters.get(character).setCharacterParameters();
+                this.game.getCurrentPlayer().payCoins(this.game.getCharacterCost(character));
+                this.game.getGameBoard().addCoins(this.game.getCharacterCost(character));
+                this.game.activateCharacter(character);
+            } else {
+                CharacterCardError message = new CharacterCardError("Hai già usato una carta in questo turno!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            }
+        } else {
+            NotEnoughCoins notEnoughCoins = new NotEnoughCoins();
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(notEnoughCoins);
+        }
+    }
+
+    void applyEffect() {
+        this.game.useCharacterEffect(this.effectsManager.getEffect(this.game.getActiveCharacter()));
+        CharacterCardUsed message = new CharacterCardUsed(this.game.getCurrentPlayer().getNickname(), this.game.getActiveCharacter());
+        this.clients.forEach(client -> client.sendObjectMessage(message));
+        this.sendUpdate();
+        this.stateOfTheGame.resumeState();
+    }
+
+    void selectColor(PawnsColors color) {
+        this.effectsManager.setGame(this.game);
+        this.effectsManager.setColor(color);
+        this.applyEffect();
+    }
+
+    void selectPawn(int pawnIndex) {
+        if (this.game.getActiveCharacter().equals(Characters.SPOILED_PRINCESS)) {
+            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+            this.effectsManager.setBoard(this.game.getGameBoard());
+            this.effectsManager.setPawn(this.game.getSpoiledPrincessStudents().remove(pawnIndex));
+            this.game.getGameBoard().drawFromBag().ifPresent(pawn -> this.game.getSpoiledPrincessStudents().add(pawn));
+            this.applyEffect();
+        }
+        if (this.game.getActiveCharacter().equals(Characters.MONK)) {
+            this.effectsManager.setPawn(this.game.getMonkStudents().remove(pawnIndex));
+            this.game.getGameBoard().drawFromBag().ifPresent(pawn -> this.game.getMonkStudents().add(pawn));
+            SelectIslandRequest selectIslandRequest = new SelectIslandRequest(
+                    this.game.getActiveCharacter(), new ArrayList<>(
+                            this.game.getGameBoard().getIslandsManager().getAllIslands()
+                                    .stream()
+                                    .map(IIsland::getIndex)
+                                    .toList()
+                    )
+            );
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
+        }
+    }
+
+    void selectIsland(int islandIndex) {
+        this.effectsManager.setIslandIndex(islandIndex);
+        this.effectsManager.setBoard(this.game.getGameBoard());
+        this.applyEffect();
+    }
+
     private int influenceForPlayer(Player player) {
         int playerInfluence = 0;
         ArrayList<Pawn> professors = player.getSchoolBoard().getProfessors();
@@ -440,9 +637,10 @@ public class ServerController  {
             Iterator<Pawn> students = this.game.getGameBoard().getIslandsManager().getIsland(this.game.getGameBoard().getMotherNature()).getStudents();
             while (students.hasNext()) {
                 if (students.next().getColor().equals(color))
-                    playerInfluence++;
+                    playerInfluence += this.game.getInfluenceForColor(color);
             }
         }
+        playerInfluence += player.getExtraInfluence();
         return playerInfluence;
     }
 

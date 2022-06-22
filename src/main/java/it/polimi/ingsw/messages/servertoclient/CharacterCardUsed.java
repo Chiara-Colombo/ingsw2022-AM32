@@ -2,26 +2,21 @@ package it.polimi.ingsw.messages.servertoclient;
 
 import it.polimi.ingsw.client.VisitorClient;
 import it.polimi.ingsw.model.Characters;
-import it.polimi.ingsw.model.PawnsColors;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-/**
- * Message that asks to select a pawn
- */
-public class SelectPawnRequest extends ServerMessage {
+public class CharacterCardUsed extends ServerMessage {
+    private final String username;
     private final Characters character;
-    private final ArrayList<PawnsColors> validPawns;
 
-    public SelectPawnRequest(Characters character, ArrayList<PawnsColors> validPawns) {
+    public CharacterCardUsed(String username, Characters character) {
+        this.username = username;
         this.character = character;
-        this.validPawns = validPawns;
     }
 
     @Override
     public String TypeOfMessage() {
-        return "SelectPawnRequest";
+        return "CharacterCardUsed";
     }
 
     @Override
@@ -29,11 +24,11 @@ public class SelectPawnRequest extends ServerMessage {
         visitorClient.visitMessage(this);
     }
 
-    public ArrayList<PawnsColors> getValidPawns() {
-        return this.validPawns;
-    }
-
     public Characters getCharacter() {
         return this.character;
+    }
+
+    public String getUsername() {
+        return this.username;
     }
 }

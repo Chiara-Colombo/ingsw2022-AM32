@@ -59,6 +59,11 @@ public class StartState implements  State {
     }
 
     @Override
+    public void resumeState() {
+
+    }
+
+    @Override
     public State changeState() {
         return new PlanningState(this.game, this.players);
     }

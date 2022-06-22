@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class ConcreteServerVisitor implements VisitorServer{
 
-    ServerController serverController;
-    ClientHandler player;
+    private final ServerController serverController;
+    private final ClientHandler player;
 
     public ConcreteServerVisitor(ServerController serverController,ClientHandler player) {
          this.serverController = serverController;
@@ -23,7 +23,7 @@ public class ConcreteServerVisitor implements VisitorServer{
             this.serverController.errorOnPlayerNumber(player);
         }
         else
-        this.serverController.setNumOfPlayers(numOfPlayersResponse.getNumOfPlayers(),player);
+            this.serverController.setNumOfPlayers(numOfPlayersResponse.getNumOfPlayers(),player);
     }
 
     @Override
@@ -61,13 +61,23 @@ public class ConcreteServerVisitor implements VisitorServer{
     }
 
     @Override
-    public void visitMessage(SelectPawnResponse selectPawnResponse) {
+    public void visitMessage(SelectColorResponse selectColorResponse) {
+        this.serverController.selectColor(selectColorResponse.getColor());
+    }
 
+    @Override
+    public void visitMessage(SelectIslandResponse selectIslandResponse) {
+        this.serverController.selectIsland(selectIslandResponse.getIslandIndex());
+    }
+
+    @Override
+    public void visitMessage(SelectPawnResponse selectPawnResponse) {
+        this.serverController.selectPawn(selectPawnResponse.getPawnIndex());
     }
 
     @Override
     public void visitMessage(UseCharacterCard useCharacterCard) {
-
+        this.serverController.useCharacterCard(useCharacterCard.getCharacter());
     }
 
     @Override
