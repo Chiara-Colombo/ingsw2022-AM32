@@ -5,13 +5,15 @@ import it.polimi.ingsw.model.Handled.ISpoiledPrincessHandled;
 public class SpoiledPrincessEffectHandler implements EffectHandler{
     private final Pawn student;
     private final ISpoiledPrincessHandled player;
+    private final ICoinsSupply coinsSupply;
 
     /**
      * Constructor of SpoiledPrincessEffectHandler Class
      */
-    public SpoiledPrincessEffectHandler(Pawn student, ISpoiledPrincessHandled player) {
+    public SpoiledPrincessEffectHandler(Pawn student, ISpoiledPrincessHandled player, ICoinsSupply coinsSupply) {
         this.player = player;
         this.student = student;
+        this.coinsSupply = coinsSupply;
     }
 
 
@@ -22,7 +24,12 @@ public class SpoiledPrincessEffectHandler implements EffectHandler{
      */
     @Override
     public void applyEffect() {
-        this.player.addStudentInDiningRoom(this.student);
+        if (this.player.addStudentInDiningRoom(this.student)) {
+            if (this.coinsSupply.getCoinsSupply() > 0) {
+                this.coinsSupply.giveCoin();
+                this.player.earnCoin();
+            }
+        }
     }
 
     /**

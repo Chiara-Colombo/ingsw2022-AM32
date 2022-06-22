@@ -39,6 +39,9 @@ public class Game implements IMooshroomManHandled {
         this.playersCopyList = new ArrayList<>();
         this.cardsManager = new AssistantCardsManager(jsonCards);
         this.validCharacters = new ArrayList<>();
+        this.monkStudents = new ArrayList<>();
+        this.spoiledPrincessStudents = new ArrayList<>();
+        this.grandmaHerbsNoEntryTiles = 0;
         this.charactersValue = new EnumMap<>(Characters.class);
         this.colorsInfluenceMultiplier = new EnumMap<>(PawnsColors.class);
     }
@@ -55,10 +58,16 @@ public class Game implements IMooshroomManHandled {
                 playersCopyList.add(p.getNickname());
             }
             final ArrayList<Characters> characters = new ArrayList<>(Arrays.asList(Characters.values()));
-            for (int i = 0; i<3; i++) {
+            /*for (int i = 0; i<3; i++) {
                 this.validCharacters.add(characters.remove((int) Math.floor(Math.random() * characters.size())));
                 this.charactersValue.put(this.validCharacters.get(i), this.validCharacters.get(i).getCoinValue());
-            }
+            }*/
+            this.validCharacters.add(Characters.GRANDMA_HERBS);
+            this.validCharacters.add(Characters.MONK);
+            this.validCharacters.add(Characters.SPOILED_PRINCESS);
+            this.charactersValue.put(Characters.GRANDMA_HERBS, Characters.GRANDMA_HERBS.getCoinValue());
+            this.charactersValue.put(Characters.MONK, Characters.MONK.getCoinValue());
+            this.charactersValue.put(Characters.SPOILED_PRINCESS, Characters.SPOILED_PRINCESS.getCoinValue());
             this.setupCharacters();
             this.setupPlayers();
         } else {
@@ -105,7 +114,6 @@ public class Game implements IMooshroomManHandled {
      */
     private void setupCharacters() {
         if (this.validCharacters.contains(Characters.MONK)) {
-            this.monkStudents = new ArrayList<>();
             for (int i = 0; i<4; i++) {
                 this.gameBoard.drawFromBag().ifPresent(pawn -> {
                     this.monkStudents.add(pawn);
@@ -113,7 +121,6 @@ public class Game implements IMooshroomManHandled {
             }
         }
         if (this.validCharacters.contains(Characters.SPOILED_PRINCESS)) {
-            this.spoiledPrincessStudents = new ArrayList<>();
             for (int i = 0; i<4; i++) {
                 this.gameBoard.drawFromBag().ifPresent(pawn -> {
                     this.spoiledPrincessStudents.add(pawn);
@@ -131,7 +138,10 @@ public class Game implements IMooshroomManHandled {
             for (int i = 0; i < students; i++) {
                 this.gameBoard.drawFromBag().ifPresent(player::addStudentInEntrance);
             }
-            if (this.expertMode) player.earnCoin();
+            if (this.expertMode) {
+                this.gameBoard.giveCoin();
+                player.earnCoin();
+            }
         });
     }
 
@@ -259,12 +269,18 @@ public class Game implements IMooshroomManHandled {
 
 
 
-    private int getGrandmaHerbsNoEntryTiles(){
+    public int getGrandmaHerbsNoEntryTiles(){
         return this.grandmaHerbsNoEntryTiles;
     }
 
+    public Collection<Pawn> getMonkStudents() {
+        System.out.println("GETTING MONK STUDENTS");
+        return this.monkStudents;
+    }
 
-
+    public Collection<Pawn> getSpoiledPrincessStudents() {
+        return this.spoiledPrincessStudents;
+    }
 
     /**
      * Method that gets the Coinvalue of the Character card selected

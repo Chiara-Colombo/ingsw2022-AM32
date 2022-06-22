@@ -125,7 +125,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     /**
      * Method which increase the coins of the player
      */
-    void earnCoin(){
+    public void earnCoin(){
         this.coins++;
     }
 
@@ -175,8 +175,8 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * {@inheritDoc}
      */
     @Override
-    public void addStudentInDiningRoom(Pawn student) {
-        this.schoolBoard.addStudentToDiningRoom(student);
+    public boolean addStudentInDiningRoom(Pawn student) {
+        return this.schoolBoard.addStudentToDiningRoom(student) % 3 == 0;
     }
 
     /**Methods based on the Farmer Character Card**/

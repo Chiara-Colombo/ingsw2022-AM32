@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.Handled.ICentaurHandled;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Board implements ICentaurHandled {
+public class Board implements ICentaurHandled, ICoinsSupply {
 
     private final IslandsManager islandManager;
     private int motherNature;
@@ -114,7 +114,8 @@ public class Board implements ICentaurHandled {
      * Method that adds coins
      * @param coins the coins that are added to a player
      */
-    void addCoins(int coins){
+    @Override
+    public void addCoins(int coins){
         if(this.coinsSupply + coins < 20)
             this.coinsSupply += coins;
         else this.coinsSupply = 20;
@@ -123,7 +124,8 @@ public class Board implements ICentaurHandled {
     /**
      *  Method that gives coins
      */
-    void giveCoin(){
+    @Override
+    public void giveCoin(){
         if (this.coinsSupply > 0)
             this.coinsSupply--;
         else this.coinsSupply = 0;
@@ -133,6 +135,7 @@ public class Board implements ICentaurHandled {
      * Getter that returns the coinsSupply
      * @return coinsSupply value
      */
+    @Override
     public int getCoinsSupply() {
         return this.coinsSupply;
     }

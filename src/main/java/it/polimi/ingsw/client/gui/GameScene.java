@@ -44,8 +44,9 @@ public class GameScene extends Scene {
     private final HashMap<Integer, HashMap<PawnsColors, Integer>> studentsOnIslands;
     private final ArrayList<TileImage> entrance;
     private final EnumMap<Characters, CharacterCardImage> characterCards;
+    private final ArrayList<ImageView> coins, noEntryTiles;
     private ClientController controller;
-    private int currentMNPosition;
+    private int currentMNPosition, coinsIndex, noEntryTilesIndex;
     private boolean firstBoardUpdate, firstPlayersUpdate, firstGameUpdate;
 
     public GameScene(Pane MAIN_PANE) {
@@ -68,8 +69,12 @@ public class GameScene extends Scene {
         this.professors = new HashMap<>();
         this.studentsOnIslands = new HashMap<>();
         this.characterCards = new EnumMap<>(Characters.class);
+        this.coins = new ArrayList<>();
+        this.noEntryTiles = new ArrayList<>();
         this.MOTHER_NATURE = new ImageView(MOTHER_NATURE_IMAGE);
         this.TOWERS = new HashMap<>();
+        this.coinsIndex = 0;
+        this.noEntryTilesIndex = 0;
         this.firstBoardUpdate = true;
         this.firstPlayersUpdate = true;
         this.firstGameUpdate = true;
@@ -113,6 +118,7 @@ public class GameScene extends Scene {
             this.CLOUDS.add(new TileImage(i, cloudImage));
             boardUpdate.getClouds().get(i).getStudents().forEach(student -> this.students.get(student).add(new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(student))));
         }
+        this.coins.add(new ImageView(COIN_IMAGE));
         this.firstBoardUpdate = false;
     }
 
@@ -168,27 +174,33 @@ public class GameScene extends Scene {
                         )
                 );
             }
+            this.coins.add(new ImageView(COIN_IMAGE));
             this.PLAYERS_PANES.put(playersUpdate.get(i).getNickname(), schoolBoard);
         }
         this.firstPlayersUpdate = false;
     }
 
-    private void loadCharactersImages(ArrayList<Characters> validCharacters) {
+    private void loadCharactersImages(GameUpdate gameUpdate) {
+        ArrayList<Characters> validCharacters = gameUpdate.getValidCharacters();
         for (Characters character : validCharacters) {
             this.characterCards.put(character, new CharacterCardImage(character, new ImageView(CHARACTERS_IMAGE_ENUM_MAP.get(character))));
+            if (character.equals(Characters.GRANDMA_HERBS)) {
+                for (int i = 0; i < gameUpdate.getGrandmaHerbsNoEntryTiles(); i++) {
+                    this.noEntryTiles.add(new ImageView(NO_ENTRY_TILE_IMAGE));
+                }
+            }
         }
         this.firstGameUpdate = false;
     }
 
-    public void updateBoard(BoardUpdateContent boardUpdate) {
+    public void updateBoard(BoardUpdateContent boardUpdate, boolean isExpertMode) {
         this.towersIndexes.forEach((key, value) -> this.towersIndexes.put(key, 0));
         this.studentsIndexes.forEach((key, value) -> this.studentsIndexes.put(key, 0));
+        this.coinsIndex = 0;
+        this.noEntryTilesIndex = 0;
         if (this.firstBoardUpdate)
             loadBoardImages(boardUpdate);
-        this.MAIN_PANE.getChildren().remove(this.BOARD_PANE);
-        this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
-        this.MAIN_PANE.getChildren().removeAll(this.PLAYERS_PANES.values());
-        this.MAIN_PANE.getChildren().removeAll(this.characterCards.values().stream().map(CharacterCardImage::getImageView).toList());
+        this.MAIN_PANE.getChildren().clear();
         this.BOARD_PANE.getChildren().clear();
         ArrayList<ArrayList<IslandUpdate>> islands = boardUpdate.getIslands();
         for (ArrayList<IslandUpdate> groupOfIslandsUpdate : islands) {
@@ -300,6 +312,19 @@ public class GameScene extends Scene {
             professorImage.setPreserveRatio(true);
             this.BOARD_PANE.getChildren().add(professorImage);
         }
+        if (isExpertMode) {
+            ImageView coinImage = this.coins.get(this.coinsIndex);
+            coinImage.setFitWidth(6 * PAWNS_RADIUS);
+            coinImage.setPreserveRatio(true);
+            coinImage.setLayoutX(CLOUD_DIMENSION / 2.0);
+            coinImage.setLayoutY(SCHOOL_BOARD_HEIGHT - 100.0);
+            Label qty = new Label(boardUpdate.getCoinsSupply() + "");
+            qty.setLayoutX(CLOUD_DIMENSION / 2.0 + 5.2 * PAWNS_RADIUS);
+            qty.setLayoutY(SCHOOL_BOARD_HEIGHT - 100.0 + 5.2 * PAWNS_RADIUS);
+            qty.setFont(Font.font("Berlin Sans FB", FontWeight.BOLD, 16));
+            this.coinsIndex++;
+            this.BOARD_PANE.getChildren().addAll(coinImage, qty);
+        }
         this.MAIN_PANE.getChildren().add(this.BOARD_PANE);
     }
 
@@ -395,7 +420,7 @@ public class GameScene extends Scene {
                 this.towersIndexes.put(playerUpdate.getTowersColor(), this.towersIndexes.get(playerUpdate.getTowersColor()) + 1);
             }
             if (isExpertMode) {
-                ImageView coinImage = new ImageView(COIN_IMAGE);
+                ImageView coinImage = this.coins.get(this.coinsIndex);
                 coinImage.setFitWidth(3.2 * PAWNS_RADIUS);
                 coinImage.setPreserveRatio(true);
                 double x = SCHOOL_BOARD_WIDTH - 1.6 * PAWNS_RADIUS, y = SCHOOL_BOARD_HEIGHT - 115.0;
@@ -412,6 +437,7 @@ public class GameScene extends Scene {
                 qty.setLayoutY(y + 1.6 * PAWNS_RADIUS);
                 qty.setFont(Font.font("Berlin Sans FB", FontWeight.BOLD, 16));
                 schoolBoard.getChildren().addAll(coinImage, qty);
+                this.coinsIndex++;
             }
         }
         this.MAIN_PANE.getChildren().addAll(this.PLAYERS_PANES.values());
@@ -419,19 +445,49 @@ public class GameScene extends Scene {
 
     public void updateGame(GameUpdate gameUpdate) {
         if (gameUpdate.isExpertMode()) {
-            if (this.firstGameUpdate) loadCharactersImages(gameUpdate.getValidCharacters());
+            if (this.firstGameUpdate) loadCharactersImages(gameUpdate);
             ArrayList<Characters> validCharacters = gameUpdate.getValidCharacters();
             final double CARDS_MARGIN_Y = 20.0,
                     CARDS_HEIGHT = SCHOOL_BOARD_WIDTH - 2 * CARDS_MARGIN_Y,
                     CARDS_MARGIN_X = 20.0, CARDS_SPACE_X = 10.0,
                     CARDS_WIDTH = (((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0) - 2 * CARDS_MARGIN_X - 2 * CARDS_SPACE_X) / 3.0;
             for (int i = 0; i < validCharacters.size(); i++) {
-                ImageView cardImage = this.characterCards.get(validCharacters.get(i)).getImageView();
+                final double CARD_X = CARDS_MARGIN_X + (CARDS_SPACE_X + CARDS_WIDTH) * i, CARD_Y = GUI_HEIGHT - CARDS_HEIGHT - CARDS_MARGIN_Y;
+                Characters character = validCharacters.get(i);
+                ImageView cardImage = this.characterCards.get(character).getImageView();
                 cardImage.setFitHeight(CARDS_HEIGHT);
                 cardImage.setFitWidth(CARDS_WIDTH);
-                cardImage.setLayoutY(GUI_HEIGHT - CARDS_HEIGHT - CARDS_MARGIN_Y);
-                cardImage.setLayoutX(CARDS_MARGIN_X + (CARDS_SPACE_X + CARDS_WIDTH) * i);
+                cardImage.setLayoutY(CARD_Y);
+                cardImage.setLayoutX(CARD_X);
                 this.MAIN_PANE.getChildren().add(cardImage);
+                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
+                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? gameUpdate.getMonkStudents() : gameUpdate.getSpoiledPrincessStudents();
+                    for (int j = 0; j < pawns.size(); j++) {
+                        ImageView pawnImage;
+                        PawnsColors color = pawns.get(j);
+                        if (this.studentsIndexes.get(color) >= this.students.get(color).size()) {
+                            pawnImage = new ImageView(PAWNS_COLORS_IMAGE_ENUM_MAP.get(color));
+                            this.students.get(color).add(pawnImage);
+                        } else pawnImage = this.students.get(color).get(this.studentsIndexes.get(color));
+                        pawnImage.setFitWidth(1.8 * PAWNS_RADIUS);
+                        pawnImage.setFitHeight(1.8 * PAWNS_RADIUS);
+                        pawnImage.setLayoutY(CARD_Y + PAWNS_RADIUS + (1.8 * PAWNS_RADIUS + 5.0) * j);
+                        pawnImage.setLayoutX(CARD_X + CARDS_WIDTH - 2.8 * PAWNS_RADIUS);
+                        this.MAIN_PANE.getChildren().add(pawnImage);
+                        this.studentsIndexes.put(color, this.studentsIndexes.get(color) + 1);
+                    }
+                }
+                if (character.equals(Characters.GRANDMA_HERBS)) {
+                    for (int j = 0; j < gameUpdate.getGrandmaHerbsNoEntryTiles(); j++) {
+                        ImageView noEntryImage = this.noEntryTiles.get(this.noEntryTilesIndex);
+                        noEntryImage.setFitWidth(2 * PAWNS_RADIUS);
+                        noEntryImage.setPreserveRatio(true);
+                        noEntryImage.setLayoutY(CARD_Y + PAWNS_RADIUS + 1.4 * PAWNS_RADIUS * j);
+                        noEntryImage.setLayoutX(CARD_X + CARDS_WIDTH - 3 * PAWNS_RADIUS);
+                        this.noEntryTilesIndex++;
+                        this.MAIN_PANE.getChildren().add(noEntryImage);
+                    }
+                }
             }
         }
         String message;
@@ -444,6 +500,7 @@ public class GameScene extends Scene {
     }
 
     public void showTurnMessage(String message) {
+        this.MAIN_PANE.getChildren().remove(this.TURN_MESSAGE);
         this.TURN_MESSAGE.setText(message);
         this.TURN_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
         this.TURN_MESSAGE.setMinWidth((GUI_WIDTH - SCHOOL_BOARD_HEIGHT) / 2.0);
@@ -453,9 +510,11 @@ public class GameScene extends Scene {
         this.TURN_MESSAGE.setTextAlignment(TextAlignment.CENTER);
         this.TURN_MESSAGE.setLayoutY(GUI_HEIGHT - 150);
         this.TURN_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
+        this.MAIN_PANE.getChildren().add(this.TURN_MESSAGE);
     }
 
     public void showGamePhaseMessage(String message) {
+        this.MAIN_PANE.getChildren().remove(this.GAME_PHASE_MESSAGE);
         this.GAME_PHASE_MESSAGE.setWrapText(true);
         this.GAME_PHASE_MESSAGE.setText(message);
         this.GAME_PHASE_MESSAGE.setFont(Font.font("Berlin Sans FB", 20));
@@ -466,6 +525,7 @@ public class GameScene extends Scene {
         this.GAME_PHASE_MESSAGE.setTextAlignment(TextAlignment.CENTER);
         this.GAME_PHASE_MESSAGE.setLayoutY(GUI_HEIGHT - 125);
         this.GAME_PHASE_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
+        this.MAIN_PANE.getChildren().add(this.GAME_PHASE_MESSAGE);
     }
 
     public void showAssistantCardsPane(ArrayList<AssistantCard> availableCards) {

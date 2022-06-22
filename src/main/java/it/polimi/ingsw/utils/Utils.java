@@ -341,4 +341,5 @@ public class Utils {
             Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess.jpg"))
     ));
     public static final Image COIN_IMAGE = new Image("\\assets\\coin.png");
+    public static final Image NO_ENTRY_TILE_IMAGE = new Image("\\assets\\no_entry_tile.png");
 }

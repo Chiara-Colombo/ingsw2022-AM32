@@ -61,11 +61,15 @@ public class ClientHandler implements Runnable {
     }
 
     void sendObjectMessage(ServerMessage message) {
-        try {
-            outputStream.writeObject(message);
-            outputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        synchronized (this.outputStream) {
+            try {
+                this.outputStream.writeObject(message);
+                this.outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                this.outputStream.notifyAll();
+            }
         }
     }
 
@@ -81,8 +85,15 @@ public class ClientHandler implements Runnable {
             timer.cancel();
             try {
                 this.inputStream.close();
-                this.outputStream.close();
             } catch (IOException ignored) {}
+            synchronized (this.outputStream) {
+                try {
+                    this.outputStream.close();
+                } catch (IOException ignored) {}
+                finally {
+                    this.outputStream.notifyAll();
+                }
+            }
         }
     }
 }

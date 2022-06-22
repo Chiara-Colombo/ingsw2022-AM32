@@ -1,9 +1,6 @@
 package it.polimi.ingsw.messages.servertoclient;
 
-import it.polimi.ingsw.client.BoardUpdateContent;
-import it.polimi.ingsw.client.GameUpdate;
-import it.polimi.ingsw.client.PlayerUpdate;
-import it.polimi.ingsw.client.VisitorClient;
+import it.polimi.ingsw.client.*;
 
 import java.io.IOException;
 import java.util.ArrayList;

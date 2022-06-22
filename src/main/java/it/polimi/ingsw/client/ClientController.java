@@ -37,12 +37,12 @@ public class ClientController implements Runnable{
     }
 
     @Override
-    public void run()  {
+    public synchronized void run()  {
         ExecutorService executor = Executors.newCachedThreadPool();
         timer.scheduleAtFixedRate(new ConnectionTask(this), 1000, 1000);
         while(true) {
              try {
-                 ServerMessage servermessage = (ServerMessage) inputStream.readObject();
+                 ServerMessage servermessage = (ServerMessage) this.inputStream.readObject();
                  if (servermessage.TypeOfMessage().equals("PingMessage")) {
                      executor.submit(() -> {
                          this.sendObjectMessage(new Pong());

@@ -52,7 +52,7 @@ public class SchoolBoard implements ISchoolBoard {
     public int addStudentToDiningRoom(Pawn student){
         PawnsColors color = student.getColor();
         this.diningRoom.get(color).add(student);
-        return this.diningRoom.size();
+        return this.diningRoom.get(color).size();
     }
 
     /**

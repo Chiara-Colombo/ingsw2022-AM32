@@ -99,7 +99,7 @@ public class ScenesManager {
     }
 
     public void showBoardUpdate(BoardUpdate boardUpdate) {
-        this.gameScene.updateBoard(boardUpdate.getBoardUpdateContent());
+        this.gameScene.updateBoard(boardUpdate.getBoardUpdateContent(), boardUpdate.getGameUpdate().isExpertMode());
         this.gameScene.updatePlayers(boardUpdate.getPlayersUpdate(), boardUpdate.getGameUpdate().isExpertMode());
         this.gameScene.updateGame(boardUpdate.getGameUpdate());
     }
