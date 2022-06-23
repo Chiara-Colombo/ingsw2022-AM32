@@ -45,35 +45,41 @@ public class ClientController implements Runnable{
         ExecutorService executor = Executors.newCachedThreadPool();
         this.timer.scheduleAtFixedRate(this.task, 1000, 1000);
         while(true) {
+            ServerMessage servermessage;
             synchronized (this.inputStream) {
                 try {
-                    ServerMessage servermessage = (ServerMessage) this.inputStream.readObject();
-                    try {
-                        if (servermessage.TypeOfMessage().equals("PingMessage")) {
-                            executor.submit(() -> {
-                                this.sendObjectMessage(new Pong());
-                                this.unreceivedPing = 0;
-                            });
-                        } else {
-                            if (this.isGui) {
-                                Platform.runLater(() -> {
-                                    try {
-                                        servermessage.accept(clientVisitor);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                    servermessage = (ServerMessage) this.inputStream.readObject();
+                    if (!Objects.isNull(servermessage)) {
+                        try {
+                            if (servermessage.TypeOfMessage().equals("PingMessage")) {
+                                executor.submit(() -> {
+                                    this.sendObjectMessage(new Pong());
+                                    this.unreceivedPing = 0;
                                 });
                             } else {
-                                servermessage.accept(clientVisitor);
+                                if (this.isGui) {
+                                    Platform.runLater(() -> {
+                                        try {
+                                            servermessage.accept(clientVisitor);
+                                        } catch (IOException ignored) {}
+                                    });
+                                } else {
+                                    executor.submit(() -> {
+                                        try {
+                                            servermessage.accept(clientVisitor);
+                                        } catch (IOException ignored) {}
+                                    });
+                                }
                             }
-                        }
-                    } catch (NullPointerException | IOException ignored) {}
+                        } catch (NullPointerException ignored) {}
+                    }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                     break;
                 } catch (IOException e) {
                     this.inputStream.notifyAll();
                     this.close();
+                    break;
                 } finally {
                     this.inputStream.notifyAll();
                 }
