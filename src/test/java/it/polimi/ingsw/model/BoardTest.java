@@ -80,9 +80,6 @@ class BoardTest {
         }
 
 
-
-
-
     /**sets students on island and check if the amaunt is correct**/
 
     @Test
@@ -149,6 +146,18 @@ class BoardTest {
 
         //when the board is created it arleady has a  student pawn on the island
         assertEquals(1,i);
+    }
+
+    @Test
+    void CentaurEffect(){
+        Board boardTest = new Board(3);
+
+        CentaurEffectHandler centaurEffectHandler = new CentaurEffectHandler(boardTest);
+        assertEquals(1,boardTest.getTowersInfluence());
+        centaurEffectHandler.applyEffect();
+        assertEquals(0,boardTest.getTowersInfluence());
+        centaurEffectHandler.removeEffect();
+        assertEquals(1,boardTest.getTowersInfluence());
     }
 
 

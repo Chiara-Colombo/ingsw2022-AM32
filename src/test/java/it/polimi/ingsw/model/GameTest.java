@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -232,15 +233,29 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Assertions.assertEquals(3,Characters.CENTAUR.getCoinValue());
+        Assertions.assertEquals(2, Characters.GRANDMA_HERBS.getCoinValue());
+        Assertions.assertEquals(2, Characters.FARMER.getCoinValue());
+        Assertions.assertEquals(2, Characters.KNIGHT.getCoinValue());
+        Assertions.assertEquals(1, Characters.MAGIC_MAILMAN.getCoinValue());
+        Assertions.assertEquals(3, Characters.MUSHROOMS_MAN.getCoinValue());
+        Assertions.assertEquals(2, Characters.SPOILED_PRINCESS.getCoinValue());
+        Assertions.assertEquals(1, Characters.MONK.getCoinValue());
         game = new Game(2, false, jsonCards);
-        Assertions.assertEquals(3, game.getCharacterCost(Characters.CENTAUR));
-        Assertions.assertEquals(2, game.getCharacterCost(Characters.GRANDMA_HERBS));
-        Assertions.assertEquals(2, game.getCharacterCost(Characters.FARMER));
-        Assertions.assertEquals(2, game.getCharacterCost(Characters.KNIGHT));
-        Assertions.assertEquals(1, game.getCharacterCost(Characters.MAGIC_MAILMAN));
-        Assertions.assertEquals(3, game.getCharacterCost(Characters.MUSHROOMS_MAN));
-        Assertions.assertEquals(2, game.getCharacterCost(Characters.SPOILED_PRINCESS));
-        Assertions.assertEquals(1, game.getCharacterCost(Characters.MONK));
+        Player player1 = new Player("Paolo Tommaso",7);
+        Player player2 = new Player("Gasparo Noe",7);
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+        game.startGame();
+        ArrayList<Characters> characters = game.getValidCharacters();
+        int i = 0;
+        for(Characters character : characters){
+            i++;
+        }
+        Assertions.assertEquals(3, i);
+
+
     }
 
     @Test

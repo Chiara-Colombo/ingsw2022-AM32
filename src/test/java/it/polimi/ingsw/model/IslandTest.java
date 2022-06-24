@@ -13,7 +13,7 @@ public class IslandTest {
         GrandmaHerbsEffectHandler handler = new GrandmaHerbsEffectHandler(island);
         handler.applyEffect();
         assertTrue(island.isNoEntry());
-        handler.removeEffect();
+        handler.restoreIsland();
         assertFalse(island.isNoEntry());
     }
 
@@ -33,4 +33,38 @@ public class IslandTest {
         IIsland island = test.getIslandsManager().getIsland(index);
         assertEquals(4,island.getIndex());
     }
+
+    @Test
+    void IslandManager(){
+        IslandsManager islandsManager = new IslandsManager();
+        int i = 0;
+        for(ArrayList<IIsland> groupsofislands : islandsManager.getIslands()){
+            i++;
+        }
+        assertEquals(12,i);
+        islandsManager.mergeIslands(0,1);
+         i = 0;
+        for(ArrayList<IIsland> groupofislands : islandsManager.getIslands()){
+            i++;
+        }
+        System.out.println(i);
+
+        i = 0;
+
+        for(IIsland islands : islandsManager.getAllIslands()){
+            i++;
+        }
+        assertEquals(12,i);
+
+        islandsManager.mergeIslands(3,4,5);
+         i = 0;
+        for(ArrayList<IIsland> groupsofislands : islandsManager.getIslands()){
+            i++;
+        }
+        assertEquals(9,i);
+
+        System.out.println(islandsManager.getIslandsGroupIndexes(3));
+
+    }
+
 }

@@ -49,7 +49,7 @@ public class AssistantCardTest {
         assertEquals("AssistantCard [value=3, motherNatureMovements=2]",(card.toString()));
     }
 
-    /*
+
     @Test
     void getAssistantCards(){
         String jsonCards = null;
@@ -63,7 +63,6 @@ public class AssistantCardTest {
         ArrayList<AssistantCard> ascm = new ArrayList<>();
 
         ascm = assistantCardsManager.getAssistantCards();
-        System.out.println(ascm.size());
 
         assertEquals(10,ascm.size());
     }
@@ -97,8 +96,17 @@ public class AssistantCardTest {
 
         assistantCardsManager.setCurrentCardForPlayer(Wizards.FIRST,7);
 
-        System.out.println(assistantCardsManager.getCurrentCardForPlayer(Wizards.FIRST));
+
+        Optional<AssistantCard> card = assistantCardsManager.getCurrentCardForPlayer(Wizards.FIRST);
+        assertEquals(7,card.get().getValue());
+        assertEquals(4,card.get().getMotherNatureMovements());
+
+        assistantCardsManager.resetCurrentCards();
+        card = assistantCardsManager.getCurrentCardForPlayer(Wizards.FIRST);
+        assertTrue(card.isEmpty());
+
+
     }
 
-     */
+
 }
