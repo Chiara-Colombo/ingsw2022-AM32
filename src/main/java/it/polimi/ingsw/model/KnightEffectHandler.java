@@ -8,20 +8,20 @@ public class KnightEffectHandler implements EffectHandler{
     /**
      * Constructor of KnightEffectHandler Class
      */
+
     public KnightEffectHandler(IKnightHandled player) {
         this.player = player;
     }
 
-
-
-
     /**
      * Method that uses character effects
      */
+
     @Override
     /**
      * Method that sets the extrainfluence for the selected player
      */
+
     public void applyEffect() {
         this.player.setExtraInfluence(2);
     }

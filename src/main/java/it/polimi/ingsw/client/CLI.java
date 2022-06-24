@@ -170,6 +170,9 @@ public class CLI  implements View{
             System.out.print("] ");
         }
         System.out.println("\n");
+        if (boardUpdate.getGameUpdate().isExpertMode()){
+            System.out.println("CHARACTER CARDS : " + boardUpdate.getGameUpdate().getValidCharacters() + "\n");
+        }
 
         for( int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
             System.out.println(ANSI_RED + "             SchoolBoard di  " +  boardUpdate.getPlayersUpdate().get(i).getNickname()+ ANSI_RESET + " : \n");
@@ -193,6 +196,8 @@ public class CLI  implements View{
             }
             System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " +
                     TOWERS_COLORS_STRING_ENUM_MAP.get(boardUpdate.getPlayersUpdate().get(i).getTowersColor()) + "\n");
+            if (boardUpdate.getGameUpdate().isExpertMode()){
+                System.out.println("COINS :" + boardUpdate.getPlayersUpdate().get(i).getCoins() + "\n");}
         }
     }
 

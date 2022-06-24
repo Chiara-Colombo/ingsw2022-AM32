@@ -22,6 +22,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * @param nickname The nickname chosen by the player
      * @param towers the number of towers that the player has
      */
+
     public Player(String nickname, int towers){
         this.nickname = nickname;
         this.schoolBoard = new SchoolBoard();
@@ -39,6 +40,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Set the tower color for the player
      * @param color the colors available
      */
+
     public void setColor(TowersColors color) {
         this.color = color;
         this.towers.forEach(tower -> {
@@ -50,6 +52,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that gets the tower color of the player
      * @return the tower color
      */
+
     public TowersColors getColor() {
         return color;
     }
@@ -58,6 +61,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that gets the Wizard of the player, which determines the AssistantCardsManager
      * @return Wizard number
      */
+
     public Optional<Wizards> getWizard() {
         return this.wizard;
     }
@@ -66,6 +70,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that sets Wizard for the selected Player
      * @param wizard the enumeration of wizards
      */
+
     public void setWizard(Wizards wizard) {
         this.wizard = Optional.of(wizard);
     }
@@ -74,6 +79,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      *Method which put a student tile in the schoolBoard entrance of the selected player
      * @param student the student Pawn that needs to be put
      */
+
     public void addStudentInEntrance(Pawn student){
         schoolBoard.addStudent(student);
     }
@@ -87,23 +93,24 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method which removes a student pawn
      * @param studentIndex the index of the student pawn to be removed
      */
+
     public Pawn removeStudent(int studentIndex){
         return this.schoolBoard.removeStudent(studentIndex);
     }
-
 
     /**
      * Method which adds a "professor" pawn
      * @param professor the  pawn to be added
      */
+
     public void addProfessor(Pawn professor){
         this.schoolBoard.addProfessor(professor);
     }
 
     /**
      * Method which removes a "professor" pawn
-     * @param professorIndex the index of the professor pawn to be added
-     */
+     * @param professorIndex the index of the professor pawnthat has to be removed
+     * */
 
     public Pawn removeProfessor(int professorIndex){
         return this.schoolBoard.removeProfessor(professorIndex);
@@ -138,6 +145,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Method that gets the schoolBoard for the player
      * @return a schoolBoard object
      */
+
     public ISchoolBoard getSchoolBoard() {
         return this.schoolBoard;
     }
@@ -146,11 +154,13 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      * Getter method that returns the player nickname
      * @return the string value of nickname
      */
+
     public String getNickname() {
         return nickname;
     }
 
     /**Methods based on the Knight Character Card/**/
+
     /**
      * {@inheritDoc}
      */
@@ -176,6 +186,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     }
 
     /**Methods based of the SpoiledPrincess Character Card/**/
+
     /**
      * {@inheritDoc}
      */
@@ -185,6 +196,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     }
 
     /**Methods based on the Farmer Character Card**/
+
     /**
      * {@inheritDoc}
      */
@@ -201,13 +213,29 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         return this.extraStudent;
     }
 
+    /**
+     * Method that get a tower
+     * @return tower
+     */
+
     public int getTowers() {
         return this.towers.size();
     }
 
+    /**
+     * Method that removes a tower
+     * @return tower to be removed
+     */
+
     public Tower removeTower() {
         return this.towers.remove(0);
     }
+
+
+    /**
+     * Method that adds a tower
+     * @param tower a tower
+     */
 
     public void addTower(Tower tower) {
         this.towers.add(tower);

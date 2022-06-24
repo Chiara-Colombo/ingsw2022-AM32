@@ -10,10 +10,10 @@ public class IslandsManager implements IMonkHandled {
     private final ArrayList<Island> islands;
     private final HashMap<Integer, Integer> groupOfIslands;
 
-
     /**
      * Class constructor
      */
+
     IslandsManager() {
         this.islands = new ArrayList<>();
         for (int i = 0; i < this.islandsSize; i++) {
@@ -29,13 +29,32 @@ public class IslandsManager implements IMonkHandled {
         return this.islandsSize;
     }
 
+    /**
+     * Method that adds students on an island
+     * @param student pawn of a student
+     * @param islandIndex index od an island
+     */
+
     void addStudentOnIsland(Pawn student, int islandIndex) {
         this.islands.get(islandIndex).addStudent(student);
     }
 
+    /**
+     * Method that get the island
+     * @param islandIndex index of an island
+     * @return the island
+     */
+
     public IIsland getIsland(int islandIndex) {
         return this.islands.get(islandIndex);
     }
+
+    /**
+     * Method that get an island with a ban
+     * @param islandIndex index of an island
+     * @return island with a ban
+     */
+
     public INoEntry getNoEntryIsland(int islandIndex) {
         return this.islands.get(islandIndex);
     }
@@ -45,6 +64,7 @@ public class IslandsManager implements IMonkHandled {
      * @return islands, each  index of arraylist<arraylist<island>> it's a group and arraylist<island> represents
      * the island of that group
      */
+
     public ArrayList<ArrayList<IIsland>> getIslands() {
         int startIndex = 0, zGroup = this.groupOfIslands.get(0);
         boolean breakpoint = false;
@@ -75,6 +95,7 @@ public class IslandsManager implements IMonkHandled {
      * Getter of all islands
      * @return ArrayList of islands
      */
+
     public ArrayList<IIsland> getAllIslands() {
         return new ArrayList<>(this.islands);
     }
@@ -84,6 +105,7 @@ public class IslandsManager implements IMonkHandled {
      * @param tower that needs to be placed
      * @param island index of the island where the tower needs to be placed
      */
+
     public void setTowerOnIsland(Tower tower, int island){
         this.islands.get(island).setTower(tower);
     }
@@ -94,6 +116,7 @@ public class IslandsManager implements IMonkHandled {
      * @param groupOfIslands1 index of first island group
      * @param groupOfIslands2 index of second island group
      */
+
     public void mergeIslands(int groupOfIslands1, int groupOfIslands2){
         final int group = Math.max(groupOfIslands1, groupOfIslands2);
         this.groupOfIslands.forEach((key, value) -> {
@@ -119,9 +142,21 @@ public class IslandsManager implements IMonkHandled {
         });
     }
 
+    /**
+     * Method that gets a group of island
+     * @param islandIndex index of an island
+     * @return group of islands
+     */
+
     public int getIslandGroup(int islandIndex) {
         return this.groupOfIslands.get(islandIndex);
     }
+
+    /**
+     * Method that gets the indexes of groups of islands
+     * @param islandIndex index of an islands
+     * @return
+     */
 
     public List<Integer> getIslandsGroupIndexes(int islandIndex) {
         return this.islands
@@ -132,8 +167,11 @@ public class IslandsManager implements IMonkHandled {
     }
 
     /**
-     * {@inheritDoc}
+     * Method that set the students on an island
+     * @param student pawn of a student
+     * @param island index of an island
      */
+
     @Override
     public void setStudentOnIsland(Pawn student, int island) {
         this.islands.get(island).addStudent(student);

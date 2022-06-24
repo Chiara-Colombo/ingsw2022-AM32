@@ -10,17 +10,17 @@ public class SpoiledPrincessEffectHandler implements EffectHandler{
     /**
      * Constructor of SpoiledPrincessEffectHandler Class
      */
+
     public SpoiledPrincessEffectHandler(Pawn student, ISpoiledPrincessHandled player, ICoinsSupply coinsSupply) {
         this.player = player;
         this.student = student;
         this.coinsSupply = coinsSupply;
     }
 
-
-
     /**
      * Method that applies SpoiledPrincessMan Character card Effects
      */
+
     @Override
     public void applyEffect() {
         if (this.player.addStudentInDiningRoom(this.student)) {
@@ -34,6 +34,7 @@ public class SpoiledPrincessEffectHandler implements EffectHandler{
     /**
      * Method that removes SpoiledPrincessMan Character card Effects
      */
+
     @Override
     public void removeEffect() {
 

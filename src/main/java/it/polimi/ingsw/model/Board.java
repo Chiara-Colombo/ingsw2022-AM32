@@ -47,6 +47,11 @@ public class Board implements ICentaurHandled, ICoinsSupply {
         this.islandsTowersMultiplier = 1;
     }
 
+    /**
+     * Method that get the Bag Size
+     * @return bag size
+     */
+
     public int getBagSize() {
         return this.bag.values().stream().reduce(0, (temp, now) -> temp += now);
     }
@@ -56,25 +61,34 @@ public class Board implements ICentaurHandled, ICoinsSupply {
      * @param student  tile that needs to be setted
      * @param cloud  tile where student need to be placed
      */
+
     public void setStudentOnCloud(Pawn student, int cloud){
         this.clouds.get(cloud).addStudent(student);
     }
 
     /**
      * Method that removes students from  cloud
-     * @param cloud
+     * @param cloud the cloud
      */
+
     public Pawn removeStudentFromCloud(int cloud){
         return clouds.get(cloud).removeStudent(0);
     }
 
     /**
      * Getter that returns the available professors pawns
-     * @return collection of abailable professors pawns
+     * @return collection of available professors pawns
      */
+
     public ArrayList<PawnsColors> getAvailableProfessors() {
         return new ArrayList<>(this.availableProfessors.stream().map(Pawn::getColor).toList());
     }
+
+    /**
+     * Method that remove a professor from the available ones
+     * @param index index of a professor
+     * @return return the available professors
+     */
 
     public Pawn removeProfessor(int index) {
         return this.availableProfessors.remove(index);
@@ -98,6 +112,10 @@ public class Board implements ICentaurHandled, ICoinsSupply {
             this.motherNature = index;
     }
 
+    /**
+     * Method for Island Manager
+     * @return Island Manager
+     */
     public IslandsManager getIslandsManager() {
         return this.islandManager;
     }
@@ -106,6 +124,7 @@ public class Board implements ICentaurHandled, ICoinsSupply {
      * Getter of motherNature,which is an index
      * @return the value of motherNature
      */
+
     public int getMotherNature() {
         return this.motherNature;
     }
@@ -114,6 +133,7 @@ public class Board implements ICentaurHandled, ICoinsSupply {
      * Method that adds coins
      * @param coins the coins that are added to a player
      */
+
     @Override
     public void addCoins(int coins){
         if(this.coinsSupply + coins < 20)
@@ -124,6 +144,7 @@ public class Board implements ICentaurHandled, ICoinsSupply {
     /**
      *  Method that gives coins
      */
+
     @Override
     public void giveCoin(){
         if (this.coinsSupply > 0)
@@ -135,6 +156,7 @@ public class Board implements ICentaurHandled, ICoinsSupply {
      * Getter that returns the coinsSupply
      * @return coinsSupply value
      */
+
     @Override
     public int getCoinsSupply() {
         return this.coinsSupply;
@@ -154,8 +176,9 @@ public class Board implements ICentaurHandled, ICoinsSupply {
     }
 
     /**
-     * Method for drawing pawns for the bag
-     * @return if a pawn it's present, the pawn
+     * method that extract pawns from the Bag
+     * @return new pawn
+     * @return the bag is empty
      */
 
     public Optional<Pawn> drawFromBag() {
@@ -171,17 +194,21 @@ public class Board implements ICentaurHandled, ICoinsSupply {
         return Optional.empty();
     }
 
+
     /**
-     * {@inheritDoc}
+     * method that set towers according to influence
+     * @param influence influence of a player
      */
+
     @Override
     public void setTowersInfluence(int influence) {
         this.islandsTowersMultiplier = influence;
     }
 
     /**
-     * {@inheritDoc}
+     * method that set towers according to influence
      */
+
     @Override
     public int getTowersInfluence() {
         return this.islandsTowersMultiplier;

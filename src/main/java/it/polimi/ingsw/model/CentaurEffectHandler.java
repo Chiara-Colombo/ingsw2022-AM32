@@ -8,6 +8,7 @@ public class CentaurEffectHandler implements EffectHandler{
     /**
      * Constructor of CentaurEffectHandler Class
      */
+
     public CentaurEffectHandler(ICentaurHandled board) {
         this.board = board;
     }
@@ -15,6 +16,7 @@ public class CentaurEffectHandler implements EffectHandler{
     /**
      * Method that applies Centaur Character card Effects
      */
+
     @Override
     public void applyEffect() {
         this.board.setTowersInfluence(0);
@@ -23,6 +25,7 @@ public class CentaurEffectHandler implements EffectHandler{
     /**
      * Method that removes Centaur Character card Effects
      */
+
     @Override
     public void removeEffect() {
         this.board.setTowersInfluence(1);

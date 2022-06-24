@@ -8,6 +8,7 @@ public class FarmerEffectHandler implements EffectHandler{
     /**
      * Constructor of FarmerEffectHandler Class
      */
+
     public FarmerEffectHandler(IFarmerHandled player) {
         this.player = player;
     }
@@ -17,6 +18,7 @@ public class FarmerEffectHandler implements EffectHandler{
     /**
      * Method that applies Farmer Character card effect
      */
+
     @Override
     public void applyEffect() {
         this.player.setExtraStudent(1);
@@ -25,6 +27,7 @@ public class FarmerEffectHandler implements EffectHandler{
     /**
      * Method that removes the Farmer Character card effect
      */
+
     @Override
     public void removeEffect() {
         this.player.setExtraStudent(0);

@@ -12,7 +12,7 @@ public class AssistantCard implements IMagicMailManHandled, Serializable {
     private int extraMotherNatureMovements;
 
     /**
-     * class constructor
+     * Class constructor
      * @param value value of the card which goes from 1 to 10
      * @param motherNatureMovements integer value of mother nature movements
      */
@@ -33,7 +33,7 @@ public class AssistantCard implements IMagicMailManHandled, Serializable {
     }
 
     /**
-     *Getter for MotherNatureMovements
+     * Getter for MotherNatureMovements
      * @return the value of MotherNatureMovements variable
      */
 

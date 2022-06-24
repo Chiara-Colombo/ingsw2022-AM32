@@ -8,6 +8,7 @@ public class GrandmaHerbsEffectHandler implements EffectHandler{
     /**
      * Constructor of CentaurEffectHandler Class
      */
+
     public GrandmaHerbsEffectHandler(INoEntry island) {
         this.island = island;
     }
@@ -15,6 +16,7 @@ public class GrandmaHerbsEffectHandler implements EffectHandler{
     /**
      * Method which implements the GrandmaHerbs characterCard effects
      */
+
     @Override
     public void applyEffect() {
         this.island.setNoEntry(true);
@@ -23,10 +25,15 @@ public class GrandmaHerbsEffectHandler implements EffectHandler{
     /**
      * Method which removes the GrandmaHerbs characterCard effects
      */
+
     @Override
     public void removeEffect() {
 
     }
+
+    /**
+     * Method that restores the islands
+     */
 
     public void restoreIsland() {
         this.island.setNoEntry(false);

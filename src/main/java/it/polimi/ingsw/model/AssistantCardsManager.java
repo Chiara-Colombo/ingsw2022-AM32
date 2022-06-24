@@ -13,6 +13,7 @@ public class AssistantCardsManager {
    /**
     private ArrayList<AssistantCard> assistantCards;
     */
+
     private ArrayList<AssistantCard> assistantCards;
     private EnumMap<Wizards, Integer> currentCards;
 
@@ -93,7 +94,7 @@ public class AssistantCardsManager {
     }
 
     /**
-     * Reset the current card
+     * Reset the value of the current card
      */
 
     public void resetCurrentCards() {

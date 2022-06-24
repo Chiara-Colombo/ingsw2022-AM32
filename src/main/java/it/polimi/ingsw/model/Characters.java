@@ -20,6 +20,7 @@ public enum Characters {
      * Assigns directly the coin value
      * @param coinValue is the coin value of a card
      */
+
     Characters (int coinValue){
         this.coinValue = coinValue;
     }
@@ -28,6 +29,7 @@ public enum Characters {
      * Getter for the coin value
      * @return the value of the coinValue
      */
+
     public int getCoinValue() {
         return this.coinValue;
     }

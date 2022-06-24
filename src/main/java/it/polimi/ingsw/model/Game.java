@@ -28,6 +28,7 @@ public class Game implements IMushroomManHandled {
      * @param expertMode sets the mode of the match
      * @param jsonCards file that sets the character cards
      */
+
     public Game(int numOfPlayers, boolean expertMode, String jsonCards){
         this.gamePhase = GamePhase.NO_PHASE;
         this.expertMode = expertMode;
@@ -48,6 +49,7 @@ public class Game implements IMushroomManHandled {
     /**
      * Method for start the game
      */
+
     public void startGame(){
         if (this.numOfPlayers == this.players.size()) {
             this.gamePhase = GamePhase.START_PHASE;
@@ -93,14 +95,30 @@ public class Game implements IMushroomManHandled {
         }
     }
 
+    /**
+     * Method that gets the order of play
+     * @return list of player in order
+     */
+
     public List<String> getOrderOfPlay() {
         return playersCopyList;
     }
 
     /* only for testing*/
+
+    /**
+     * Method that get a copied list of player
+     * @return list of players
+     */
+
     public List<String> getPlayersCopyList() {
         return playersCopyList;
     }
+
+    /**
+     * method that says if a Character Card is Active
+     * @return
+     */
 
     public boolean isCharacterActive() {
         return this.characterActive;
@@ -109,6 +127,7 @@ public class Game implements IMushroomManHandled {
     /**
      * Method that sets up Characters
      */
+
     private void setupCharacters() {
         if (this.validCharacters.contains(Characters.MONK)) {
             for (int i = 0; i<4; i++) {
@@ -127,9 +146,12 @@ public class Game implements IMushroomManHandled {
             this.colorsInfluenceMultiplier.put(color, 1);
         }
     }
+
     /**
-     * Setting up for all players, the students pawn and if expert mode coins
+     * Method that set up parameters for all players:
+     * the students pawn and, in case of expert mode, coins
      */
+
     private void setupPlayers() {
         this.players.forEach(player -> {
             int students = this.numOfPlayers == 2 ? 7 : 9;
@@ -146,6 +168,7 @@ public class Game implements IMushroomManHandled {
     /**
      * Method that calculate the next player
      */
+
     public boolean nextPlayer() {
         if (this.playerOrderIndex + 1 >= this.playersCopyList.size()){
             this.playerOrderIndex = 0;
@@ -171,9 +194,19 @@ public class Game implements IMushroomManHandled {
         return true;
     }
 
+    /**
+     * Method that get the index of a player when playing
+     * @return player index
+     */
+
     public int getPlayerOrderIndex() {
         return playerOrderIndex;
     }
+
+    /**
+     * Method that gets the current player index
+     * @return index of current player
+     */
 
     /* only for testing*/
     public int getcurrentplayerindex(){
@@ -184,6 +217,7 @@ public class Game implements IMushroomManHandled {
      * Getter for the Phase of the game
      * @return the phase of the game
      */
+
     public GamePhase getGamePhase() {
         return this.gamePhase;
     }
@@ -192,22 +226,24 @@ public class Game implements IMushroomManHandled {
      * Setter for the Phase of the game
      * @return the phase of the game
      */
+
     public void setGamePhase(GamePhase gamePhase) {
         this.gamePhase = gamePhase;
     }
-
 
     /**
      * Get method that returns the current player
      * @return the index of the current player
      */
+
     public Player getCurrentPlayer(){
         return this.players.get(this.currentPlayer); }
 
     /**
      * Method that sets the current player index
-     * @param currentPlayer
+     * @param currentPlayer the current player
      */
+
     public void setCurrentPlayer(int currentPlayer) {
         if(currentPlayer >= 0 && currentPlayer < players.size())
             this.currentPlayer = currentPlayer;
@@ -219,6 +255,7 @@ public class Game implements IMushroomManHandled {
      * Getter for the Players
      * @return the players
      */
+
     public ArrayList<Player>getPlayers() {
         return this.players;
     }
@@ -227,35 +264,41 @@ public class Game implements IMushroomManHandled {
      * Method that gets the gameBoard of the game
      * @return gameboard variable
      */
+
     public Board getGameBoard() { return this.gameBoard; }
 
     /**
      * Method AssistantCardsManager that returns the cardsManager variable
-     * @return
+     * @return card Manager
      */
+
     public AssistantCardsManager getCardsManager() { return this.cardsManager; }
 
     /**
      * Method that activates a character
      * @param  character the character activated
      */
+
     public void activateCharacter(Characters character) {
         this.characterActive = true;
         this.activeCharacter = character;
         this.charactersValue.put(character, character.getCoinValue() + 1);
     }
+
     /**
      * Getter that returns active character
      * @return  characters activated
      */
+
     public Characters getActiveCharacter() {
         return this.activeCharacter;
     }
 
     /**
      * Method used for calling the effects of Characters cards
-     * @param effect
+     * @param effect effect of a card
      */
+
     public void useCharacterEffect(EffectHandler effect){
         if (this.characterActive) {
             this.activeEffect = effect;
@@ -266,6 +309,7 @@ public class Game implements IMushroomManHandled {
     /**
      * Method that removes the Character card effect
      */
+
     public void removeCharacterEffect(){
         if (this.characterActive) {
             this.characterActive = false;
@@ -273,12 +317,16 @@ public class Game implements IMushroomManHandled {
         }
     }
 
-
-
     /**
      * Method that get valid characters
      */
     public ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
+
+    /**
+     * Method that takes the tile with  a ban
+     * @return true if it takes the tile
+     *          false if not takes the tile
+     */
 
     public boolean takeGrandmaHerbsNoEntryTile() {
         if (this.grandmaHerbsNoEntryTiles > 0) {
@@ -288,17 +336,36 @@ public class Game implements IMushroomManHandled {
         return false;
     }
 
+    /**
+     * Method that puts the tile with a ban
+     */
+
     public void putGrandmaHerbsNoEntryTile() {
         this.grandmaHerbsNoEntryTiles++;
     }
+
+    /**
+     * Method that gets the tiles with ban
+     * @return tiles with ban
+     */
 
     public int getGrandmaHerbsNoEntryTiles(){
         return this.grandmaHerbsNoEntryTiles;
     }
 
+    /**
+     * Method that get the students effected by Monk Card
+     * @return monk students
+     */
+
     public ArrayList<Pawn> getMonkStudents() {
         return this.monkStudents;
     }
+
+    /**
+     * Method that gets students affected by Spoiled Princess Card
+     * @return Spoiled princess students
+     */
 
     public ArrayList<Pawn> getSpoiledPrincessStudents() {
         return this.spoiledPrincessStudents;
@@ -320,9 +387,10 @@ public class Game implements IMushroomManHandled {
     METODI AGGIUNTIVI:
  */
     /**
-     * getter for returning the number of players which was selected
+     * Getter that returns the number of players which was selected
      * @return numoplayers value
      */
+
     public int getNumOfPlayers() {
         return numOfPlayers;
     }
@@ -331,6 +399,7 @@ public class Game implements IMushroomManHandled {
      * Method that adds a selected player to the game
      * @param player the player that needs to be added
      */
+
     public void addPlayer(Player player){
         if(Objects.nonNull(player)) {
             this.players.add(player);
@@ -338,14 +407,13 @@ public class Game implements IMushroomManHandled {
         else System.out.println("Player has not been added");
  }
 
-
-
     @Override
     /**
      * Set influence value for a certain pawn
      * @param influence value
      * @param color the pawncolor that gets the influence value
      */
+
     public void setInfluenceForColor(PawnsColors color, int influence) {
         if((Objects.nonNull(this.colorsInfluenceMultiplier.get(color)))) {
             this.colorsInfluenceMultiplier.replace(color, influence);
@@ -359,6 +427,7 @@ public class Game implements IMushroomManHandled {
      * @param color is the color of the pawns of which we calculate the influence
      * @return
      */
+
     @Override
     public int getInfluenceForColor(PawnsColors color) {
         return this.colorsInfluenceMultiplier.get(color);
@@ -366,8 +435,10 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that tell if the match is in Expert Mode
-     * @return expertMode variable
+     * @return expertMode true if it is expert Mode
+     *                     false if it is simple Mode
      */
+
     public boolean isExpertMode() {
         return this.expertMode;
     }

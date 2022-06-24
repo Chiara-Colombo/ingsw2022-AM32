@@ -11,6 +11,7 @@ public class Cloud implements ICloud  {
     /**
      * Constructor of Cloud Class
      */
+
     public Cloud(){
         this.students = new ArrayList<>();
     }
@@ -20,6 +21,7 @@ public class Cloud implements ICloud  {
      * @param index  of the students pawn that has to be removed
      * @return the (student pawn) selected
      */
+
     public Pawn removeStudent(int index){
          return this.students.remove(index);
     }
@@ -28,9 +30,15 @@ public class Cloud implements ICloud  {
      * Method for adding a student pawn to the cloud
      * @param student the student pawn that needs to be added
      */
+
     void addStudent(Pawn student){
         this.students.add(student);
     }
+
+    /**
+     *
+     * @return
+     */
 
     int studentsSize(){
         return this.students.size();
@@ -40,6 +48,7 @@ public class Cloud implements ICloud  {
      * Method that checks if the cloud has no student pawns
      * @return that the cloud is empty
      */
+
     @Override
     public boolean isEmpty() {
          return this.students.isEmpty();
@@ -49,6 +58,7 @@ public class Cloud implements ICloud  {
      * Method which returns a student iterator
      * @return student iterator
      */
+
     @Override
     public Iterator<Pawn> getStudents() {
         return this.students.iterator();
