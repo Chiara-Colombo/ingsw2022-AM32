@@ -13,7 +13,7 @@ public class MagicMailmanEffectHandler implements EffectHandler{
     }
 
 
-    /*Methods that apply the MagicMailMan Character card Effects*/
+
 
     /**
      * Method that applies MagicMailman Character card Effects

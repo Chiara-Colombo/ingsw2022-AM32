@@ -10,6 +10,10 @@ public class IslandsManager implements IMonkHandled {
     private final ArrayList<Island> islands;
     private final HashMap<Integer, Integer> groupOfIslands;
 
+
+    /**
+     * Class constructor
+     */
     IslandsManager() {
         this.islands = new ArrayList<>();
         for (int i = 0; i < this.islandsSize; i++) {
@@ -36,6 +40,11 @@ public class IslandsManager implements IMonkHandled {
         return this.islands.get(islandIndex);
     }
 
+    /**
+     * Method for getting the islands
+     * @return islands, each  index of arraylist<arraylist<island>> it's a group and arraylist<island> represents
+     * the island of that group
+     */
     public ArrayList<ArrayList<IIsland>> getIslands() {
         int startIndex = 0, zGroup = this.groupOfIslands.get(0);
         boolean breakpoint = false;
@@ -62,6 +71,10 @@ public class IslandsManager implements IMonkHandled {
         return groups;
     }
 
+    /**
+     * Getter of all islands
+     * @return ArrayList of islands
+     */
     public ArrayList<IIsland> getAllIslands() {
         return new ArrayList<>(this.islands);
     }
@@ -77,7 +90,9 @@ public class IslandsManager implements IMonkHandled {
 
 
     /**
-     * Method for merging islands whenever it's needed
+     * Method for merging two islands
+     * @param groupOfIslands1 index of first island group
+     * @param groupOfIslands2 index of second island group
      */
     public void mergeIslands(int groupOfIslands1, int groupOfIslands2){
         final int group = Math.max(groupOfIslands1, groupOfIslands2);
@@ -87,6 +102,13 @@ public class IslandsManager implements IMonkHandled {
             }
         });
     }
+
+    /**
+     * Method for merging three islands
+     * @param groupOfIslands1 index of first island group
+     * @param groupOfIslands2 index of second island group
+     * @param groupOfIslands3 index of third island group
+     */
 
     public void mergeIslands(int groupOfIslands1, int groupOfIslands2, int groupOfIslands3){
         final int group = Math.max(Math.max(groupOfIslands1, groupOfIslands2), groupOfIslands3);

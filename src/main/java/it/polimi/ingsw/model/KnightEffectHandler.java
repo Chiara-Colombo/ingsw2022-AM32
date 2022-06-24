@@ -13,20 +13,24 @@ public class KnightEffectHandler implements EffectHandler{
     }
 
 
-    /*Methods that apply the Knight Character card Effects*/
+
 
     /**
-     * Method that applies Knight Character card Effects
+     * Method that uses character effects
      */
     @Override
+    /**
+     * Method that sets the extrainfluence for the selected player
+     */
     public void applyEffect() {
         this.player.setExtraInfluence(2);
     }
 
-    /**
-     * Method that removes Knight Character card Effects
-     */
+
     @Override
+    /**
+     * Method that removes the extra influence for the player
+     */
     public void removeEffect() {
         this.player.resetExtraInfluence();
     }

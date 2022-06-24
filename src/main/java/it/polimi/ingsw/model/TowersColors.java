@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 /**
- * Enumerator for the Towers Colors
+ * Enumeration for the Towers Colors
  */
 public enum TowersColors {
         NONE,

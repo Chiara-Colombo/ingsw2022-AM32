@@ -15,7 +15,7 @@ public class MushroomManEffectHandler implements EffectHandler{
     }
 
 
-    /*Methods that apply the MushroomMan Character card Effects*/
+
 
     /**
      * Method that applies MooshroomMan Character card Effects

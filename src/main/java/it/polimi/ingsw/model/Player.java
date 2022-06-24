@@ -93,12 +93,17 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
 
 
     /**
-     * Method which add a professor pawn
-     * @param professor the index of the professor pawn to be added
+     * Method which adds a "professor" pawn
+     * @param professor the  pawn to be added
      */
     public void addProfessor(Pawn professor){
         this.schoolBoard.addProfessor(professor);
     }
+
+    /**
+     * Method which removes a "professor" pawn
+     * @param professorIndex the index of the professor pawn to be added
+     */
 
     public Pawn removeProfessor(int professorIndex){
         return this.schoolBoard.removeProfessor(professorIndex);
@@ -123,7 +128,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
     }
 
     /**
-     * Method which increase the coins of the player
+     * Method which increases the coins of the player
      */
     public void earnCoin(){
         this.coins++;

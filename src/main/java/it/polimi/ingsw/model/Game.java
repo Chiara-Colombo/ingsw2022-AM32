@@ -127,7 +127,9 @@ public class Game implements IMushroomManHandled {
             this.colorsInfluenceMultiplier.put(color, 1);
         }
     }
-
+    /**
+     * Setting up for all players, the students pawn and if expert mode coins
+     */
     private void setupPlayers() {
         this.players.forEach(player -> {
             int students = this.numOfPlayers == 2 ? 7 : 9;
@@ -233,12 +235,19 @@ public class Game implements IMushroomManHandled {
      */
     public AssistantCardsManager getCardsManager() { return this.cardsManager; }
 
+    /**
+     * Method that activates a character
+     * @param  character the character activated
+     */
     public void activateCharacter(Characters character) {
         this.characterActive = true;
         this.activeCharacter = character;
         this.charactersValue.put(character, character.getCoinValue() + 1);
     }
-
+    /**
+     * Getter that returns active character
+     * @return  characters activated
+     */
     public Characters getActiveCharacter() {
         return this.activeCharacter;
     }
@@ -330,8 +339,13 @@ public class Game implements IMushroomManHandled {
  }
 
 
- /**Override methods of MushroomMan Character Card*/
+
     @Override
+    /**
+     * Set influence value for a certain pawn
+     * @param influence value
+     * @param color the pawncolor that gets the influence value
+     */
     public void setInfluenceForColor(PawnsColors color, int influence) {
         if((Objects.nonNull(this.colorsInfluenceMultiplier.get(color)))) {
             this.colorsInfluenceMultiplier.replace(color, influence);

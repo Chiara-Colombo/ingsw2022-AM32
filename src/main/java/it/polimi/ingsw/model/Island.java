@@ -52,6 +52,9 @@ public class Island implements IIsland, INoEntry {
     }
 
     @Override
+    /**
+     * @return Index of the island
+     */
     public int getIndex() {
         return this.index;
     }

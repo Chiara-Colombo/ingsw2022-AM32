@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 /**
- * Enumerator for the Wizards
+ * Enumeration for the Wizards
  */
 public enum Wizards {
         FIRST,

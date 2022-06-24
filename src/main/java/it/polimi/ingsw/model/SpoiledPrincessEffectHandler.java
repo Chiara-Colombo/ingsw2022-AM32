@@ -18,7 +18,6 @@ public class SpoiledPrincessEffectHandler implements EffectHandler{
 
 
 
-    /*Methods that applies the Spoiled Princess Character card Effects*/
     /**
      * Method that applies SpoiledPrincessMan Character card Effects
      */

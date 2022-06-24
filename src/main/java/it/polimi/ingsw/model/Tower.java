@@ -19,6 +19,11 @@ public class Tower {
         return color;
     }
 
+    /**
+     * Method that sets a certain color to the tower
+     * @param color  the selected color
+     */
+
     public void setColor(TowersColors color) {
         this.color = color;
     }

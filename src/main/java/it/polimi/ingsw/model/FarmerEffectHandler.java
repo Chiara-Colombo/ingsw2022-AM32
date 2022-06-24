@@ -14,9 +14,8 @@ public class FarmerEffectHandler implements EffectHandler{
 
 
 
-    /*Methods that applies the Farmer Character card Effects*/
     /**
-     * Method that applies Farmer Character card Effects
+     * Method that applies Farmer Character card effect
      */
     @Override
     public void applyEffect() {
@@ -24,7 +23,7 @@ public class FarmerEffectHandler implements EffectHandler{
     }
 
     /**
-     * Method that applies the Farmer Character card effect
+     * Method that removes the Farmer Character card effect
      */
     @Override
     public void removeEffect() {

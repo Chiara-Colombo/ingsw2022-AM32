@@ -153,6 +153,11 @@ public class Board implements ICentaurHandled, ICoinsSupply {
                 this.bag.get(PawnsColors.YELLOW) == 0;
     }
 
+    /**
+     * Method for drawing pawns for the bag
+     * @return if a pawn it's present, the pawn
+     */
+
     public Optional<Pawn> drawFromBag() {
         if (!this.isBagEmpty()) {
             PawnsColors color;

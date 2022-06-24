@@ -47,8 +47,6 @@ public class IslandTest {
         for(ArrayList<IIsland> groupofislands : islandsManager.getIslands()){
             i++;
         }
-        System.out.println(i);
-
         i = 0;
 
         for(IIsland islands : islandsManager.getAllIslands()){
