@@ -13,26 +13,48 @@ public class PlanningState implements State{
     private final Game game;
     private final Map<String, ClientHandler> players;
 
+    /**
+     * Class constructor
+     * @param game the match
+     * @param players the players
+     */
+
     public PlanningState(Game game, Map<String, ClientHandler> players) {
         this.game = game;
         this.players = players;
         this.game.getCardsManager().resetCurrentCards();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void chooseWizard() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public boolean moveStudent(boolean error) {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void chooseCloud() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void drawAssistantCard() {
@@ -44,6 +66,10 @@ public class PlanningState implements State{
             this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(cardRequest);
         });
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void fillClouds() {
@@ -60,20 +86,36 @@ public class PlanningState implements State{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void moveMN() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void endGame() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void resumeState() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public State changeState() {

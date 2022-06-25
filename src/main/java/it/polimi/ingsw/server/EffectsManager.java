@@ -15,10 +15,18 @@ public class EffectsManager {
     private int islandIndex;
     private final EnumMap<Characters, IInstantiateEffect> INSTANTIATE_EFFECT;
 
+    /**
+     * Class constructor
+     */
+
     public EffectsManager() {
         this.INSTANTIATE_EFFECT = new EnumMap<>(Characters.class);
         this.initiate();
     }
+
+    /**
+     * method that initiate the Character Cards
+     */
 
     private void initiate() {
         this.INSTANTIATE_EFFECT.put(Characters.GRANDMA_HERBS, () -> new GrandmaHerbsEffectHandler(this.board.getIslandsManager().getNoEntryIsland(this.islandIndex)));
@@ -31,34 +39,75 @@ public class EffectsManager {
         this.INSTANTIATE_EFFECT.put(Characters.SPOILED_PRINCESS, () -> new SpoiledPrincessEffectHandler(this.pawn, this.player, this.board));
     }
 
+    /**
+     * Method that gets an effect
+     * @param character Character card
+     * @return
+     */
+
     public EffectHandler getEffect(Characters character) {
         System.out.println("RETURNING EFFECT");
         return this.INSTANTIATE_EFFECT.get(character).instantiateEffect();
     }
 
+    /**
+     * Method that sets a player
+     * @param player the player
+     */
+
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    /**
+     * Setter for pawns
+     * @param pawn
+     */
 
     public void setPawn(Pawn pawn) {
         this.pawn = pawn;
     }
 
+    /**
+     * Setter for the board
+     * @param board the game board
+     */
+
     public void setBoard(Board board) {
         this.board = board;
     }
+
+    /**
+     * Setter for Assistant Card
+     * @param card Assistant Card
+     */
 
     public void setCard(AssistantCard card) {
         this.card = card;
     }
 
+    /**
+     * Setter for pawns colors
+     * @param color color of a pawn
+     */
+
     public void setColor(PawnsColors color) {
         this.color = color;
     }
 
+    /**
+     * Setter for the game
+     * @param game the game
+     */
+
     public void setGame(Game game) {
         this.game = game;
     }
+
+    /**
+     * Setter for the index of an island
+     * @param islandIndex index that identifies an island
+     */
 
     public void setIslandIndex(int islandIndex) {
         this.islandIndex = islandIndex;

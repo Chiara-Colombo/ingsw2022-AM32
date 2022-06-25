@@ -13,10 +13,20 @@ public class StartState implements  State {
     private final Game game;
     private final Map<String, ClientHandler> players;
 
+    /**
+     * Class constructor
+     * @param game the match
+     * @param players the players
+     */
+
     public StartState(Game game, Map<String, ClientHandler> players) {
         this.game = game;
         this.players = players;
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void chooseWizard() {
@@ -28,40 +38,73 @@ public class StartState implements  State {
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(wizardCardRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public boolean moveStudent(boolean error) {
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void chooseCloud() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void drawAssistantCard() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void fillClouds() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void moveMN() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void endGame() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void resumeState() {
 
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public State changeState() {

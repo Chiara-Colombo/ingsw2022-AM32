@@ -16,6 +16,7 @@ public class Server {
      * Allocates a new Server object and initialize serverSocket
      * @throws IOException if cannot initialize the ServerSocket
      */
+
     public Server() throws IOException {
         this.serverSocket = new ServerSocket(DEFAULT_SERVER_PORT);
         this.match = new ServerController();
@@ -25,6 +26,7 @@ public class Server {
      * method that starts connection with clients
      * @throws IOException if cannot initialize connection
      */
+
     public void start() throws IOException {
         System.out.println("Server started...");
         while (true) {

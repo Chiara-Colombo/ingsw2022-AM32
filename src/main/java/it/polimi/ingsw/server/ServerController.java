@@ -27,6 +27,10 @@ public class ServerController  {
     private Game game;
     private State stateOfTheGame;
 
+    /**
+     * Class Constructor
+     */
+
     public ServerController() {
         this.numOfPlayers = -1;
         this.clients = new ArrayList<>();
@@ -37,10 +41,20 @@ public class ServerController  {
         this.effectsManager = new EffectsManager();
     }
 
+    /**
+     * Method that set up a game (sends number of player request)
+     * @param player first player
+     */
+
     public void setupGame(ClientHandler player) {
         ServerMessage NumOfPlayersRequest = new NumOfPlayersRequest();
         player.sendObjectMessage(NumOfPlayersRequest);
     }
+
+    /**
+     * Method that sent "error on player number chosen" message
+     * @param player the first player
+     */
 
     public void errorOnPlayerNumber(ClientHandler player){
         ServerMessage errorOnPlayerNumber = new ErrorOnPlayerNumber();
@@ -48,10 +62,20 @@ public class ServerController  {
         this.setupGame(player);
     }
 
+    /**
+     * Method that set up the game mode (sends the game mode request)
+     * @param player the first player
+     */
+
     public void setupGameMode(ClientHandler player) {
         ServerMessage GameModeRequest = new GameModeRequest();
         player.sendObjectMessage(GameModeRequest);
     }
+
+    /**
+     * Method that adds a player to the game
+     * @param player a new player
+     */
 
     public synchronized void addPlayer(Socket player) throws IOException {
         if (this.clients.size() >= this.numOfPlayers && this.numOfPlayers > 0) {
@@ -68,8 +92,9 @@ public class ServerController  {
     /**
      * Method that sets the number of player
      * @param numOfPlayers chosen by the first player
-     * @param player
+     * @param player the first player
      */
+
     public void setNumOfPlayers(int numOfPlayers, ClientHandler player) {
         this.numOfPlayers = numOfPlayers;
         this.setupGameMode(player);
@@ -194,6 +219,7 @@ public class ServerController  {
      * @param username is the username chosen by the user
      * @param player is the player to whom assign the username
      */
+
     public synchronized void setUsername(String username, ClientHandler player) {
         if (this.usernames.containsKey(username)) {
             UsernameNotAssigned usernameNotAssigned = new UsernameNotAssigned();
@@ -218,6 +244,7 @@ public class ServerController  {
      * Method that removes a player when it disconnects
      * @param player that has to be removed
      */
+
     public void removePlayer(ClientHandler player) {
         boolean isFirstPlayer = this.clients.get(0).equals(player);
         String username = player.getNickname();
@@ -239,6 +266,13 @@ public class ServerController  {
             }
         }
     }
+
+    /**
+     * Method that calculate if is the end of a game
+     * @param endOfTurn parameter that says if it is an end of a turn
+     * @return true if the game is ended
+     *          false if the game continues
+     */
 
     private boolean isEndOfGame(boolean endOfTurn) {
         for (Player player : this.game.getPlayers()) {
@@ -269,6 +303,7 @@ public class ServerController  {
     /**
      * This method is called when the game starts
      */
+
     private synchronized void startGame() {
         Iterator<String> iterUsernames = this.usernames.keySet().iterator();
         ArrayList<TowersColors> colors = new ArrayList<>(0);
@@ -289,6 +324,10 @@ public class ServerController  {
         this.stateOfTheGame.chooseWizard();
     }
 
+    /**
+     * Method that sends a board update
+     */
+
     private void sendUpdate() {
         final BoardUpdate boardUpdate = this.calculateBoardUpdate();
         this.clients.forEach(client -> client.sendObjectMessage(boardUpdate));
@@ -298,6 +337,7 @@ public class ServerController  {
      * method that set the Wizard
      * @param wizard that the player has chosen
      */
+
     public void setWizard(Wizards wizard) {
         this.game.getCurrentPlayer().setWizard(wizard);
         this.game.getCardsManager().initializeCardsForPlayer(wizard);

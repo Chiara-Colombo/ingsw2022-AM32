@@ -14,16 +14,31 @@ public class ActionState implements State{
     private final Map<String, ClientHandler> players;
     private int studentsMoved;
     private ServerMessage lastMessageSent;
+
+    /**
+     * Class constructor
+     * @param game the match
+     * @param players the players
+     */
+
     public ActionState(Game game, Map<String, ClientHandler> players) {
         this.game = game;
         this.players = players;
         this.studentsMoved = 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void chooseWizard() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public boolean moveStudent(boolean error) {
@@ -40,6 +55,10 @@ public class ActionState implements State{
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void chooseCloud() {
         ArrayList<Integer> validClouds = new ArrayList<>();
@@ -53,15 +72,27 @@ public class ActionState implements State{
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void drawAssistantCard() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void fillClouds() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void moveMN() {
@@ -86,15 +117,27 @@ public class ActionState implements State{
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void endGame() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void resumeState() {
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(this.lastMessageSent);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public State changeState() {
