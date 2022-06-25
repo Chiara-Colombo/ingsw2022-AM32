@@ -100,6 +100,12 @@ public class ServerController  {
         this.setupGameMode(player);
     }
 
+    /**
+     * Method that sets the game mode
+     * @param expertMode parameter that says if the game is in expert mode or not
+     * @param player a player
+     */
+
     public void setGameMode(boolean expertMode, ClientHandler player) throws IOException {
         BufferedReader input = new BufferedReader(
                 new InputStreamReader(
@@ -113,6 +119,10 @@ public class ServerController  {
         }
         checkStartGame(player);
     }
+
+    /**
+     * Method that sets  the parameters of the Characters
+     */
 
     private void setCharactersParameters() {
         this.charactersParameters.put(Characters.GRANDMA_HERBS, () -> {
@@ -194,6 +204,11 @@ public class ServerController  {
             }
         });
     }
+
+    /**
+     * Method that check if a game can starts
+     * @param player the player
+     */
 
     private void checkStartGame(ClientHandler player) {
         if (this.numOfPlayers != this.clients.size() || this.clients.size() != this.usernames.size() || Objects.isNull(this.game)) {
@@ -351,6 +366,11 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that sets the Assistant Card of a Player in a turn
+     * @param card Assistant card
+     */
+
     public void setAssistantCard(AssistantCard card) {
         AtomicBoolean invalid = new AtomicBoolean(false);
         this.game.getPlayers().forEach(
@@ -431,6 +451,14 @@ public class ServerController  {
         });
     }
 
+    /**
+     * Method that moves a student
+     * @param pawnIndex index of the chosen pawn
+     * @param islandIndex index of the chosen island (0 if the layer want to move on school board)
+     * @param moveOnSchoolBoard true if the player want to move the pawn on school board
+     *                          false if the player want to move the pawn on an island
+     */
+
     public void moveStudent(int pawnIndex, int islandIndex, boolean moveOnSchoolBoard) {
         Pawn student;
         try {
@@ -468,6 +496,11 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that check the influence of a player on a professor
+     * @param color color of the pawn
+     */
+
     private void checkProfessor(PawnsColors color) {
         final Player currentPlayer = this.game.getCurrentPlayer();
         final int studentsOnDiningRoom = currentPlayer.getSchoolBoard().getStudentsOfColor(color).size() + currentPlayer.getExtraStudent();
@@ -492,6 +525,11 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that move Mother Nature and controls if it's the end of a game
+     * @param position position chosen by the player
+     */
+
     public void moveMotherNature(int position) {
         this.game.getGameBoard().moveMotherNature(position);
         this.sendUpdate();
@@ -510,6 +548,11 @@ public class ServerController  {
             else this.stateOfTheGame.chooseCloud();
         }
     }
+
+    /**
+     * Method that allows to choose a cloud and the pursuance (or end) of the match
+     * @param index index of a cloud
+     */
 
     public void chooseCloud(int index) {
         if (index >= 0) {
@@ -540,6 +583,10 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that ends the controller
+     */
+
     void endController() {
         this.clients.forEach(ClientHandler::close);
         this.clients.clear();
@@ -548,6 +595,11 @@ public class ServerController  {
         this.cardValues.clear();
         this.game = null;
     }
+
+    /**
+     * Method that check if a player gets a tower
+     * and if islands needs to be merged
+     */
 
     private void checkTowers() {
         final int motherNature = this.game.getGameBoard().getMotherNature();
@@ -609,6 +661,11 @@ public class ServerController  {
         });
     }
 
+    /**
+     * Method that allow (or denies) playing a Character Card to a player
+     * @param character Character card chosen
+     */
+
     synchronized void useCharacterCard(Characters character) {
         if (this.game.getCurrentPlayer().getCoins() >= this.game.getCharacterCost(character)) {
             if (!this.game.isCharacterActive()) {
@@ -626,6 +683,10 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that applies the effect of a Character Card
+     */
+
     void applyEffect() {
         this.game.useCharacterEffect(this.effectsManager.getEffect(this.game.getActiveCharacter()));
         CharacterCardUsed message = new CharacterCardUsed(this.game.getCurrentPlayer().getNickname(), this.game.getActiveCharacter());
@@ -634,11 +695,21 @@ public class ServerController  {
         this.stateOfTheGame.resumeState();
     }
 
+    /**
+     * Method that select the color of a pawn in order to apply a Character card effect
+     * @param color color of a pawn
+     */
+
     void selectColor(PawnsColors color) {
         this.effectsManager.setGame(this.game);
         this.effectsManager.setColor(color);
         this.applyEffect();
     }
+
+    /**
+     * Method that allow to select a pawn in case of Spoiled princess or Monk cards
+     * @param pawnIndex index of a pawn
+     */
 
     void selectPawn(int pawnIndex) {
         if (this.game.getActiveCharacter().equals(Characters.SPOILED_PRINCESS)) {
@@ -663,11 +734,22 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that select an island in order to apply a Character card effect
+     * @param islandIndex index of the island
+     */
+
     void selectIsland(int islandIndex) {
         this.effectsManager.setIslandIndex(islandIndex);
         this.effectsManager.setBoard(this.game.getGameBoard());
         this.applyEffect();
     }
+
+    /**
+     * Method that calculate the influence of a player
+     * @param player the current player
+     * @return value of the influence
+     */
 
     private int influenceForPlayer(Player player) {
         int playerInfluence = 0;
@@ -683,6 +765,12 @@ public class ServerController  {
         playerInfluence += player.getExtraInfluence();
         return playerInfluence;
     }
+
+    /**
+     * Method that checks if some islands needs to be merged
+     * @param groupOfIsland group of islands
+     * @param color color of the towers
+     */
 
     private void checkIslandsMerge(int groupOfIsland, TowersColors color) {
         final int islands = this.game.getGameBoard().getIslandsManager().getIslandsSize();
@@ -723,6 +811,11 @@ public class ServerController  {
         }
     }
 
+    /**
+     * Method that calculate the board update
+     * @return the update of the board
+     */
+
     private BoardUpdate calculateBoardUpdate() {
         ArrayList<PlayerUpdate> playerUpdates = this.calculatePlayersUpdate();
         BoardUpdateContent boardUpdateContent = this.calculateBoardUpdateContent();
@@ -738,6 +831,11 @@ public class ServerController  {
         );
         return new BoardUpdate(playerUpdates, boardUpdateContent, gameUpdate);
     }
+
+    /**
+     * Method that updates the players
+     * @return Array list of players
+     */
 
     private ArrayList<PlayerUpdate> calculatePlayersUpdate() {
         ArrayList<PlayerUpdate> playerUpdates = new ArrayList<>();
@@ -767,6 +865,11 @@ public class ServerController  {
         }
         return playerUpdates;
     }
+
+    /**
+     * Method that updates the content of the board
+     * @return board update content
+     */
 
     private BoardUpdateContent calculateBoardUpdateContent() {
         ArrayList<ArrayList<IslandUpdate>> islandsUpdate = new ArrayList<>();
