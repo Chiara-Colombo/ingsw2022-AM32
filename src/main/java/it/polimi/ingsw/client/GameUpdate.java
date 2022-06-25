@@ -18,7 +18,7 @@ public class GameUpdate implements Serializable {
     /**
      * Class constructor
      * @param numOfPlayers number of players
-     * @param grandmaHerbsNoEntryTiles tiles affected by Granma Herbs
+     * @param grandmaHerbsNoEntryTiles tiles affected by Grandma Herbs
      * @param expertMode says if the expert mode is on
      * @param currentPlayer th current player
      * @param gamePhase the phase of the match

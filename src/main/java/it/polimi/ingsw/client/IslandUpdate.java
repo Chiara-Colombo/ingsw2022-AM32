@@ -51,7 +51,7 @@ public class IslandUpdate implements Serializable {
     /**
      * Method that says if there is a ban of the island
      * @return true if there is a ban
-     *          fales if there isn't
+     *          false if there isn't
      */
 
     public boolean isNoEntry() {

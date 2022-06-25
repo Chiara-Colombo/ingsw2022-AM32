@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static it.polimi.ingsw.utils.Utils.*;
@@ -170,8 +171,33 @@ public class CLI  implements View{
             System.out.print("] ");
         }
         System.out.println("\n");
+
         if (boardUpdate.getGameUpdate().isExpertMode()){
-            System.out.println("CHARACTER CARDS : " + boardUpdate.getGameUpdate().getValidCharacters() + "\n");
+            ArrayList<Characters> validCharacters = boardUpdate.getGameUpdate().getValidCharacters();
+            System.out.println("CHARACTER CARDS : \n");
+            for (int i = 0; i < validCharacters.size(); i++) {
+                System.out.println( "[" + i + "]" + validCharacters.get(i));}
+            for (int i = 0; i < validCharacters.size(); i++) {
+                Characters character = validCharacters.get(i);
+                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
+                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? boardUpdate.getGameUpdate().getMonkStudents() : boardUpdate.getGameUpdate().
+                    getSpoiledPrincessStudents();
+                    if (character.equals(Characters.MONK)) {
+                        System.out.println("Monk pawns: ");
+                        for(PawnsColors pawnsColors : pawns){
+                        System.out.println(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) +  "   " + ANSI_RESET +  " ");
+                        }
+                    }
+                    if (character.equals(Characters.SPOILED_PRINCESS)) {
+                        System.out.println("Spoiled princess pawns:");
+                        for (PawnsColors pawnsColors : pawns) {
+                            System.out.println(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
+                        }
+                    }
+                }
+
+            }
+
         }
 
         for( int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
@@ -203,7 +229,7 @@ public class CLI  implements View{
 
     @Override
     public void showCharacterCardUsed(Characters character, String username) {
-
+        System.out.println(username + "has used the Character Card: " + character + "\n");
     }
 
     @Override
@@ -418,4 +444,5 @@ public class CLI  implements View{
     public void showYourPlanningPhaseTurnEnds() {
         System.out.println("Il tuo turno è terminato");
     }
+
 }
