@@ -11,6 +11,15 @@ public class BoardUpdateContent implements Serializable {
     private final ArrayList<PawnsColors> availableProfessors;
     private final ArrayList<CloudUpdate> clouds;
 
+    /**
+     * Class constructor
+     * @param motherNature mother nature
+     * @param coinsSupply  coins
+     * @param islands list of islands
+     * @param availableProfessors list of available professors
+     * @param clouds list of clouds
+     */
+
     public BoardUpdateContent(int motherNature,
                               int coinsSupply,
                               ArrayList<ArrayList<IslandUpdate>> islands,
@@ -23,22 +32,46 @@ public class BoardUpdateContent implements Serializable {
         this.clouds = clouds;
     }
 
+    /**
+     * Getter for mother nature
+     * @return mother nature
+     */
 
     public int getMotherNature() {
         return this.motherNature;
     }
 
+    /**
+     * Getter for coins Supply
+     * @return coins supply
+     */
+
     public int getCoinsSupply() {
         return this.coinsSupply;
     }
+
+    /**
+     * Getter for the islands
+     * @return list of islands
+     */
 
     public ArrayList<ArrayList<IslandUpdate>> getIslands() {
         return this.islands;
     }
 
+    /**
+     * Getter for available professors
+     * @return list of available professors
+     */
+
     public ArrayList<PawnsColors> getAvailableProfessors() {
         return this.availableProfessors;
     }
+
+    /**
+     * Getter for clouds
+     * @return list of clouds
+     */
 
     public ArrayList<CloudUpdate> getClouds() {
         return this.clouds;

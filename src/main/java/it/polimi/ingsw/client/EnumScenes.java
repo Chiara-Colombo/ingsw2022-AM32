@@ -1,5 +1,9 @@
 package it.polimi.ingsw.client;
 
+/**
+ * Enumerator for the different scenes
+ */
+
 public enum EnumScenes {
     MAIN_SCENE,
     CONNECTION_SCENE,
