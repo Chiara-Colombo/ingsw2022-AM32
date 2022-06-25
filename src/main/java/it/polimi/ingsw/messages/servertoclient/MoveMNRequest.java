@@ -5,6 +5,10 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Message that is used to ask to a player to move Mother Nature
+ */
+
 public class MoveMNRequest extends ServerMessage{
 
     private final int movements;

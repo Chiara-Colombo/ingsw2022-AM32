@@ -7,6 +7,7 @@ import java.io.IOException;
 /**
  * Message that notifies that the Planning Phase turn ends
  */
+
 public class YourPlanningPhaseTurnEnds extends ServerMessage{
     @Override
     public String TypeOfMessage() {

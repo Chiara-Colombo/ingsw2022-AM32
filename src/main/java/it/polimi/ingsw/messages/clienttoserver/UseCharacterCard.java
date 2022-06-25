@@ -5,6 +5,10 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Message that a player sends when he wants to use a Character Card
+ */
+
 public class UseCharacterCard extends ClientMessage{
     private final Characters character;
 

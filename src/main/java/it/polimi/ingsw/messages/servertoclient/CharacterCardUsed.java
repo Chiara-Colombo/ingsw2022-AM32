@@ -5,6 +5,10 @@ import it.polimi.ingsw.model.Characters;
 
 import java.io.IOException;
 
+/**
+ * Message that notifies the Character Card used by a payer
+ */
+
 public class CharacterCardUsed extends ServerMessage {
     private final String username;
     private final Characters character;

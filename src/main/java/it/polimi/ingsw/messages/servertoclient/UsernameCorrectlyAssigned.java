@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Message that notify that the Username has been correctly assigned
  */
+
 public class UsernameCorrectlyAssigned extends ServerMessage{
 
     public String typeOfMessage = "UsernameCorrectlyAssigned";

@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Message that return the chosen Wizard Card from the player
  */
+
 public class WizardCardResponse extends ClientMessage{
     private final Wizards chosenWizard;
 

@@ -5,6 +5,10 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Message that returns the pawn selected by a player
+ */
+
 public class SelectPawnResponse extends ClientMessage{
     private final int pawnIndex;
 

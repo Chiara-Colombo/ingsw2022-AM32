@@ -7,6 +7,7 @@ import java.io.IOException;
 /**
  * Message that notifies that the Action Phase Turn ends
  */
+
 public class YourActionPhaseTurnEnds extends ServerMessage{
     @Override
     public String TypeOfMessage() {

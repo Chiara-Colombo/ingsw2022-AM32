@@ -8,6 +8,7 @@ import java.util.ArrayList;
 /**
  * Message that requests a Wizard Card
  */
+
 public class WizardCardRequest extends ServerMessage{
 
     private final ArrayList<Wizards> validWizards;

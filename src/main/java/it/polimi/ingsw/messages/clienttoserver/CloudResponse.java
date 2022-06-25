@@ -4,6 +4,10 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Method that return the cloud chosen by a player
+ */
+
 public class CloudResponse extends ClientMessage{
     private final int cloudIndex;
 

@@ -6,6 +6,10 @@ import it.polimi.ingsw.model.Characters;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Message that asks to select an island
+ */
+
 public class SelectIslandRequest extends ServerMessage {
     private final Characters character;
     private final ArrayList<Integer> validIndexes;

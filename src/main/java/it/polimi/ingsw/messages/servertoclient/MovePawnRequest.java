@@ -7,6 +7,7 @@ import java.io.IOException;
 /**
  * Message that asks to select the position where to move the selected pawn
  */
+
 public class MovePawnRequest extends ServerMessage{
     private final int numOfPawns;
 

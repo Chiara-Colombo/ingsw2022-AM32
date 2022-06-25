@@ -4,6 +4,10 @@ import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
 
+/**
+ * Method that notify that a player has disconnected
+ */
+
 public class PlayerDisconnected extends ServerMessage{
     private final String player;
 

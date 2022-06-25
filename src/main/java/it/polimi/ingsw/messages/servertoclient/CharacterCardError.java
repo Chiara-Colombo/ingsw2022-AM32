@@ -4,6 +4,10 @@ import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
 
+/**
+ * Message that notifies that there was an error when a player used a Character Card
+ */
+
 public class CharacterCardError extends ServerMessage {
     private final String error;
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Message that returns the Assistant Card chosen by the player
  */
+
 public class AssistantCardResponse extends ClientMessage{
     private final AssistantCard chosenCard;
 

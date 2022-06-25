@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Message that requests the Username
  */
+
 public class RequestUsername extends ServerMessage{
 
     public String typeOfMessage = "RequestUsername";

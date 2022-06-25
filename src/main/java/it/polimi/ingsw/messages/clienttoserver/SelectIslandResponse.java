@@ -4,6 +4,10 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Message that notifies the island selected by a player
+ */
+
 public class SelectIslandResponse extends ClientMessage {
     private final int islandIndex;
 

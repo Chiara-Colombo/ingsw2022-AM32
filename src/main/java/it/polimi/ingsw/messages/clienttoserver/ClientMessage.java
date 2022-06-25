@@ -7,6 +7,10 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Abstract class for client messages
+ */
+
 public abstract class ClientMessage implements Serializable {
 
     public abstract String TypeOfMessage();

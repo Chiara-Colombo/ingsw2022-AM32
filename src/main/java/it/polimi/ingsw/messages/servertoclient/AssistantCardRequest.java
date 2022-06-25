@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * Message that asks to choose an Assistant Card
  * it contains the drawable Assistant Cards
  */
+
 public class AssistantCardRequest extends ServerMessage{
     private final ArrayList<AssistantCard> availableCards;
 

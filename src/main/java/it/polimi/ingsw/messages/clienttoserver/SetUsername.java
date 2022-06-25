@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Message that return the Username chosen by the player
  */
+
 public class SetUsername extends ClientMessage {
 
     public String username;

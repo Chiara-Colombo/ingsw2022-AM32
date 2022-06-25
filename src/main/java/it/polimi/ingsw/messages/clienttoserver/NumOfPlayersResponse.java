@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Message that returns the numbers of players chosen by the first player
  */
+
 public class NumOfPlayersResponse extends ClientMessage {
 
     int numOfPlayers;

@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Message that asks the first player the Game Mode of the match
  */
+
 public class GameModeRequest extends ServerMessage{
 
     public String typeOfMessage = "GameModeRequest";

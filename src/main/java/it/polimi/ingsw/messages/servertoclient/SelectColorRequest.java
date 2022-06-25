@@ -7,6 +7,10 @@ import it.polimi.ingsw.model.PawnsColors;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Message that asks to select a color
+ */
+
 public class SelectColorRequest extends ServerMessage {
     private final Characters character;
     private final ArrayList<PawnsColors> values;

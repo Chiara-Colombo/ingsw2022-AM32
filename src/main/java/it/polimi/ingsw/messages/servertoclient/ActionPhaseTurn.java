@@ -6,8 +6,9 @@ import javax.swing.*;
 import java.io.IOException;
 
 /**
- * Message that notifies tha
+ * Message that notifies that the action Phase turn is starting
  */
+
 public class ActionPhaseTurn extends ServerMessage{
 
     public String nickname;

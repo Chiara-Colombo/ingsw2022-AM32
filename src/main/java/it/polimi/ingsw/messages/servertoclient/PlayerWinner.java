@@ -5,6 +5,10 @@ import it.polimi.ingsw.model.Player;
 
 import java.io.IOException;
 
+/**
+ * Message that notify the winner
+ */
+
 public class PlayerWinner extends ServerMessage{
     private final String winner, reason;
 

@@ -4,6 +4,10 @@ import it.polimi.ingsw.client.VisitorClient;
 
 import java.io.IOException;
 
+/**
+ * Message that notifies the update of Mother Nature position
+ */
+
 public class MNPositionUpdate extends ServerMessage{
     @Override
     public String TypeOfMessage() {

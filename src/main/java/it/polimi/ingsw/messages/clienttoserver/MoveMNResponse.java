@@ -4,6 +4,10 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Message that returns the position where the player wants to put Mother Nature
+ */
+
 public class MoveMNResponse extends ClientMessage{
 
     private final int position;

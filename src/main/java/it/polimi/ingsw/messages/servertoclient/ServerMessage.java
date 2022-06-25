@@ -5,6 +5,10 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Abstract class for Server Message
+ */
+
 public abstract class ServerMessage implements Serializable {
 
 

@@ -5,6 +5,10 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Message that asks a player to choose a Cloud
+ */
+
 public class CloudRequest extends ServerMessage{
     private final ArrayList<Integer> validClouds;
 

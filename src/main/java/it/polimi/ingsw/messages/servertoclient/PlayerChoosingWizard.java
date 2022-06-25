@@ -6,6 +6,10 @@ import it.polimi.ingsw.model.Player;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Message that notifies that a player is choosing a wizard
+ */
+
 public class PlayerChoosingWizard extends ServerMessage{
 
     public String typeOfMessage = "WizardCardRequest";

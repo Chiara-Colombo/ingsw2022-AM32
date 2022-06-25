@@ -7,6 +7,7 @@ import java.io.IOException;
 /**
  * Message that notify the earned coins in the round
  */
+
 public class CoinsUpdate extends ServerMessage{
     @Override
     public String TypeOfMessage() {

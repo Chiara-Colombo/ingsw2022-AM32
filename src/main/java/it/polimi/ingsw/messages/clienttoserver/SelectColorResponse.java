@@ -5,6 +5,10 @@ import it.polimi.ingsw.server.VisitorServer;
 
 import java.io.IOException;
 
+/**
+ * Message that return the color of a pawn chosen by a player
+ */
+
 public class SelectColorResponse extends ClientMessage {
     private final PawnsColors color;
 

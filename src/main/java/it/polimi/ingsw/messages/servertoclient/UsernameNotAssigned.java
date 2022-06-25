@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * Message that notify that the Username chosen is not valid
  */
+
 public class UsernameNotAssigned extends ServerMessage{
 
     public String typeOfMessage = "UsernameNotAssigned";

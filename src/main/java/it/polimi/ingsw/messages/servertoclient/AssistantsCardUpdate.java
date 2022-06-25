@@ -5,6 +5,10 @@ import it.polimi.ingsw.model.AssistantCard;
 
 import java.io.IOException;
 
+/**
+ * Method that notifies the update of the assistant Cards of a player
+ */
+
 public class AssistantsCardUpdate extends ServerMessage{
 
     public AssistantCard assistantCard;

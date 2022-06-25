@@ -10,6 +10,7 @@ import java.util.ArrayList;
 /**
  * Message that asks to select a pawn
  */
+
 public class SelectPawnRequest extends ServerMessage {
     private final Characters character;
     private final ArrayList<PawnsColors> validPawns;
