@@ -10,12 +10,12 @@
 | Functionality    |                       State                        |
 |:-----------------|:--------------------------------------------------:|
 | Basic rules      | 🟢 |
-| Complete rules   | 🟡 |
+| Complete rules   | 🟢 |
 | Socket           | 🟡 |
 | GUI              | 🟡 |
 | CLI              | 🟡 |
-| Multiple games   | 🔴 |
-| Persistence      | 🔴 |
+| Multiple games   | 🟡 |
+| Character cards  | 🟡 |
 
 
 🔴 Not implemented
