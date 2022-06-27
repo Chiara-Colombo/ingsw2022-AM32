@@ -14,7 +14,7 @@
 | Socket           | 🟡 |
 | GUI              | 🟡 |
 | CLI              | 🟡 |
-| Multiple games   | 🟡 |
+| Multiple games   | 🟢 |
 | Character cards  | 🟡 |
 
 
