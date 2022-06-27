@@ -2,6 +2,7 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.model.*;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class EffectsManager {
@@ -36,6 +37,12 @@ public class EffectsManager {
         this.INSTANTIATE_EFFECT.put(Characters.MUSHROOMS_MAN, () -> new MushroomManEffectHandler(this.color, this.game));
         this.INSTANTIATE_EFFECT.put(Characters.MAGIC_MAILMAN, () -> new MagicMailmanEffectHandler(this.card));
         this.INSTANTIATE_EFFECT.put(Characters.SPOILED_PRINCESS, () -> new SpoiledPrincessEffectHandler(this.pawn, this.player, this.board));
+      //  this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.pawn,this.player));
+        this.INSTANTIATE_EFFECT.put(Characters.WITCH, () -> new WitchEffectHandler(this.game,this.color));
+
+        //this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.pawn,this.player));
+        // this.INSTANTIATE_EFFECT.put(Characters.HERALD, () -> new HeraldEffectHandler());
+        // this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new WitchEffectHandler());
     }
 
     /**

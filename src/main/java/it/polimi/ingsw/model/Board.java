@@ -194,6 +194,12 @@ public class Board implements ICentaurHandled, ICoinsSupply {
         return Optional.empty();
     }
 
+    public void putBackInBag(Pawn pawn) {
+        PawnsColors color = pawn.getColor();
+        Integer value = this.bag.get(color);
+        this.bag.put(color,value + 1);
+    }
+
 
     /**
      * method that set towers according to influence

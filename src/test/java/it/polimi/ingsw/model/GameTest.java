@@ -352,4 +352,29 @@ public class GameTest {
 
         gametest.startGame();
     }
+
+    @Test
+    void ActivateCharacter(){
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Game gametest = new Game(2,true, jsonCards );
+
+        Player player1 = new Player("Paolo Tommaso",7);
+        Player player2 = new Player("Gasparo Noe",7);
+
+        gametest.addPlayer(player1);
+        gametest.addPlayer(player2);
+
+        gametest.startGame();
+
+        gametest.activateCharacter(Characters.MONK);
+        assertEquals(Characters.MONK,gametest.getActiveCharacter());
+
+
+
+    }
 }

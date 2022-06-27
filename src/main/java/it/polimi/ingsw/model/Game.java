@@ -1,10 +1,11 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMushroomManHandled;
+import it.polimi.ingsw.model.Handled.IWitchHandled;
 
 import java.util.*;
 
-public class Game implements IMushroomManHandled {
+public class Game implements IMushroomManHandled, IWitchHandled {
 
     private final ArrayList<Player> players;
     private final Board gameBoard;
@@ -14,7 +15,7 @@ public class Game implements IMushroomManHandled {
     private final ArrayList<Characters> validCharacters;
     private final EnumMap<Characters, Integer> charactersValue;
     private final EnumMap<PawnsColors, Integer> colorsInfluenceMultiplier;
-    private final ArrayList<Pawn> monkStudents, spoiledPrincessStudents;
+    private final ArrayList<Pawn> monkStudents, spoiledPrincessStudents, jesterStudents;
     private final List<String> playersCopyList;
     private int grandmaHerbsNoEntryTiles, playerOrderIndex, currentPlayer;
     private boolean characterActive;
@@ -24,12 +25,13 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Game class Constructor
-     * @param numOfPlayers  number of Players that play the match
-     * @param expertMode sets the mode of the match
-     * @param jsonCards file that sets the character cards
+     *
+     * @param numOfPlayers number of Players that play the match
+     * @param expertMode   sets the mode of the match
+     * @param jsonCards    file that sets the character cards
      */
 
-    public Game(int numOfPlayers, boolean expertMode, String jsonCards){
+    public Game(int numOfPlayers, boolean expertMode, String jsonCards) {
         this.gamePhase = GamePhase.NO_PHASE;
         this.expertMode = expertMode;
         this.gameBoard = new Board(numOfPlayers);
@@ -40,6 +42,7 @@ public class Game implements IMushroomManHandled {
         this.validCharacters = new ArrayList<>();
         this.monkStudents = new ArrayList<>();
         this.spoiledPrincessStudents = new ArrayList<>();
+        this.jesterStudents = new ArrayList<>();
         this.grandmaHerbsNoEntryTiles = 0;
         this.charactersValue = new EnumMap<>(Characters.class);
         this.colorsInfluenceMultiplier = new EnumMap<>(PawnsColors.class);
@@ -50,12 +53,12 @@ public class Game implements IMushroomManHandled {
      * Method for start the game
      */
 
-    public void startGame(){
+    public void startGame() {
         if (this.numOfPlayers == this.players.size()) {
             this.gamePhase = GamePhase.START_PHASE;
             this.currentPlayer = 0;
             this.playerOrderIndex = 0;
-            for(Player p : players){
+            for (Player p : players) {
                 playersCopyList.add(p.getNickname());
             }
             final ArrayList<Characters> characters = new ArrayList<>(Arrays.asList(Characters.values()));
@@ -72,31 +75,33 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method for Changing order of play based on the card value selected
+     *
      * @param order New order
      */
-    public void ChangePlayersOrder(List<String> order){
+    public void ChangePlayersOrder(List<String> order) {
         this.playerOrderIndex = 0;
-        for (int i = 0; i < order.size(); i++){
-            for (int j = 0; j < playersCopyList.size(); j++){
-                if (order.get(i).equals(playersCopyList.get(j))){
+        for (int i = 0; i < order.size(); i++) {
+            for (int j = 0; j < playersCopyList.size(); j++) {
+                if (order.get(i).equals(playersCopyList.get(j))) {
                     String playerR = playersCopyList.get(j);
                     String playerS = playersCopyList.get(i);
-                    playersCopyList.set(i,playerR);
-                    playersCopyList.set(j,playerS);
+                    playersCopyList.set(i, playerR);
+                    playersCopyList.set(j, playerS);
                 }
             }
         }
         int j = 0;
-        for(Player player : players){
-            if(player.getNickname().equals(playersCopyList.get(playerOrderIndex))){
+        for (Player player : players) {
+            if (player.getNickname().equals(playersCopyList.get(playerOrderIndex))) {
                 this.currentPlayer = j;
             }
-            j ++;
+            j++;
         }
     }
 
     /**
      * Method that gets the order of play
+     *
      * @return list of player in order
      */
 
@@ -108,6 +113,7 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that get a copied list of player
+     *
      * @return list of players
      */
 
@@ -117,6 +123,7 @@ public class Game implements IMushroomManHandled {
 
     /**
      * method that says if a Character Card is Active
+     *
      * @return
      */
 
@@ -130,17 +137,23 @@ public class Game implements IMushroomManHandled {
 
     private void setupCharacters() {
         if (this.validCharacters.contains(Characters.MONK)) {
-            for (int i = 0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 this.gameBoard.drawFromBag().ifPresent(this.monkStudents::add);
             }
         }
         if (this.validCharacters.contains(Characters.SPOILED_PRINCESS)) {
-            for (int i = 0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 this.gameBoard.drawFromBag().ifPresent(this.spoiledPrincessStudents::add);
             }
         }
         if (this.validCharacters.contains(Characters.GRANDMA_HERBS)) {
             this.grandmaHerbsNoEntryTiles = 4;
+        }
+
+        if (this.validCharacters.contains(Characters.JESTER)) {
+            for (int i = 0; i < 6; i++) {
+                this.gameBoard.drawFromBag().ifPresent(this.jesterStudents::add);
+            }
         }
         for (PawnsColors color : PawnsColors.values()) {
             this.colorsInfluenceMultiplier.put(color, 1);
@@ -170,32 +183,33 @@ public class Game implements IMushroomManHandled {
      */
 
     public boolean nextPlayer() {
-        if (this.playerOrderIndex + 1 >= this.playersCopyList.size()){
+        if (this.playerOrderIndex + 1 >= this.playersCopyList.size()) {
             this.playerOrderIndex = 0;
             String playerNick = playersCopyList.get(playerOrderIndex);
-            int j= 0;
-            for(Player player : players){
-                if(player.getNickname() == playersCopyList.get(playerOrderIndex)){
+            int j = 0;
+            for (Player player : players) {
+                if (player.getNickname() == playersCopyList.get(playerOrderIndex)) {
                     this.currentPlayer = j;
                 }
-                j ++;
+                j++;
             }
             return false;
         }
-        this.playerOrderIndex ++;
+        this.playerOrderIndex++;
         String playerNick = playersCopyList.get(playerOrderIndex);
         int i = 0;
-        for(Player player : players){
-            if(player.getNickname() == playersCopyList.get(playerOrderIndex)){
+        for (Player player : players) {
+            if (player.getNickname() == playersCopyList.get(playerOrderIndex)) {
                 this.currentPlayer = i;
             }
-            i ++;
+            i++;
         }
         return true;
     }
 
     /**
      * Method that get the index of a player when playing
+     *
      * @return player index
      */
 
@@ -205,16 +219,18 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that gets the current player index
+     *
      * @return index of current player
      */
 
     /* only for testing*/
-    public int getcurrentplayerindex(){
+    public int getcurrentplayerindex() {
         return currentPlayer;
     }
 
     /**
      * Getter for the Phase of the game
+     *
      * @return the phase of the game
      */
 
@@ -224,6 +240,7 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Setter for the Phase of the game
+     *
      * @return the phase of the game
      */
 
@@ -233,19 +250,22 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Get method that returns the current player
+     *
      * @return the index of the current player
      */
 
-    public Player getCurrentPlayer(){
-        return this.players.get(this.currentPlayer); }
+    public Player getCurrentPlayer() {
+        return this.players.get(this.currentPlayer);
+    }
 
     /**
      * Method that sets the current player index
+     *
      * @param currentPlayer the current player
      */
 
     public void setCurrentPlayer(int currentPlayer) {
-        if(currentPlayer >= 0 && currentPlayer < players.size())
+        if (currentPlayer >= 0 && currentPlayer < players.size())
             this.currentPlayer = currentPlayer;
         else System.out.println("Error");
     }
@@ -253,30 +273,38 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Getter for the Players
+     *
      * @return the players
      */
 
-    public ArrayList<Player>getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return this.players;
     }
 
     /**
      * Method that gets the gameBoard of the game
+     *
      * @return gameboard variable
      */
 
-    public Board getGameBoard() { return this.gameBoard; }
+    public Board getGameBoard() {
+        return this.gameBoard;
+    }
 
     /**
      * Method AssistantCardsManager that returns the cardsManager variable
+     *
      * @return card Manager
      */
 
-    public AssistantCardsManager getCardsManager() { return this.cardsManager; }
+    public AssistantCardsManager getCardsManager() {
+        return this.cardsManager;
+    }
 
     /**
      * Method that activates a character
-     * @param  character the character activated
+     *
+     * @param character the character activated
      */
 
     public void activateCharacter(Characters character) {
@@ -287,7 +315,8 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Getter that returns active character
-     * @return  characters activated
+     *
+     * @return characters activated
      */
 
     public Characters getActiveCharacter() {
@@ -296,10 +325,11 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method used for calling the effects of Characters cards
+     *
      * @param effect effect of a card
      */
 
-    public void useCharacterEffect(EffectHandler effect){
+    public void useCharacterEffect(EffectHandler effect) {
         if (this.characterActive) {
             this.activeEffect = effect;
             this.activeEffect.applyEffect();
@@ -310,7 +340,7 @@ public class Game implements IMushroomManHandled {
      * Method that removes the Character card effect
      */
 
-    public void removeCharacterEffect(){
+    public void removeCharacterEffect() {
         if (this.characterActive) {
             this.characterActive = false;
             this.activeEffect.removeEffect();
@@ -320,12 +350,15 @@ public class Game implements IMushroomManHandled {
     /**
      * Method that get valid characters
      */
-    public ArrayList<Characters> getValidCharacters(){ return this.validCharacters; }
+    public ArrayList<Characters> getValidCharacters() {
+        return this.validCharacters;
+    }
 
     /**
      * Method that takes the tile with  a ban
+     *
      * @return true if it takes the tile
-     *          false if not takes the tile
+     * false if not takes the tile
      */
 
     public boolean takeGrandmaHerbsNoEntryTile() {
@@ -346,15 +379,17 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that gets the tiles with ban
+     *
      * @return tiles with ban
      */
 
-    public int getGrandmaHerbsNoEntryTiles(){
+    public int getGrandmaHerbsNoEntryTiles() {
         return this.grandmaHerbsNoEntryTiles;
     }
 
     /**
      * Method that get the students effected by Monk Card
+     *
      * @return monk students
      */
 
@@ -364,6 +399,7 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that gets students affected by Spoiled Princess Card
+     *
      * @return Spoiled princess students
      */
 
@@ -372,22 +408,35 @@ public class Game implements IMushroomManHandled {
     }
 
     /**
-     * Method that gets the Coinvalue of the Character card selected
-     * @param character the character card selected
-     * @return  coinvalue of character card
+     * Method that gets num of jesterstudents
+     *
+     * @return students pawn on jester
      */
 
-   public int getCharacterCost(Characters character){
-       return this.charactersValue.get(character);
-   }
+    public ArrayList<Pawn> getJesterStudents() {
+        return this.jesterStudents;
+    }
+
+    /**
+     * Method that gets the Coinvalue of the Character card selected
+     *
+     * @param character the character card selected
+     * @return coinvalue of character card
+     */
+
+    public int getCharacterCost(Characters character) {
+        return this.charactersValue.get(character);
+    }
 
 
 
  /*
     METODI AGGIUNTIVI:
  */
+
     /**
      * Getter that returns the number of players which was selected
+     *
      * @return numoplayers value
      */
 
@@ -397,15 +446,15 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that adds a selected player to the game
+     *
      * @param player the player that needs to be added
      */
 
-    public void addPlayer(Player player){
-        if(Objects.nonNull(player)) {
+    public void addPlayer(Player player) {
+        if (Objects.nonNull(player)) {
             this.players.add(player);
-        }
-        else System.out.println("Player has not been added");
- }
+        } else System.out.println("Player has not been added");
+    }
 
     @Override
     /**
@@ -415,15 +464,15 @@ public class Game implements IMushroomManHandled {
      */
 
     public void setInfluenceForColor(PawnsColors color, int influence) {
-        if((Objects.nonNull(this.colorsInfluenceMultiplier.get(color)))) {
+        if ((Objects.nonNull(this.colorsInfluenceMultiplier.get(color)))) {
             this.colorsInfluenceMultiplier.replace(color, influence);
-        }
-        else
-            this.colorsInfluenceMultiplier.put(color,influence);
+        } else
+            this.colorsInfluenceMultiplier.put(color, influence);
     }
 
     /**
      * Method that get the influence for a pawn color
+     *
      * @param color is the color of the pawns of which we calculate the influence
      * @return
      */
@@ -435,11 +484,32 @@ public class Game implements IMushroomManHandled {
 
     /**
      * Method that tell if the match is in Expert Mode
+     *
      * @return expertMode true if it is expert Mode
-     *                     false if it is simple Mode
+     * false if it is simple Mode
      */
 
     public boolean isExpertMode() {
         return this.expertMode;
+    }
+
+    @Override
+    public void removeStudentsFromdiningRoom(PawnsColors color) {
+        for (Player player : players) {
+            int size = 0;
+            ArrayList<Pawn> studentofcolor = new ArrayList<>();
+            if (player.getSchoolBoard().getStudentsOfColor(color).size() > 2) {
+                for (int i = 0; i < 3; i++) {
+                    studentofcolor = player.getSchoolBoard().getStudentsOfColor(color);
+                    this.gameBoard.putBackInBag(studentofcolor.remove(studentofcolor.size() - 1));
+                }
+            } else
+                studentofcolor = player.getSchoolBoard().getStudentsOfColor(color);
+            size = studentofcolor.size();
+            for (int i = 0; i < size; i++) {
+                this.gameBoard.putBackInBag(studentofcolor.remove(studentofcolor.size() - 1));
+            }
+        }
+
     }
 }

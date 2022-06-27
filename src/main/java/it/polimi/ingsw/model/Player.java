@@ -1,8 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Handled.IFarmerHandled;
-import it.polimi.ingsw.model.Handled.IKnightHandled;
-import it.polimi.ingsw.model.Handled.ISpoiledPrincessHandled;
+import it.polimi.ingsw.model.Handled.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

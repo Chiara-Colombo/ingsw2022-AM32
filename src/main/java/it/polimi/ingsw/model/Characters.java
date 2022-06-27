@@ -12,7 +12,12 @@ public enum Characters {
     CENTAUR(3),
     SPOILED_PRINCESS(2),
     FARMER(2),
-    MAGIC_MAILMAN(1);
+    MAGIC_MAILMAN(1),
+    JESTER(1),
+    MINSTREL(1),
+    HERALD(3),
+    WITCH(3);
+
 
 
     private final int coinValue;

@@ -175,6 +175,10 @@ public class ServerController  {
             SelectColorRequest selectColorRequest = new SelectColorRequest(Characters.MUSHROOMS_MAN, new ArrayList<>(List.of(PawnsColors.values())));
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
         });
+        this.charactersParameters.put(Characters.WITCH, () -> {
+            SelectColorRequest selectColorRequest = new SelectColorRequest(Characters.WITCH, new ArrayList<>(List.of(PawnsColors.values())));
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
+        });
         this.charactersParameters.put(Characters.MAGIC_MAILMAN, () -> {
             this.game.getCurrentPlayer().getWizard().ifPresentOrElse(wizard -> {
                 this.game.getCardsManager().getCurrentCardForPlayer(wizard).ifPresentOrElse(card -> {
@@ -712,9 +716,16 @@ public class ServerController  {
      */
 
     void selectColor(PawnsColors color) {
-        this.effectsManager.setGame(this.game);
-        this.effectsManager.setColor(color);
-        this.applyEffect();
+        if(this.game.getActiveCharacter().equals(Characters.MUSHROOMS_MAN)) {
+            this.effectsManager.setGame(this.game);
+            this.effectsManager.setColor(color);
+            this.applyEffect();
+        }
+        if(this.game.getActiveCharacter().equals(Characters.WITCH)){
+            this.effectsManager.setGame(this.game);
+            this.effectsManager.setColor(color);
+            this.applyEffect();
+        }
     }
 
     /**

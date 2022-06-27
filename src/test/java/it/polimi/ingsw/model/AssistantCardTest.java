@@ -66,47 +66,6 @@ public class AssistantCardTest {
 
         assertEquals(10,ascm.size());
     }
-    @Test
-    void assistantCarddManager(){
-
-        String jsonCards = null;
-        try {
-            jsonCards = readCards();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Player p1 = new Player("PROVA", 7);
-        Player p2 = new Player("PROVA2",7);
-        Player p3 = new Player("PROVA3",7);
-
-
-        Game game = new Game(3,false,jsonCards);
-        game.addPlayer(p1);
-        game.addPlayer(p2);
-        game.addPlayer(p3);
-
-        AssistantCardsManager assistantCardsManager = new AssistantCardsManager(jsonCards);
-
-        game.startGame();
-
-        game.getPlayers().get(0).setWizard(Wizards.FIRST);
-
-        game.getCardsManager().initializeCardsForPlayer(Wizards.FIRST);
-
-        assistantCardsManager.setCurrentCardForPlayer(Wizards.FIRST,7);
-
-
-        Optional<AssistantCard> card = assistantCardsManager.getCurrentCardForPlayer(Wizards.FIRST);
-        assertEquals(7,card.get().getValue());
-        assertEquals(4,card.get().getMotherNatureMovements());
-
-        assistantCardsManager.resetCurrentCards();
-        card = assistantCardsManager.getCurrentCardForPlayer(Wizards.FIRST);
-        assertTrue(card.isEmpty());
-
-
-    }
 
 
 }
