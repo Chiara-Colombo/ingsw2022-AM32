@@ -18,6 +18,12 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(AssistantCardChosen assistantCardChosen) {
         this.view.showAssistantCardChosen();
     }
+
+    @Override
+    public void visitMessage(AssistantCardInvalid assistantCardInvalid) {
+        this.view.showErrorMessage("Non puoi selezionare questa carta!");
+    }
+
     @Override
     public void visitMessage(AssistantCardRequest assistantCardRequest) {
         this.view.showAssistantCardRequest(assistantCardRequest.getAvailableCards());
@@ -73,6 +79,12 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(GameIsStarting gameIsStarting) { this.view.showGameStartingView(); }
     @Override
     public void visitMessage(GameModeRequest gameModeRequest) { this.view.showRequestExpertMode(); }
+
+    @Override
+    public void visitMessage(MatchRequest matchRequest) {
+        this.view.showMatchRequest();
+    }
+
     @Override
     public void visitMessage(MNPositionUpdate mnPositionUpdate) {
         this.view.showMNPositionUpdate();
@@ -85,6 +97,12 @@ public class ConcreteClientVisitor implements VisitorClient{
     public void visitMessage(MovePawnRequest movePawnRequest) {
         this.view.showMovePawnRequest(movePawnRequest.getNumOfPawns());
     }
+
+    @Override
+    public void visitMessage(NoMatchAvailable noMatchAvailable) {
+        this.view.showNoMatchAvailable();
+    }
+
     @Override
     public void visitMessage(NotEnoughCoins notEnoughCoins){
         this.view.showErrorMessage("Non hai abbastanza monete!");

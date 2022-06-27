@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.servertoclient.*;
 public interface VisitorClient {
     void visitMessage(ActionPhaseTurn actionPhaseTurn);
     void visitMessage(AssistantCardChosen assistantCardChosen);
+    void visitMessage(AssistantCardInvalid assistantCardInvalid);
     void visitMessage(AssistantCardRequest assistantCardRequest);
     void visitMessage(AssistantsCardUpdate assistantsCardUpdate);
     void visitMessage(BoardUpdate boardUpdate);
@@ -19,9 +20,11 @@ public interface VisitorClient {
     void visitMessage(ErrorOnPlayerNumber errorOnPlayerNumber);
     void visitMessage(GameIsStarting gameIsStarting);
     void visitMessage(GameModeRequest gameModeRequest);
+    void visitMessage(MatchRequest matchRequest);
     void visitMessage(MNPositionUpdate mnPositionUpdate);
     void visitMessage(MoveMNRequest moveMNRequest);
     void visitMessage(MovePawnRequest movePawnRequest);
+    void visitMessage(NoMatchAvailable noMatchAvailable);
     void visitMessage(NotEnoughCoins notEnoughCoins);
     void visitMessage(NumOfPlayersRequest numOfPlayersRequest);
     void visitMessage(PlanningPhaseTurn planningPhaseTurn);

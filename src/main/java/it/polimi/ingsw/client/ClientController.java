@@ -25,7 +25,6 @@ public class ClientController implements Runnable{
     private final TimerTask task;
     private final boolean isGui;
     private int unreceivedPing;
-    private boolean closed;
     private String username;
 
     public ClientController(int serverPort, String serverAddress, View view, boolean isGui) throws IOException {
@@ -34,7 +33,6 @@ public class ClientController implements Runnable{
         this.clientVisitor = new ConcreteClientVisitor(view);
         this.timer = new Timer();
         this.task = new ConnectionTask(this);
-        this.closed = false;
         Socket server = new Socket(serverAddress, serverPort);
         this.outputStream = new ObjectOutputStream(server.getOutputStream());
         this.inputStream = new ObjectInputStream(server.getInputStream());
@@ -61,13 +59,13 @@ public class ClientController implements Runnable{
                                     Platform.runLater(() -> {
                                         try {
                                             servermessage.accept(clientVisitor);
-                                        } catch (IOException ignored) {}
+                                        } catch (IOException | NullPointerException ignored) {}
                                     });
                                 } else {
                                     executor.submit(() -> {
                                         try {
                                             servermessage.accept(clientVisitor);
-                                        } catch (IOException ignored) {}
+                                        } catch (IOException | NullPointerException ignored) {}
                                     });
                                 }
                             }
@@ -85,7 +83,7 @@ public class ClientController implements Runnable{
                 }
             }
         }
-        System.out.println("Ending Thread");
+        executor.shutdown();
     }
 
     public void sendObjectMessage(ClientMessage message){
@@ -138,7 +136,6 @@ public class ClientController implements Runnable{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
-                this.closed = true;
                 this.inputStream.notifyAll();
             }
         }

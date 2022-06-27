@@ -21,9 +21,11 @@ public interface View {
     void showErrorMessage(String message);
     void showErrorOnPawnPosition();
     void showGameStartingView();
+    void showMatchRequest();
     void showMNPositionUpdate();
     void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes);
     void showMovePawnRequest(int numOfPawns);
+    void showNoMatchAvailable();
     void showNotEnoughCoins();
     void showPlanningPhaseTurn(String nickname);
     void showPlayerChoosingWizard();

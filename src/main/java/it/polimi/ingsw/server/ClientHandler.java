@@ -11,28 +11,27 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ClientHandler implements Runnable {
-    private final ServerController controller;
+    private final MatchManager matchManager;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
-    private final ConcreteServerVisitor visitorServer;
     private final Timer timer;
     private final TimerTask task;
     private int pingSent;
     private boolean closed;
     private String nickname;
+    private ServerController controller;
+    private ConcreteServerVisitor visitorServer;
 
-    public ClientHandler(Socket client, ServerController controller) throws IOException {
-        this.controller = controller;
+    public ClientHandler(MatchManager matchManager, Socket client) throws IOException {
+        this.matchManager = matchManager;
         this.inputStream = new ObjectInputStream(client.getInputStream());
         this.outputStream = new ObjectOutputStream(client.getOutputStream());
-        this.visitorServer = new ConcreteServerVisitor(this.controller,this);
         this.pingSent = 0;
         this.timer = new Timer();
         this.task = new ConnectionTask(this);
+        this.visitorServer = new ConcreteServerVisitor(this.matchManager, this);
         this.closed = false;
     }
 
@@ -54,10 +53,15 @@ public class ClientHandler implements Runnable {
                     }
                 } catch (SocketException e) {
                     this.inputStream.notifyAll();
-                    this.controller.removePlayer(this);
+                    try {
+                        this.controller.removePlayer(this);
+                    } catch (NullPointerException ne) {
+                        this.matchManager.removeClient(this);
+                    }
                     break;
                 } catch (ClassNotFoundException | IOException e) {
                     break;
+                } catch(NullPointerException ignored) {
                 } finally {
                     this.inputStream.notifyAll();
                 }
@@ -85,6 +89,11 @@ public class ClientHandler implements Runnable {
                 this.outputStream.notifyAll();
             }
         }
+    }
+
+    void setController(ServerController controller) {
+        this.controller = controller;
+        this.visitorServer.setServerController(controller);
     }
 
     void setNickname(String nickname){

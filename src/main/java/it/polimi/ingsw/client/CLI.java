@@ -281,6 +281,23 @@ public class CLI  implements View{
     }
 
     @Override
+    public synchronized void showMatchRequest() {
+        boolean validInput = false;
+        do {
+            System.out.println("Vuoi creare una nuova partita o partecipare ad una già esistente? (-crea / -partecipa)");
+            try {
+                String match = new Scanner(System.in).nextLine();
+                if (!match.equals("-crea") && !match.equals("-partecipa")) throw new InputMismatchException();
+                ClientMessage matchResponse = new MatchResponse(match.equals("-crea"));
+                this.clientController.sendObjectMessage(matchResponse);
+                validInput = true;
+            } catch (InputMismatchException error) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
+            }
+        } while (!validInput);
+    }
+
+    @Override
     public void showMNPositionUpdate() {
 
     }
@@ -325,6 +342,12 @@ public class CLI  implements View{
                 System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
             }
         } while (!validInput);
+    }
+
+    @Override
+    public void showNoMatchAvailable() {
+        System.out.println("Nessuna partita disponibile!");
+        this.closeConnection();
     }
 
     @Override

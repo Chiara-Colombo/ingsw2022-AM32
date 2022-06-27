@@ -1,28 +1,29 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.messages.clienttoserver.*;
-import it.polimi.ingsw.messages.servertoclient.ErrorOnPawnResponse;
-import it.polimi.ingsw.messages.servertoclient.MovePawnRequest;
-import it.polimi.ingsw.messages.servertoclient.ServerMessage;
 
 import java.io.IOException;
 
 public class ConcreteServerVisitor implements VisitorServer{
 
-    private final ServerController serverController;
+    private ServerController serverController;
     private final ClientHandler player;
+    private final MatchManager matchManager;
 
-    public ConcreteServerVisitor(ServerController serverController,ClientHandler player) {
-         this.serverController = serverController;
+    public ConcreteServerVisitor(MatchManager matchManager, ClientHandler player) {
+         this.matchManager = matchManager;
          this.player = player;
+    }
+
+    public void setServerController(ServerController serverController) {
+        this.serverController = serverController;
     }
 
     @Override
     public void visitMessage(NumOfPlayersResponse numOfPlayersResponse) {
         if(numOfPlayersResponse.getNumOfPlayers() > 3 || numOfPlayersResponse.getNumOfPlayers() < 2){
             this.serverController.errorOnPlayerNumber(player);
-        }
-        else
+        } else
             this.serverController.setNumOfPlayers(numOfPlayersResponse.getNumOfPlayers(),player);
     }
 
@@ -48,6 +49,11 @@ public class ConcreteServerVisitor implements VisitorServer{
     @Override
     public void visitMessage(CloudResponse cloudResponse) {
         this.serverController.chooseCloud(cloudResponse.getCloudIndex());
+    }
+
+    @Override
+    public void visitMessage(MatchResponse matchResponse) throws IOException {
+        this.matchManager.matchResponse(matchResponse.isNewMatch(), this.player);
     }
 
     @Override

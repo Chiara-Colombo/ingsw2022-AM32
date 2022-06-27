@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 
+import static it.polimi.ingsw.utils.FXUtils.*;
 import static it.polimi.ingsw.utils.Utils.*;
 
 @SuppressWarnings("SuspiciousNameCombination")
@@ -39,7 +40,6 @@ public class GameScene extends Scene {
     private final HashMap<String, Pane> PLAYERS_PANES;
     private final ImageView MOTHER_NATURE;
     private final HashMap<TowersColors, ArrayList<ImageView>> TOWERS;
-    //private final ArrayList<ImageView> ASSISTANT_CARDS;
     private final HashMap<PawnsColors, ImageView> professors;
     private final HashMap<PawnsColors, ArrayList<ImageView>> students;
     private final HashMap<PawnsColors, Integer> studentsIndexes;
@@ -250,8 +250,8 @@ public class GameScene extends Scene {
                     else
                         theta -= Math.PI / 40;
                 }
-                double x = centerX + GROUP_OF_ISLANDS_OFSSETS[groupOfIslandsUpdate.size() - 1].get(j).get('x'),
-                        y = centerY + GROUP_OF_ISLANDS_OFSSETS[groupOfIslandsUpdate.size() - 1].get(j).get('y');
+                double x = centerX + GROUP_OF_ISLANDS_OFFSETS[groupOfIslandsUpdate.size() - 1].get(j).get('x'),
+                        y = centerY + GROUP_OF_ISLANDS_OFFSETS[groupOfIslandsUpdate.size() - 1].get(j).get('y');
                 this.ISLANDS.get(island.getIndex()).getImageView().setLayoutX(x);
                 this.ISLANDS.get(island.getIndex()).getImageView().setLayoutY(y);
                 this.BOARD_PANE.getChildren().add(this.ISLANDS.get(island.getIndex()).getImageView());

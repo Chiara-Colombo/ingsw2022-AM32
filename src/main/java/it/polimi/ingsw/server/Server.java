@@ -3,14 +3,12 @@ package it.polimi.ingsw.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class Server {
-    private ServerSocket serverSocket;
-    private ServerController match;
+    private final ServerSocket serverSocket;
+    private final MatchManager matchManager;
 
     /**
      * Allocates a new Server object and initialize serverSocket
@@ -19,7 +17,7 @@ public class Server {
 
     public Server() throws IOException {
         this.serverSocket = new ServerSocket(DEFAULT_SERVER_PORT);
-        this.match = new ServerController();
+        this.matchManager = new MatchManager();
     }
 
     /**
@@ -28,10 +26,9 @@ public class Server {
      */
 
     public void start() throws IOException {
-        System.out.println("Server started...");
         while (true) {
             Socket clientSocket = this.serverSocket.accept();
-            this.match.addPlayer(clientSocket);
+            this.matchManager.newClient(clientSocket);
         }
     }
 }

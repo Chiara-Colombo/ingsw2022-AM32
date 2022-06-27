@@ -6,10 +6,7 @@ import it.polimi.ingsw.model.*;
 
 
 import java.io.*;
-import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,13 +14,14 @@ import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
 public class ServerController  {
-    private final ExecutorService executor;
     private final EffectsManager effectsManager;
+    private final MatchManager matchManager;
     private final ArrayList<ClientHandler> clients;
     private final Map<String, ClientHandler> usernames;
     private final Map<String, Integer> cardValues;
     private final EnumMap<Characters, ISetCharacterParameters> charactersParameters;
     private int numOfPlayers;
+    private boolean full;
     private Game game;
     private State stateOfTheGame;
 
@@ -31,14 +29,15 @@ public class ServerController  {
      * Class Constructor
      */
 
-    public ServerController() {
+    public ServerController(MatchManager matchManager) {
         this.numOfPlayers = -1;
         this.clients = new ArrayList<>();
         this.usernames = new HashMap<>();
         this.cardValues = new HashMap<>();
-        this.executor = Executors.newCachedThreadPool();
         this.charactersParameters = new EnumMap<>(Characters.class);
         this.effectsManager = new EffectsManager();
+        this.matchManager = matchManager;
+        this.full = false;
     }
 
     /**
@@ -72,21 +71,24 @@ public class ServerController  {
         player.sendObjectMessage(GameModeRequest);
     }
 
+    public synchronized boolean isFull() {
+        return this.full;
+    }
+
     /**
      * Method that adds a player to the game
      * @param player a new player
      */
 
-    public synchronized void addPlayer(Socket player) throws IOException {
+    public synchronized void addPlayer(ClientHandler player) {
         if (this.clients.size() >= this.numOfPlayers && this.numOfPlayers > 0) {
-            new ClientHandler(player, this).sendObjectMessage(new ConnectionRefused());
+            player.sendObjectMessage(new ConnectionRefused());
             player.close();
         }
-        ClientHandler client = new ClientHandler(player, this);
-        executor.submit(client);
-        this.clients.add(client);
+        player.setController(this);
+        this.clients.add(player);
         ServerMessage RequestUsername = new RequestUsername();
-        client.sendObjectMessage(RequestUsername);
+        player.sendObjectMessage(RequestUsername);
     }
 
     /**
@@ -106,7 +108,7 @@ public class ServerController  {
      * @param player a player
      */
 
-    public void setGameMode(boolean expertMode, ClientHandler player) throws IOException {
+    public synchronized void setGameMode(boolean expertMode, ClientHandler player) throws IOException {
         BufferedReader input = new BufferedReader(
                 new InputStreamReader(
                         Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("assistantCards.json"))
@@ -215,6 +217,7 @@ public class ServerController  {
             WaitingForPlayers waitingForPlayers = new WaitingForPlayers();
             player.sendObjectMessage(waitingForPlayers);
         } else {
+            this.full = true;
             GameIsStarting gameIsStarting = new GameIsStarting();
             for (int i = 0; i < clients.size(); i++) {
                 if (i < this.numOfPlayers) {
@@ -406,7 +409,11 @@ public class ServerController  {
                 }
             });
         }
-        if (invalid.get()) return;
+        if (invalid.get()) {
+            AssistantCardInvalid error = new AssistantCardInvalid();
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(error);
+            return;
+        }
         this.game.getCurrentPlayer().getWizard().ifPresent(wizard -> {
             this.game.getCardsManager().setCurrentCardForPlayer(wizard, card.getValue());
             this.game.getCardsManager().setDiscardedForPlayer(wizard, true);
@@ -594,6 +601,8 @@ public class ServerController  {
         this.numOfPlayers = -1;
         this.cardValues.clear();
         this.game = null;
+        this.full = false;
+        this.matchManager.matchEnded(this);
     }
 
     /**
@@ -669,17 +678,19 @@ public class ServerController  {
     synchronized void useCharacterCard(Characters character) {
         if (this.game.getCurrentPlayer().getCoins() >= this.game.getCharacterCost(character)) {
             if (!this.game.isCharacterActive()) {
-                this.charactersParameters.get(character).setCharacterParameters();
                 this.game.getCurrentPlayer().payCoins(this.game.getCharacterCost(character));
                 this.game.getGameBoard().addCoins(this.game.getCharacterCost(character));
                 this.game.activateCharacter(character);
+                this.charactersParameters.get(character).setCharacterParameters();
             } else {
                 CharacterCardError message = new CharacterCardError("Hai già usato una carta in questo turno!");
                 this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+                this.stateOfTheGame.resumeState();
             }
         } else {
             NotEnoughCoins notEnoughCoins = new NotEnoughCoins();
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(notEnoughCoins);
+            this.stateOfTheGame.resumeState();
         }
     }
 

@@ -20,8 +20,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
+import static it.polimi.ingsw.utils.FXUtils.*;
 import static it.polimi.ingsw.utils.Utils.*;
 
 public class GameSetupScene extends Scene {

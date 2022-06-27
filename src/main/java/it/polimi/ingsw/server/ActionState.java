@@ -7,13 +7,16 @@ import it.polimi.ingsw.messages.servertoclient.ServerMessage;
 import it.polimi.ingsw.model.Game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ActionState implements State{
     private final Game game;
     private final Map<String, ClientHandler> players;
+    private final HashMap<String, IPerformAction> lastMessageAction;
     private int studentsMoved;
-    private ServerMessage lastMessageSent;
+    private String lastAction;
 
     /**
      * Class constructor
@@ -25,6 +28,11 @@ public class ActionState implements State{
         this.game = game;
         this.players = players;
         this.studentsMoved = 0;
+        this.lastMessageAction = new HashMap<>(Map.ofEntries(
+                Map.entry("chooseCloud", this::chooseCloud),
+                Map.entry("moveMN", this::moveMN),
+                Map.entry("moveStudent", () -> this.moveStudent(false))
+        ));
     }
 
     /**
@@ -49,7 +57,7 @@ public class ActionState implements State{
             return false;
         }
         MovePawnRequest request = new MovePawnRequest(this.game.getNumOfPlayers() == 2 ? 3 : 4);
-        this.lastMessageSent = request;
+        this.lastAction = "moveStudent";
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
         this.studentsMoved++;
         return true;
@@ -68,7 +76,7 @@ public class ActionState implements State{
             }
         }
         CloudRequest request = new CloudRequest(validClouds);
-        this.lastMessageSent = request;
+        this.lastAction = "chooseCloud";
         this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
     }
 
@@ -112,7 +120,7 @@ public class ActionState implements State{
                 } else break;
             }
             MoveMNRequest request = new MoveMNRequest(movements, validIndexes);
-            this.lastMessageSent = request;
+            this.lastAction = "moveMN";
             this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(request);
         });
     }
@@ -132,7 +140,9 @@ public class ActionState implements State{
 
     @Override
     public void resumeState() {
-        this.players.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(this.lastMessageSent);
+        if (!Objects.isNull(this.lastAction)) {
+            this.lastMessageAction.get(this.lastAction).performAction();
+        }
     }
 
     /**
@@ -143,4 +153,9 @@ public class ActionState implements State{
     public State changeState() {
         return new PlanningState(game, players);
     }
+}
+
+@FunctionalInterface
+interface IPerformAction {
+    void performAction();
 }

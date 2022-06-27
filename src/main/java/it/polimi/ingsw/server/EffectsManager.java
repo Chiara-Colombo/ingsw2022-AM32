@@ -1,7 +1,6 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.Handled.INoEntry;
 
 import java.util.EnumMap;
 
@@ -46,7 +45,6 @@ public class EffectsManager {
      */
 
     public EffectHandler getEffect(Characters character) {
-        System.out.println("RETURNING EFFECT");
         return this.INSTANTIATE_EFFECT.get(character).instantiateEffect();
     }
 

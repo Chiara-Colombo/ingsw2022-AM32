@@ -21,6 +21,7 @@ import static it.polimi.ingsw.utils.Utils.*;
 
 public class ScenesManager {
     private final EnumMap<EnumScenes, Scene> scenes;
+    private final MatchSettingScene matchSettingScene;
     private final GameSettingsScene gameSettingsScene;
     private final GameSetupScene gameSetupScene;
     private final GameScene gameScene;
@@ -35,6 +36,7 @@ public class ScenesManager {
         this.scenes = new EnumMap<>(EnumScenes.class);
         this.gameSetupScene = new GameSetupScene(new Pane());
         this.usernameScene = new UsernameScene(new AnchorPane());
+        this.matchSettingScene = new MatchSettingScene(new AnchorPane());
         this.gameSettingsScene = new GameSettingsScene(new AnchorPane());
         this.gameScene = new GameScene(new Pane());
         this.moveStudentsManager = new MoveStudentsManager(this);
@@ -53,6 +55,7 @@ public class ScenesManager {
         scenes.put(EnumScenes.WAITING_SCENE, new WaitingScene(new AnchorPane()));
         scenes.put(EnumScenes.GAME_STARTING_SCENE, this.gameSetupScene);
         scenes.put(EnumScenes.GAME_SCENE, this.gameScene);
+        scenes.put(EnumScenes.MATCH_SETTING_SCENE, this.matchSettingScene);
     }
 
     public void resetScenes() {
@@ -70,6 +73,7 @@ public class ScenesManager {
         this.moveMNManager.setController(this.gui.getController());
         this.chooseCloudManager.setController(this.gui.getController());
         this.usernameScene.setController(this.gui.getController());
+        this.matchSettingScene.setController(this.gui.getController());
     }
 
     void playOnline() {

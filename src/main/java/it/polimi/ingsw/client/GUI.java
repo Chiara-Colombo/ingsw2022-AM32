@@ -164,6 +164,11 @@ public class GUI extends Application implements View{
     }
 
     @Override
+    public void showMatchRequest() {
+        stage.setScene(this.scenesManager.getScene(EnumScenes.MATCH_SETTING_SCENE));
+    }
+
+    @Override
     public void showMNPositionUpdate() {}
 
     @Override
@@ -174,6 +179,14 @@ public class GUI extends Application implements View{
     @Override
     public void showMovePawnRequest(int numOfPawns) {
         this.scenesManager.showMovePawnRequest(numOfPawns);
+    }
+
+    @Override
+    public void showNoMatchAvailable() {
+        this.showDialogBox("Errore!", "Nessuna partita disponibile!", (event) -> {
+            stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
+        });
+        this.controller.close();
     }
 
     @Override

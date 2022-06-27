@@ -1,8 +1,11 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.messages.clienttoserver.*;
+import it.polimi.ingsw.messages.servertoclient.MatchRequest;
 import it.polimi.ingsw.messages.servertoclient.NumOfPlayersRequest;
 import it.polimi.ingsw.messages.servertoclient.SelectIslandRequest;
+
+import java.io.IOException;
 
 public interface VisitorServer {
 
@@ -11,6 +14,7 @@ public interface VisitorServer {
     void visitMessage(SetUsername username);
     void visitMessage(AssistantCardResponse assistantCardResponse);
     void visitMessage(CloudResponse cloudResponse);
+    void visitMessage(MatchResponse matchResponse) throws IOException;
     void visitMessage(MoveMNResponse moveMNResponse);
     void visitMessage(MovePawnResponse movePawnResponse);
     void visitMessage(SelectColorResponse selectColorResponse);
