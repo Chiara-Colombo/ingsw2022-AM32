@@ -10,7 +10,7 @@ import java.util.*;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
-public class CLI  implements View{
+public class CLI  implements View {
     private ClientController clientController;
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
@@ -37,7 +37,8 @@ public class CLI  implements View{
             Map.entry(TowersColors.WHITE, "W"),
             Map.entry(TowersColors.GREY, "G")
     ));
-
+    private static ArrayList<Characters> validCharacters = new ArrayList<>();
+    private static boolean isExpert = false;
 
     public void start() {
         boolean validInput = false;
@@ -84,9 +85,9 @@ public class CLI  implements View{
         System.out.println("Seleziona una carta assistente digitando il suo numero! : ");
 
         int index = 0;
-        for(int i = 0; i <= 4; i++) {
-            for (int j = 0; j <=3 ; j++) {
-                if(index >= availableCards.size()){
+        for (int i = 0; i <= 4; i++) {
+            for (int j = 0; j <= 3; j++) {
+                if (index >= availableCards.size()) {
                     System.out.print("");
                 } else {
                     System.out.print("  [ " + index + " ] : " + " Valore : " + availableCards.get(index).getValue() + "  Movimenti MN " + availableCards.get(index).getMotherNatureMovements());
@@ -116,7 +117,7 @@ public class CLI  implements View{
 
     @Override
     public void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {
-        System.out.println(ANSI_RED + assistantsCardUpdate.getNickname() + ANSI_RESET + " ha scelto la seguente carta: \n VALORE : " + assistantsCardUpdate.getAssistantCard().getValue() + " Movimenti MN :" + assistantsCardUpdate.getAssistantCard().getMotherNatureMovements() );
+        System.out.println(ANSI_RED + assistantsCardUpdate.getNickname() + ANSI_RESET + " ha scelto la seguente carta: \n VALORE : " + assistantsCardUpdate.getAssistantCard().getValue() + " Movimenti MN :" + assistantsCardUpdate.getAssistantCard().getMotherNatureMovements());
 
     }
 
@@ -129,18 +130,17 @@ public class CLI  implements View{
         for (ArrayList<IslandUpdate> island : islands) {
             ArrayList<PawnsColors> colors = new ArrayList<>();
             System.out.print("[ ");
-            for(int j = 0; j < island.size(); j++) {
+            for (int j = 0; j < island.size(); j++) {
                 ArrayList<PawnsColors> islandcolor = island.get(j).getStudents();
                 colors.addAll(islandcolor);
-                if( j ==0){
+                if (j == 0) {
                     System.out.print(island.get(j).getIndex());
-                }
-                else
+                } else
                     System.out.print("/" + island.get(j).getIndex());
             }
             System.out.print(" ] : [ ");
 
-            for(PawnsColors pawnsColors : colors){
+            for (PawnsColors pawnsColors : colors) {
                 System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
             }
             int towers = 0;
@@ -151,41 +151,45 @@ public class CLI  implements View{
                 if (islandUpdate.hasTower()) {
                     towers++;
                 }
+                if (islandUpdate.isNoEntry()){
+                    System.out.print(ANSI_RED + "! " + ANSI_RESET);
+                }
             }
-            if(island.get(0).hasTower()) {
+            if (island.get(0).hasTower()) {
                 System.out.print(towers + TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()));
             }
             System.out.print("] ");
-            if(island.get(0).getIndex() == 4 || island.get(0).getIndex() == 8 || island.get(0).getIndex() == 0){
+            if (island.get(0).getIndex() == 4 || island.get(0).getIndex() == 8 || island.get(0).getIndex() == 0) {
                 System.out.println("\n");
             }
         }
 
-        System.out.println(ANSI_RED + "                    NUVOLE"  + ANSI_RESET + "\n");
+        System.out.println(ANSI_RED + "                    NUVOLE" + ANSI_RESET + "\n");
         System.out.print("  ");
-        for( int i = 0 ; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++ ){
+        for (int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
             System.out.print("[" + i + "] : " + "[ ");
-            for(PawnsColors color : boardUpdate.getBoardUpdateContent().getClouds().get(i).getStudents()) {
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) +  "   " + ANSI_RESET +  " ");
+            for (PawnsColors color : boardUpdate.getBoardUpdateContent().getClouds().get(i).getStudents()) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + " ");
             }
             System.out.print("] ");
         }
         System.out.println("\n");
 
-        if (boardUpdate.getGameUpdate().isExpertMode()){
-            ArrayList<Characters> validCharacters = boardUpdate.getGameUpdate().getValidCharacters();
+        if (boardUpdate.getGameUpdate().isExpertMode()) {
+            this.validCharacters = boardUpdate.getGameUpdate().getValidCharacters();
             System.out.println("CHARACTER CARDS : \n");
             for (int i = 0; i < validCharacters.size(); i++) {
-                System.out.println( "[" + i + "]" + validCharacters.get(i));}
+                System.out.println("[" + i + "]" + validCharacters.get(i));
+            }
             for (int i = 0; i < validCharacters.size(); i++) {
                 Characters character = validCharacters.get(i);
                 if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
                     ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? boardUpdate.getGameUpdate().getMonkStudents() : boardUpdate.getGameUpdate().
-                    getSpoiledPrincessStudents();
+                            getSpoiledPrincessStudents();
                     if (character.equals(Characters.MONK)) {
                         System.out.println("Monk pawns: ");
-                        for(PawnsColors pawnsColors : pawns){
-                        System.out.println(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) +  "   " + ANSI_RESET +  " ");
+                        for (PawnsColors pawnsColors : pawns) {
+                            System.out.println("[" + i + "]" + PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
                         }
                     }
                     if (character.equals(Characters.SPOILED_PRINCESS)) {
@@ -200,31 +204,33 @@ public class CLI  implements View{
 
         }
 
-        for( int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
-            System.out.println(ANSI_RED + "             SchoolBoard di  " +  boardUpdate.getPlayersUpdate().get(i).getNickname()+ ANSI_RESET + " : \n");
-            System.out.print("INGRESSO :  [ " );
+        for (int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
+            System.out.println(ANSI_RED + "             SchoolBoard di  " + boardUpdate.getPlayersUpdate().get(i).getNickname() + ANSI_RESET + " : \n");
+            System.out.print("INGRESSO :  [ ");
             ArrayList<PawnsColors> entrance = boardUpdate.getPlayersUpdate().get(i).getEntranceStudents();
             int PawnIndex = 0;
-            for(PawnsColors pawnsColors : entrance){
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + ANSI_BLACK +" "+ PawnIndex +" " + ANSI_RESET +  ANSI_RESET + "  ");
-                PawnIndex ++;
+            for (PawnsColors pawnsColors : entrance) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + ANSI_BLACK + " " + PawnIndex + " " + ANSI_RESET + ANSI_RESET + "  ");
+                PawnIndex++;
             }
             System.out.print("]\n");
 
             // System.out.println("SALA : " + boardUpdate.getPlayersUpdate().get(i).getDiningRoom());
             EnumMap<PawnsColors, Integer> diningRoom = boardUpdate.getPlayersUpdate().get(i).getDiningRoom();
-            for(PawnsColors color : PawnsColors.values()) {
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + ANSI_BLACK + "TABLE"+ ANSI_RESET + ANSI_RESET + ":  ");
-                for(int indexPawn = 0; indexPawn < diningRoom.get(color); indexPawn++) {
-                    System.out.print(" "+ PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + "");
+            for (PawnsColors color : PawnsColors.values()) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + ANSI_BLACK + "TABLE" + ANSI_RESET + ANSI_RESET + ":  ");
+                for (int indexPawn = 0; indexPawn < diningRoom.get(color); indexPawn++) {
+                    System.out.print(" " + PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + "");
                 }
                 System.out.println();
             }
             System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " +
                     TOWERS_COLORS_STRING_ENUM_MAP.get(boardUpdate.getPlayersUpdate().get(i).getTowersColor()) + "\n");
-            if (boardUpdate.getGameUpdate().isExpertMode()){
-                System.out.println("COINS :" + boardUpdate.getPlayersUpdate().get(i).getCoins() + "\n");}
+            if (boardUpdate.getGameUpdate().isExpertMode()) {
+                System.out.println("COINS :" + boardUpdate.getPlayersUpdate().get(i).getCoins() + "\n");
+            }
         }
+
     }
 
     @Override
@@ -322,7 +328,25 @@ public class CLI  implements View{
     @Override
     public void showMovePawnRequest(int numOfPawns) {
         boolean validInput = false;
+
+        if(isExpert){
+            boolean correctInput = false;
+            do {
+                try {
+                    System.out.println("Vuoi usare una carta personaggio personaggio? [s - n]");
+                    String resp = new Scanner(System.in).nextLine();
+                    if (resp.contains("s")) {
+                        UseACharacterCard();
+                    }
+                    if(!(resp.contains("s")) && !(resp.contains("n")) ) throw new InputMismatchException();
+                    correctInput = true;
+                } catch (InputMismatchException e) {
+                    System.out.println(ANSI_RED + "Hai inserito un valore non corretto, ritenta!" + ANSI_RESET);
+                }
+            } while (!(correctInput));
+        }
         do {
+
             System.out.println("Seleziona uno studente dall'ingresso digitando il numero presente sopra la pedina ! ");
             try {
                 int student = new Scanner(System.in).nextInt();
@@ -351,13 +375,13 @@ public class CLI  implements View{
     }
 
     @Override
-    public void showNotEnoughCoins(){
+    public void showNotEnoughCoins() {
         System.out.println(ANSI_RED + "Non hai abbastanza monete" + ANSI_RED);
     }
 
     @Override
     public void showPlanningPhaseTurn(String nickname) {
-        System.out.println("Fase Pianificazione: è il turno di " + nickname );
+        System.out.println("Fase Pianificazione: è il turno di " + nickname);
     }
 
     @Override
@@ -372,10 +396,12 @@ public class CLI  implements View{
             try {
                 System.out.print("Vuoi giocare con la modalità esperti? [s - n]\n - ");
                 String ans = new Scanner(System.in).nextLine();
-                if (ans.toLowerCase().charAt(0) != 's' && ans.toLowerCase().charAt(0) != 'n') throw new InputMismatchException();
+                if (ans.toLowerCase().charAt(0) != 's' && ans.toLowerCase().charAt(0) != 'n')
+                    throw new InputMismatchException();
                 boolean expertMode = ans.toLowerCase().charAt(0) == 's';
                 GameModeResponse gameModeResponse = new GameModeResponse(expertMode);
                 this.clientController.sendObjectMessage(gameModeResponse);
+                isExpert= expertMode;
                 validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("Valore non accettabile");
@@ -468,4 +494,54 @@ public class CLI  implements View{
         System.out.println("Il tuo turno è terminato");
     }
 
+
+    private void UseACharacterCard() {
+        boolean validInput = false;
+        do {
+            System.out.println("Quale carta voui usare? segnare il valore accanto al nome");
+            try {
+                int chose = new Scanner(System.in).nextInt();
+                UseCharacterCard useCharacterCard = new UseCharacterCard(validCharacters.get(chose));
+                if (chose < 0 || chose > validCharacters.size()) throw new InputMismatchException();
+                this.clientController.sendObjectMessage(useCharacterCard);
+                if (validCharacters.get(chose).toString().equals("MONK")) {
+                    try {
+                        System.out.println("Scegli una delle pedine della Carta indicandone il numero");
+                        int student = new Scanner(System.in).nextInt();
+                        System.out.println("Seleziona il numero dell'isola su cui vuoi piazzare lo studente");
+                        int isola = new Scanner(System.in).nextInt();
+                        ClientMessage clientMessage = new MovePawnResponse(student, isola, false);
+                        this.clientController.sendObjectMessage(clientMessage);
+                    } catch (IndexOutOfBoundsException | InputMismatchException error) {
+                        System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
+                    }
+                }
+                if (validCharacters.get(chose).toString().equals("SPOILED_PRINCESS")) {
+                    try {
+                        System.out.println("Scegli una delle pedine della Carta indicandone il numero");
+                        int student = new Scanner(System.in).nextInt();
+                        ClientMessage clientMessage = new MovePawnResponse(student, 0, true);
+                        this.clientController.sendObjectMessage(clientMessage);
+                    } catch (IndexOutOfBoundsException | InputMismatchException error) {
+                        System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
+                    }
+                }
+                if (validCharacters.get(chose).toString().equals("GRANDMA_HERBS")) {
+                    try {
+                        System.out.println("Scegli l'isola su cui mettere la carta divieto");
+                        int isola = new Scanner(System.in).nextInt();
+                        ClientMessage clientMessage = new SelectIslandResponse(isola);
+                        this.clientController.sendObjectMessage(clientMessage);
+                    } catch (IndexOutOfBoundsException | InputMismatchException error) {
+                        System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
+                    }
+                }
+                validInput = true;
+            } catch (InputMismatchException error) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
+
+            }
+
+        } while (!validInput);
+    }
 }
