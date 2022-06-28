@@ -13,9 +13,6 @@ public class KnightEffectHandler implements EffectHandler{
         this.player = player;
     }
 
-    /**
-     * Method that uses character effects
-     */
 
     @Override
     /**
@@ -31,6 +28,7 @@ public class KnightEffectHandler implements EffectHandler{
     /**
      * Method that removes the extra influence for the player
      */
+
     public void removeEffect() {
         this.player.resetExtraInfluence();
     }

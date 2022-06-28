@@ -15,6 +15,7 @@ public class MagicMailmanEffectHandler implements EffectHandler{
 
     /**
      * Method that applies MagicMailman Character card Effects
+     * (it set extra moves for Mother Nature)
      */
 
     @Override
@@ -24,6 +25,7 @@ public class MagicMailmanEffectHandler implements EffectHandler{
 
     /**
      * Method that removes MagicMailman Character card Effects
+     * (it removes the extra moves for Mother Nature)
      */
 
     @Override
