@@ -12,6 +12,7 @@ public class EffectsManager {
     private AssistantCard card;
     private PawnsColors color;
     private Game game;
+    private ArrayList<Pawn> pawns;
     private int islandIndex;
     private final EnumMap<Characters, IInstantiateEffect> INSTANTIATE_EFFECT;
 
@@ -37,12 +38,11 @@ public class EffectsManager {
         this.INSTANTIATE_EFFECT.put(Characters.MUSHROOMS_MAN, () -> new MushroomManEffectHandler(this.color, this.game));
         this.INSTANTIATE_EFFECT.put(Characters.MAGIC_MAILMAN, () -> new MagicMailmanEffectHandler(this.card));
         this.INSTANTIATE_EFFECT.put(Characters.SPOILED_PRINCESS, () -> new SpoiledPrincessEffectHandler(this.pawn, this.player, this.board));
-      //  this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.pawn,this.player));
+        this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.player,this.pawns));
         this.INSTANTIATE_EFFECT.put(Characters.WITCH, () -> new WitchEffectHandler(this.game,this.color));
 
         //this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.pawn,this.player));
         // this.INSTANTIATE_EFFECT.put(Characters.HERALD, () -> new HeraldEffectHandler());
-        // this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new WitchEffectHandler());
     }
 
     /**
@@ -116,5 +116,9 @@ public class EffectsManager {
 
     public void setIslandIndex(int islandIndex) {
         this.islandIndex = islandIndex;
+    }
+
+    public void setPawns(ArrayList<Pawn> pawns) {
+        this.pawns = pawns;
     }
 }

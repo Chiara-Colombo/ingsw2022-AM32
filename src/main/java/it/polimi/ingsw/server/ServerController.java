@@ -171,6 +171,22 @@ public class ServerController  {
                 this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
             }
         });
+        this.charactersParameters.put(Characters.JESTER, () -> {
+            if (this.game.getJesterStudents().size() > 0) {
+                SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                        Characters.JESTER, new ArrayList<>(
+                        this.game.getJesterStudents()
+                                .stream()
+                                .map(Pawn::getColor)
+                                .toList()
+                )
+                );
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+            } else {
+                CharacterCardError message = new CharacterCardError("Non ci sono più studenti!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            }
+        });
         this.charactersParameters.put(Characters.MUSHROOMS_MAN, () -> {
             SelectColorRequest selectColorRequest = new SelectColorRequest(Characters.MUSHROOMS_MAN, new ArrayList<>(List.of(PawnsColors.values())));
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
@@ -755,6 +771,45 @@ public class ServerController  {
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
         }
     }
+
+
+
+    boolean checker = true;
+    void selectPawns(ArrayList<Integer> pawnsindex){
+
+        if (this.game.getActiveCharacter().equals(Characters.JESTER) && checker) {
+            ArrayList<Pawn> jestertoschool = new ArrayList<>();
+            for(int pawnIndex : pawnsindex){
+                Pawn pawn = (this.game.getJesterStudents().remove(pawnIndex));
+                jestertoschool.add(pawn);
+            }
+            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+            this.effectsManager.setPawns(jestertoschool);
+            SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                    Characters.JESTER, new ArrayList<>(
+                    this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
+                            .stream()
+                            .map(Pawn::getColor)
+                            .toList()
+            )
+            );
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+            checker = false;
+        }
+        if (this.game.getActiveCharacter().equals(Characters.JESTER) && !checker) {
+            ArrayList<Pawn> schooltojester = new ArrayList<>();
+            for(int pawnIndex : pawnsindex){
+                Pawn pawn = (this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().remove(pawnIndex));
+                schooltojester.add(pawn);
+            }
+            for(Pawn pawn : schooltojester){
+                this.game.getJesterStudents().add(pawn);
+            }
+            checker = true;
+            this.applyEffect();
+        }
+    }
+
 
     /**
      * Method that select an island in order to apply a Character card effect

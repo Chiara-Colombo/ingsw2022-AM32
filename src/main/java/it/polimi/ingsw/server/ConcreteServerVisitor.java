@@ -91,6 +91,11 @@ public class ConcreteServerVisitor implements VisitorServer{
         this.serverController.setWizard(wizardCardResponse.getChosenWizard());
     }
 
+    @Override
+    public void visitMessage(SelectPawnsResponse selectPawnsResponse) {
+        this.serverController.selectPawns(selectPawnsResponse.getPawnsindex());
+    }
+
     public void visitMessage(Quit quit){
 
     }
