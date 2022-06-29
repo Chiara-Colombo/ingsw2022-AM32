@@ -50,22 +50,4 @@ public class AssistantCardTest {
     }
 
 
-    @Test
-    void getAssistantCards(){
-        String jsonCards = null;
-        try {
-            jsonCards = readCards();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        AssistantCardsManager assistantCardsManager = new AssistantCardsManager(jsonCards);
-
-        ArrayList<AssistantCard> ascm = new ArrayList<>();
-
-        ascm = assistantCardsManager.getAssistantCards();
-
-        assertEquals(10,ascm.size());
-    }
-
-
 }
