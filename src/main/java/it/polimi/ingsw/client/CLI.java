@@ -5,25 +5,25 @@ import it.polimi.ingsw.messages.servertoclient.*;
 import it.polimi.ingsw.model.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static it.polimi.ingsw.utils.Utils.*;
 
-public class CLI  implements View {
+public class CLI  implements View{
     private ClientController clientController;
+    private ArrayList<Characters> validCharacters;
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
-    public static final String RED_BACKGROUND_BRIGHT = "\033[0;101m";// RED
-    public static final String GREEN_BACKGROUND_BRIGHT = "\033[0;102m";// GREEN
-    public static final String YELLOW_BACKGROUND_BRIGHT = "\033[0;103m";// YELLOW
-    public static final String BLUE_BACKGROUND_BRIGHT = "\033[0;104m";// BLUE
-    public static final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m"; // PURPLE
-    public static final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
-    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
+    public static final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";     // BLACK
+    public static final String RED_BACKGROUND_BRIGHT = "\033[0;101m";       // RED
+    public static final String GREEN_BACKGROUND_BRIGHT = "\033[0;102m";     // GREEN
+    public static final String YELLOW_BACKGROUND_BRIGHT = "\033[0;103m";    // YELLOW
+    public static final String BLUE_BACKGROUND_BRIGHT = "\033[0;104m";      // BLUE
+    public static final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m";    // PURPLE
+    public static final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";      // CYAN
+    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";     // WHITE
     private static final EnumMap<PawnsColors, String> PAWNS_COLORS_ANSI_ENUM_MAP = new EnumMap<>(Map.ofEntries(
             Map.entry(PawnsColors.BLUE, "\033[0;104m"),
             Map.entry(PawnsColors.PINK, "\033[0;105m"),
@@ -37,8 +37,6 @@ public class CLI  implements View {
             Map.entry(TowersColors.WHITE, "W"),
             Map.entry(TowersColors.GREY, "G")
     ));
-    private static ArrayList<Characters> validCharacters = new ArrayList<>();
-    private static boolean isExpert = false;
 
     public void start() {
         boolean validInput = false;
@@ -72,22 +70,29 @@ public class CLI  implements View {
 
     private void closeConnection() {
         this.clientController.close();
+        System.exit(0);
+    }
+
+    private String readInput() throws CharacterCardException {
+        String string = new Scanner(System.in).nextLine();
+        if (string.equals("-carta_personaggio")) throw new CharacterCardException();
+        return string;
     }
 
     @Override
-    public void showActionPhaseTurn(String nickname) {
+    public synchronized void showActionPhaseTurn(String nickname) {
         System.out.println("Fase Azione: è il turno di " + nickname);
     }
 
     @Override
-    public void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
+    public synchronized void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
 
         System.out.println("Seleziona una carta assistente digitando il suo numero! : ");
 
         int index = 0;
-        for (int i = 0; i <= 4; i++) {
-            for (int j = 0; j <= 3; j++) {
-                if (index >= availableCards.size()) {
+        for(int i = 0; i <= 4; i++) {
+            for (int j = 0; j <=3 ; j++) {
+                if(index >= availableCards.size()){
                     System.out.print("");
                 } else {
                     System.out.print("  [ " + index + " ] : " + " Valore : " + availableCards.get(index).getValue() + "  Movimenti MN " + availableCards.get(index).getMotherNatureMovements());
@@ -100,13 +105,13 @@ public class CLI  implements View {
         do {
             try {
                 System.out.print(" - ");
-                int choice = new Scanner(System.in).nextInt();
+                int choice = Integer.parseInt(this.readInput());
                 if (choice < 0 || choice >= availableCards.size()) throw new IndexOutOfBoundsException();
                 ClientMessage clientMessage = new AssistantCardResponse(availableCards.get(choice));
                 this.clientController.sendObjectMessage(clientMessage);
                 validInput = true;
-            } catch (IndexOutOfBoundsException | InputMismatchException error) {
-                System.out.println(ANSI_RED + "Hai selezionato una carta sbagliata! Ritenta! " + ANSI_RESET);
+            } catch (IndexOutOfBoundsException | NumberFormatException | CharacterCardException error) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non valido! Ritenta! " + ANSI_RESET);
             }
         } while (!validInput);
     }
@@ -116,31 +121,31 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {
-        System.out.println(ANSI_RED + assistantsCardUpdate.getNickname() + ANSI_RESET + " ha scelto la seguente carta: \n VALORE : " + assistantsCardUpdate.getAssistantCard().getValue() + " Movimenti MN :" + assistantsCardUpdate.getAssistantCard().getMotherNatureMovements());
+    public synchronized void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {
+        System.out.println(ANSI_RED + assistantsCardUpdate.getNickname() + ANSI_RESET + " ha scelto la seguente carta: \n VALORE : " + assistantsCardUpdate.getAssistantCard().getValue() + " Movimenti MN :" + assistantsCardUpdate.getAssistantCard().getMotherNatureMovements() );
 
     }
 
     @Override
-    public void showBoardUpdate(BoardUpdate boardUpdate) {
-
+    public synchronized void showBoardUpdate(BoardUpdate boardUpdate) {
         System.out.println(ANSI_RED + "                     ISOLE" + ANSI_RESET + "\n");
         ArrayList<ArrayList<IslandUpdate>> islands = boardUpdate.getBoardUpdateContent().getIslands();
 
         for (ArrayList<IslandUpdate> island : islands) {
             ArrayList<PawnsColors> colors = new ArrayList<>();
             System.out.print("[ ");
-            for (int j = 0; j < island.size(); j++) {
+            for(int j = 0; j < island.size(); j++) {
                 ArrayList<PawnsColors> islandcolor = island.get(j).getStudents();
                 colors.addAll(islandcolor);
-                if (j == 0) {
+                if( j ==0){
                     System.out.print(island.get(j).getIndex());
-                } else
+                }
+                else
                     System.out.print("/" + island.get(j).getIndex());
             }
             System.out.print(" ] : [ ");
 
-            for (PawnsColors pawnsColors : colors) {
+            for(PawnsColors pawnsColors : colors){
                 System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
             }
             int towers = 0;
@@ -155,87 +160,84 @@ public class CLI  implements View {
                     System.out.print(ANSI_RED + "! " + ANSI_RESET);
                 }
             }
-            if (island.get(0).hasTower()) {
+            if(island.get(0).hasTower()) {
                 System.out.print(towers + TOWERS_COLORS_STRING_ENUM_MAP.get(island.get(0).getTowerColor()));
             }
             System.out.print("] ");
-            if (island.get(0).getIndex() == 4 || island.get(0).getIndex() == 8 || island.get(0).getIndex() == 0) {
+            if(island.get(0).getIndex() == 3 || island.get(0).getIndex() == 7 || island.get(0).getIndex() == 11){
                 System.out.println("\n");
             }
         }
 
-        System.out.println(ANSI_RED + "                    NUVOLE" + ANSI_RESET + "\n");
+        System.out.println(ANSI_RED + "                    NUVOLE"  + ANSI_RESET + "\n");
         System.out.print("  ");
-        for (int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
+        for( int i = 0 ; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++ ){
             System.out.print("[" + i + "] : " + "[ ");
-            for (PawnsColors color : boardUpdate.getBoardUpdateContent().getClouds().get(i).getStudents()) {
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + " ");
+            for(PawnsColors color : boardUpdate.getBoardUpdateContent().getClouds().get(i).getStudents()) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) +  "   " + ANSI_RESET +  " ");
             }
             System.out.print("] ");
         }
         System.out.println("\n");
 
-        if (boardUpdate.getGameUpdate().isExpertMode()) {
-            this.validCharacters = boardUpdate.getGameUpdate().getValidCharacters();
-            System.out.println("CHARACTER CARDS : \n");
-            for (int i = 0; i < validCharacters.size(); i++) {
-                System.out.println("[" + i + "]" + validCharacters.get(i));
-            }
-            for (int i = 0; i < validCharacters.size(); i++) {
-                Characters character = validCharacters.get(i);
-                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
-                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? boardUpdate.getGameUpdate().getMonkStudents() : boardUpdate.getGameUpdate().
-                            getSpoiledPrincessStudents();
-                    if (character.equals(Characters.MONK)) {
-                        System.out.println("Monk pawns: ");
-                        for (PawnsColors pawnsColors : pawns) {
-                            System.out.println("[" + i + "]" + PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
-                        }
-                    }
-                    if (character.equals(Characters.SPOILED_PRINCESS)) {
-                        System.out.println("Spoiled princess pawns:");
-                        for (PawnsColors pawnsColors : pawns) {
-                            System.out.println(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + " ");
-                        }
-                    }
-                }
-
-            }
-
-        }
-
-        for (int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
-            System.out.println(ANSI_RED + "             SchoolBoard di  " + boardUpdate.getPlayersUpdate().get(i).getNickname() + ANSI_RESET + " : \n");
-            System.out.print("INGRESSO :  [ ");
+        for( int i = 0; i < boardUpdate.getGameUpdate().getNumOfPlayers(); i++) {
+            System.out.println(ANSI_RED + "             Plancia di  " +  boardUpdate.getPlayersUpdate().get(i).getNickname()+ ANSI_RESET + " : \n");
+            System.out.print("INGRESSO :  [ " );
             ArrayList<PawnsColors> entrance = boardUpdate.getPlayersUpdate().get(i).getEntranceStudents();
-            int PawnIndex = 0;
-            for (PawnsColors pawnsColors : entrance) {
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + ANSI_BLACK + " " + PawnIndex + " " + ANSI_RESET + ANSI_RESET + "  ");
-                PawnIndex++;
+            for(int pawnIndex = 0; pawnIndex < entrance.size(); pawnIndex++){
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(entrance.get(pawnIndex)) + ANSI_BLACK +" "+ pawnIndex +" " + ANSI_RESET +  ANSI_RESET + "  ");
             }
             System.out.print("]\n");
 
             // System.out.println("SALA : " + boardUpdate.getPlayersUpdate().get(i).getDiningRoom());
             EnumMap<PawnsColors, Integer> diningRoom = boardUpdate.getPlayersUpdate().get(i).getDiningRoom();
-            for (PawnsColors color : PawnsColors.values()) {
-                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + ANSI_BLACK + "TABLE" + ANSI_RESET + ANSI_RESET + ":  ");
-                for (int indexPawn = 0; indexPawn < diningRoom.get(color); indexPawn++) {
-                    System.out.print(" " + PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + "");
+            for(PawnsColors color : PawnsColors.values()) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + ANSI_BLACK + "TAVOLO"+ ANSI_RESET + ANSI_RESET + ":  ");
+                for(int indexPawn = 0; indexPawn < diningRoom.get(color); indexPawn++) {
+                    System.out.print(" "+ PAWNS_COLORS_ANSI_ENUM_MAP.get(color) + "   " + ANSI_RESET + "");
                 }
                 System.out.println();
             }
             System.out.println("TORRI : " + boardUpdate.getPlayersUpdate().get(i).getTowers() + " " +
                     TOWERS_COLORS_STRING_ENUM_MAP.get(boardUpdate.getPlayersUpdate().get(i).getTowersColor()) + "\n");
-            if (boardUpdate.getGameUpdate().isExpertMode()) {
-                System.out.println("COINS :" + boardUpdate.getPlayersUpdate().get(i).getCoins() + "\n");
-            }
+            if (boardUpdate.getGameUpdate().isExpertMode()){
+                System.out.println("MONETE :" + boardUpdate.getPlayersUpdate().get(i).getCoins() + "\n");}
         }
+        if (boardUpdate.getGameUpdate().isExpertMode()){
+            this.validCharacters = boardUpdate.getGameUpdate().getValidCharacters();
+            for (int i = 0; i < this.validCharacters.size(); i++) {
+                System.out.println( "[" + i + "]" + CHARACTERS_NAME_MAP.get(this.validCharacters.get(i)));
+            }
+            for (Characters character : this.validCharacters) {
+                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
+                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? boardUpdate.getGameUpdate().getMonkStudents() : boardUpdate.getGameUpdate().
+                            getSpoiledPrincessStudents();
+                    if (character.equals(Characters.MONK)) {
+                        System.out.println("Monaco: ");
+                        System.out.print("[  ");
+                        for (PawnsColors pawnsColors : pawns) {
+                            System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + "  ");
+                        }
+                        System.out.println("]");
+                    }
+                    if (character.equals(Characters.SPOILED_PRINCESS)) {
+                        System.out.println("Principessa viziata:");
+                        System.out.print("[  ");
+                        for (PawnsColors pawnsColors : pawns) {
+                            System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + "  ");
+                        }
+                        System.out.println("]");
+                    }
+                }
 
+            }
+            System.out.println("Digita -carta_personaggio per usare una carta personaggio\n");
+        }
     }
 
     @Override
-    public void showCharacterCardUsed(Characters character, String username) {
-        System.out.println(username + "has used the Character Card: " + character + "\n");
+    public synchronized void showCharacterCardUsed(Characters character, String username) {
+        System.out.println(username + "ha usato la carta: " + CHARACTERS_NAME_MAP.get(character) + "\n");
     }
 
     @Override
@@ -244,18 +246,21 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showCloudRequest(ArrayList<Integer> validClouds) {
+    public synchronized void showCloudRequest(ArrayList<Integer> validClouds) {
         boolean validInput = false;
         do {
             try {
                 System.out.println("Seleziona una nuvola indicandone il numero!");
-                int choice = new Scanner(System.in).nextInt();
+                int choice = Integer.parseInt(this.readInput());
                 ClientMessage CloudResponse = new CloudResponse(choice);
                 if (!validClouds.contains(choice)) throw new InputMismatchException();
                 this.clientController.sendObjectMessage(CloudResponse);
                 validInput = true;
-            } catch (InputMismatchException e) {
+            } catch (NumberFormatException | InputMismatchException e) {
                 System.out.println("Valore non accettabile");
+            } catch (CharacterCardException e) {
+                this.chooseCharacterCard();
+                break;
             }
         } while (!validInput);
     }
@@ -272,17 +277,17 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showErrorMessage(String message) {
+    public synchronized void showErrorMessage(String message) {
         System.out.println('\n' + message + '\n');
     }
 
     @Override
-    public void showErrorOnPawnPosition() {
+    public synchronized void showErrorOnPawnPosition() {
         System.out.println(ANSI_RED + "Hai selezionato una posizione scorretta! Ritenta! " + ANSI_RESET);
     }
 
     @Override
-    public void showGameStartingView() {
+    public synchronized void showGameStartingView() {
         System.out.println("Partita avviata");
     }
 
@@ -292,12 +297,12 @@ public class CLI  implements View {
         do {
             System.out.println("Vuoi creare una nuova partita o partecipare ad una già esistente? (-crea / -partecipa)");
             try {
-                String match = new Scanner(System.in).nextLine();
+                String match = this.readInput();
                 if (!match.equals("-crea") && !match.equals("-partecipa")) throw new InputMismatchException();
                 ClientMessage matchResponse = new MatchResponse(match.equals("-crea"));
                 this.clientController.sendObjectMessage(matchResponse);
                 validInput = true;
-            } catch (InputMismatchException error) {
+            } catch (InputMismatchException | CharacterCardException error) {
                 System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
             }
         } while (!validInput);
@@ -309,52 +314,37 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes) {
+    public synchronized void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes) {
         boolean validInput = false;
         do {
             System.out.println("Muovi madre natura fino a " + movements + " isole: seleziona l'isola su cui spostare madre natura");
             try {
-                int choice = new Scanner(System.in).nextInt();
+                int choice = Integer.parseInt(this.readInput());
                 ClientMessage MNResponse = new MoveMNResponse(choice);
                 if (choice <= 0 || !validIndexes.contains(choice)) throw new InputMismatchException();
                 this.clientController.sendObjectMessage(MNResponse);
                 validInput = true;
             } catch (InputMismatchException error) {
                 System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
+            } catch (CharacterCardException e) {
+                this.chooseCharacterCard();
+                break;
             }
         } while (!validInput);
     }
 
     @Override
-    public void showMovePawnRequest(int numOfPawns) {
+    public synchronized void showMovePawnRequest(int numOfPawns) {
         boolean validInput = false;
-
-        if(isExpert){
-            boolean correctInput = false;
-            do {
-                try {
-                    System.out.println("Vuoi usare una carta personaggio personaggio? [s - n]");
-                    String resp = new Scanner(System.in).nextLine();
-                    if (resp.contains("s")) {
-                        UseACharacterCard();
-                    }
-                    if(!(resp.contains("s")) && !(resp.contains("n")) ) throw new InputMismatchException();
-                    correctInput = true;
-                } catch (InputMismatchException e) {
-                    System.out.println(ANSI_RED + "Hai inserito un valore non corretto, ritenta!" + ANSI_RESET);
-                }
-            } while (!(correctInput));
-        }
         do {
-
             System.out.println("Seleziona uno studente dall'ingresso digitando il numero presente sopra la pedina ! ");
             try {
-                int student = new Scanner(System.in).nextInt();
+                int student = Integer.parseInt(this.readInput());
                 System.out.println("Dove vuoi spostare la pedina? Digita -isola per posizionarla in un isola o -sala per posizionarla in sala ");
-                String response = new Scanner(System.in).nextLine();
+                String response = this.readInput();
                 if (response.contains("-isola")) {
                     System.out.println("Scegli l'isola digitando il numero corrispondente");
-                    int isola = new Scanner(System.in).nextInt();
+                    int isola = Integer.parseInt(this.readInput());
                     ClientMessage clientMessage = new MovePawnResponse(student, isola, false);
                     this.clientController.sendObjectMessage(clientMessage);
                 } else if (response.contains("-sala")) {
@@ -362,8 +352,11 @@ public class CLI  implements View {
                     this.clientController.sendObjectMessage(clientMessage);
                 } else throw new InputMismatchException();
                 validInput = true;
-            } catch (InputMismatchException e) {
+            } catch (NumberFormatException | InputMismatchException e) {
                 System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
+            } catch (CharacterCardException e) {
+                this.chooseCharacterCard();
+                break;
             }
         } while (!validInput);
     }
@@ -375,63 +368,69 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showNotEnoughCoins() {
+    public synchronized void showNotEnoughCoins(){
         System.out.println(ANSI_RED + "Non hai abbastanza monete" + ANSI_RED);
     }
 
     @Override
-    public void showPlanningPhaseTurn(String nickname) {
-        System.out.println("Fase Pianificazione: è il turno di " + nickname);
+    public synchronized void showPlanningPhaseTurn(String nickname) {
+        System.out.println("Fase Pianificazione: è il turno di " + nickname );
     }
 
     @Override
-    public void showPlayerChoosingWizard() {
+    public synchronized void showPlayerChoosingWizard() {
         System.out.println("Un altro giocatore sta scegliendo il suo mago");
     }
 
     @Override
-    public void showRequestExpertMode() {
+    public synchronized void showRequestExpertMode() {
         boolean validInput = false;
         do {
             try {
                 System.out.print("Vuoi giocare con la modalità esperti? [s - n]\n - ");
-                String ans = new Scanner(System.in).nextLine();
-                if (ans.toLowerCase().charAt(0) != 's' && ans.toLowerCase().charAt(0) != 'n')
-                    throw new InputMismatchException();
+                String ans = this.readInput();
+                if (ans.toLowerCase().charAt(0) != 's' && ans.toLowerCase().charAt(0) != 'n') throw new InputMismatchException();
                 boolean expertMode = ans.toLowerCase().charAt(0) == 's';
                 GameModeResponse gameModeResponse = new GameModeResponse(expertMode);
                 this.clientController.sendObjectMessage(gameModeResponse);
-                isExpert= expertMode;
                 validInput = true;
-            } catch (InputMismatchException e) {
-                System.out.println("Valore non accettabile");
+            } catch (InputMismatchException | CharacterCardException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
             }
         } while (!validInput);
     }
 
     @Override
-    public void showRequestNumOfPlayers() {
+    public synchronized void showRequestNumOfPlayers() {
         boolean validInput = false;
         do {
             try {
                 System.out.print("Quanti giocatori per questa partita? [2 - 3]\n - ");
-                int numOfPlayers = new Scanner(System.in).nextInt();
+                int numOfPlayers = Integer.parseInt(this.readInput());
                 if (numOfPlayers != 2 && numOfPlayers != 3) throw new InputMismatchException();
                 ClientMessage clientMessage = new NumOfPlayersResponse(numOfPlayers);
                 this.clientController.sendObjectMessage(clientMessage);
                 validInput = true;
-            } catch (InputMismatchException e) {
-                System.out.println("Valore non accettabile");
+            } catch (NumberFormatException | CharacterCardException | InputMismatchException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
             }
         } while (!validInput);
     }
 
     @Override
-    public void showRequestUsername() {
-        System.out.print("Inserisci uno username:\n - ");
-        String username = new Scanner(System.in).nextLine();
-        SetUsername setUsername = new SetUsername(username);
-        this.clientController.sendObjectMessage(setUsername);
+    public synchronized void showRequestUsername() {
+        boolean validInput = false;
+        do {
+            try {
+                System.out.print("Inserisci uno username:\n - ");
+                String username = this.readInput();
+                SetUsername setUsername = new SetUsername(username);
+                this.clientController.sendObjectMessage(setUsername);
+                validInput = true;
+            } catch (CharacterCardException e) {
+                System.out.println(ANSI_RED + "Non puoi usare questo username " + ANSI_RESET);
+            }
+        } while (!validInput);
     }
 
     @Override
@@ -440,22 +439,72 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showSelectColorRequest(SelectColorRequest selectColorRequest) {
-
+    public synchronized void showSelectColorRequest(SelectColorRequest selectColorRequest) {
+        boolean validInput = false;
+        do {
+            try {
+                System.out.println("Seleziona un colore tra i seguenti:");
+                ArrayList<PawnsColors> colors = selectColorRequest.getValues();
+                System.out.print("[  ");
+                for(int pawnIndex = 0; pawnIndex < colors.size(); pawnIndex++){
+                    System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(colors.get(pawnIndex)) + ANSI_BLACK +" "+ pawnIndex +" " + ANSI_RESET +  ANSI_RESET + "  ");
+                }
+                System.out.print("]\n\n - ");
+                int index = Integer.parseInt(this.readInput());
+                if (index < 0 || index >= colors.size()) throw new InputMismatchException();
+                SelectColorResponse response = new SelectColorResponse(colors.get(index));
+                this.clientController.sendObjectMessage(response);
+                validInput = true;
+            } catch (CharacterCardException | InputMismatchException | NumberFormatException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
+            }
+        } while (!validInput);
     }
 
     @Override
-    public void showSelectIslandRequest(SelectIslandRequest selectIslandRequest) {
-
+    public synchronized void showSelectIslandRequest(SelectIslandRequest selectIslandRequest) {
+        boolean validInput = false;
+        do {
+            try {
+                System.out.println("Seleziona un'isola:");
+                ArrayList<Integer> islands = selectIslandRequest.getValidIndexes();
+                System.out.print("\n - ");
+                int index = Integer.parseInt(this.readInput());
+                if (!islands.contains(index)) throw new InputMismatchException();
+                SelectIslandResponse response = new SelectIslandResponse(index);
+                this.clientController.sendObjectMessage(response);
+                validInput = true;
+            } catch (CharacterCardException | InputMismatchException | NumberFormatException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
+            }
+        } while (!validInput);
     }
 
     @Override
-    public void showSelectPawnRequest(SelectPawnRequest selectPawnRequest) {
-
+    public synchronized void showSelectPawnRequest(SelectPawnRequest selectPawnRequest) {
+        boolean validInput = false;
+        do {
+            try {
+                System.out.println("Seleziona una pedina:");
+                ArrayList<PawnsColors> pawns = selectPawnRequest.getValidPawns();
+                System.out.print("[  ");
+                for(int pawnIndex = 0; pawnIndex < pawns.size(); pawnIndex++){
+                    System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawns.get(pawnIndex)) + ANSI_BLACK +" "+ pawnIndex +" " + ANSI_RESET +  ANSI_RESET + "  ");
+                }
+                System.out.print("]\n\n - ");
+                int index = Integer.parseInt(this.readInput());
+                if (index < 0 || index >= pawns.size()) throw new InputMismatchException();
+                SelectPawnResponse response = new SelectPawnResponse(index);
+                this.clientController.sendObjectMessage(response);
+                validInput = true;
+            } catch (CharacterCardException | InputMismatchException | NumberFormatException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
+            }
+        } while (!validInput);
     }
 
     @Override
-    public void showWaitingView() {
+    public synchronized void showWaitingView() {
         System.out.println("In attesa che altri giocatori si colleghino...");
     }
 
@@ -466,7 +515,7 @@ public class CLI  implements View {
     }
 
     @Override
-    public void showWizardCardRequest(ArrayList<Wizards> validWizards) {
+    public synchronized void showWizardCardRequest(ArrayList<Wizards> validWizards) {
         boolean validInput = false;
         do {
             System.out.print("Scegli una carta mago selezionando il numero\n");
@@ -474,74 +523,45 @@ public class CLI  implements View {
                 System.out.println("[ " + i + " ] " + validWizards.get(i).toString());
             }
             try {
-                int wizardCard = new Scanner(System.in).nextInt();
+                int wizardCard = Integer.parseInt(this.readInput());
                 ClientMessage clientMessage = new WizardCardResponse(validWizards.get(wizardCard));
                 this.clientController.sendObjectMessage(clientMessage);
                 validInput = true;
-            } catch (IndexOutOfBoundsException | InputMismatchException error) {
+            } catch (IndexOutOfBoundsException | InputMismatchException | CharacterCardException error) {
                 System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
             }
         } while (!validInput);
     }
 
     @Override
-    public void showYourActionPhaseTurnEnds() {
+    public synchronized void showYourActionPhaseTurnEnds() {
         System.out.println("Il tuo turno è terminato");
     }
 
     @Override
-    public void showYourPlanningPhaseTurnEnds() {
+    public synchronized void showYourPlanningPhaseTurnEnds() {
         System.out.println("Il tuo turno è terminato");
     }
 
-
-    private void UseACharacterCard() {
+    private void chooseCharacterCard() {
         boolean validInput = false;
         do {
-            System.out.println("Quale carta voui usare? segnare il valore accanto al nome");
             try {
-                int chose = new Scanner(System.in).nextInt();
-                UseCharacterCard useCharacterCard = new UseCharacterCard(validCharacters.get(chose));
-                if (chose < 0 || chose > validCharacters.size()) throw new InputMismatchException();
-                this.clientController.sendObjectMessage(useCharacterCard);
-                if (validCharacters.get(chose).toString().equals("MONK")) {
-                    try {
-                        System.out.println("Scegli una delle pedine della Carta indicandone il numero");
-                        int student = new Scanner(System.in).nextInt();
-                        System.out.println("Seleziona il numero dell'isola su cui vuoi piazzare lo studente");
-                        int isola = new Scanner(System.in).nextInt();
-                        ClientMessage clientMessage = new MovePawnResponse(student, isola, false);
-                        this.clientController.sendObjectMessage(clientMessage);
-                    } catch (IndexOutOfBoundsException | InputMismatchException error) {
-                        System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
-                    }
+                System.out.println("Quale carta voui usare? segnare il valore accanto al nome:\n");
+                for (int i = 0; i < this.validCharacters.size(); i++) {
+                    System.out.println("[ " + i + " ] " + CHARACTERS_NAME_MAP.get(this.validCharacters.get(i)));
                 }
-                if (validCharacters.get(chose).toString().equals("SPOILED_PRINCESS")) {
-                    try {
-                        System.out.println("Scegli una delle pedine della Carta indicandone il numero");
-                        int student = new Scanner(System.in).nextInt();
-                        ClientMessage clientMessage = new MovePawnResponse(student, 0, true);
-                        this.clientController.sendObjectMessage(clientMessage);
-                    } catch (IndexOutOfBoundsException | InputMismatchException error) {
-                        System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
-                    }
-                }
-                if (validCharacters.get(chose).toString().equals("GRANDMA_HERBS")) {
-                    try {
-                        System.out.println("Scegli l'isola su cui mettere la carta divieto");
-                        int isola = new Scanner(System.in).nextInt();
-                        ClientMessage clientMessage = new SelectIslandResponse(isola);
-                        this.clientController.sendObjectMessage(clientMessage);
-                    } catch (IndexOutOfBoundsException | InputMismatchException error) {
-                        System.out.println(ANSI_RED + "Hai selezionato un valore scorretto! Ritenta!" + ANSI_RESET);
-                    }
-                }
+                System.out.print("\n - ");
+                int index = Integer.parseInt(this.readInput());
+                if (index < 0 || index >= this.validCharacters.size()) throw new InputMismatchException();
+                UseCharacterCard message = new UseCharacterCard(this.validCharacters.get(index));
+                this.clientController.sendObjectMessage(message);
                 validInput = true;
-            } catch (InputMismatchException error) {
-                System.out.println(ANSI_RED + "Hai inserito un valore non corretto! Ritenta! " + ANSI_RESET);
-
+            } catch (InputMismatchException | NumberFormatException | CharacterCardException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
             }
-
         } while (!validInput);
     }
 }
+
+class CharacterCardException extends Exception {}

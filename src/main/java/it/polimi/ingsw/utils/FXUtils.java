@@ -35,12 +35,17 @@ public class FXUtils {
             Map.entry(Characters.KNIGHT, new Image("\\assets\\character_knight.jpg")),
             Map.entry(Characters.MAGIC_MAILMAN, new Image("\\assets\\character_magic_mailman.jpg")),
             Map.entry(Characters.MUSHROOMS_MAN, new Image("\\assets\\character_mushroom_man.jpg")),
-            Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess.jpg"))
+            Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess.jpg")),
+            Map.entry(Characters.JESTER, new Image("\\assets\\character_jester.jpg")),
+            Map.entry(Characters.THIEF, new Image("\\assets\\character_thief.jpg")),
+            Map.entry(Characters.HERALD, new Image("\\assets\\character_herald.jpg")),
+            Map.entry(Characters.MINSTREL, new Image("\\assets\\character_minstrel.jpg"))
     ));
     public static final EnumMap<Characters, Image> EMPTY_CHARACTERS_IMAGE_ENUM_MAP = new EnumMap<>(Map.ofEntries(
             Map.entry(Characters.MONK, new Image("\\assets\\character_monk_empty.jpg")),
             Map.entry(Characters.MUSHROOMS_MAN, new Image("\\assets\\character_mushroom_man_empty.jpg")),
-            Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess_empty.jpg"))
+            Map.entry(Characters.SPOILED_PRINCESS, new Image("\\assets\\character_spoiled_princess_empty.jpg")),
+            Map.entry(Characters.THIEF, new Image("\\assets\\character_thief_empty.jpg"))
     ));
     public static final Image COIN_IMAGE = new Image("\\assets\\coin.png");
     public static final Image NO_ENTRY_TILE_IMAGE = new Image("\\assets\\no_entry_tile.png");

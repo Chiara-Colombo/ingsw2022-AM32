@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.Handled.IMushroomManHandled;
-import it.polimi.ingsw.model.Handled.IWitchHandled;
+import it.polimi.ingsw.model.Handled.IThiefHandled;
 
 import java.util.*;
 
-public class Game implements IMushroomManHandled, IWitchHandled {
+public class Game implements IMushroomManHandled, IThiefHandled {
 
     private final ArrayList<Player> players;
     private final Board gameBoard;
@@ -494,20 +494,20 @@ public class Game implements IMushroomManHandled, IWitchHandled {
     }
 
     @Override
-    public void removeStudentsFromdiningRoom(PawnsColors color) {
+    public void removeStudentsFromDiningRoom(PawnsColors color) {
         for (Player player : players) {
             int size = 0;
-            ArrayList<Pawn> studentofcolor = new ArrayList<>();
+            ArrayList<Pawn> studentsOfColor = new ArrayList<>();
             if (player.getSchoolBoard().getStudentsOfColor(color).size() > 2) {
                 for (int i = 0; i < 3; i++) {
-                    studentofcolor = player.getSchoolBoard().getStudentsOfColor(color);
-                    this.gameBoard.putBackInBag(studentofcolor.remove(studentofcolor.size() - 1));
+                    studentsOfColor = player.getSchoolBoard().getStudentsOfColor(color);
+                    this.gameBoard.putBackInBag(studentsOfColor.remove(studentsOfColor.size() - 1));
                 }
             } else
-                studentofcolor = player.getSchoolBoard().getStudentsOfColor(color);
-            size = studentofcolor.size();
+                studentsOfColor = player.getSchoolBoard().getStudentsOfColor(color);
+            size = studentsOfColor.size();
             for (int i = 0; i < size; i++) {
-                this.gameBoard.putBackInBag(studentofcolor.remove(studentofcolor.size() - 1));
+                this.gameBoard.putBackInBag(studentsOfColor.remove(studentsOfColor.size() - 1));
             }
         }
 

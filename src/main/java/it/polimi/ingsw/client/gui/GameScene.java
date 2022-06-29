@@ -211,7 +211,10 @@ public class GameScene extends Scene {
         ArrayList<Characters> validCharacters = gameUpdate.getValidCharacters();
         validCharacters
                 .stream()
-                .filter(character -> character.equals(Characters.SPOILED_PRINCESS) || character.equals(Characters.MONK) || character.equals(Characters.MUSHROOMS_MAN))
+                .filter(character -> character.equals(Characters.SPOILED_PRINCESS)
+                        || character.equals(Characters.MONK)
+                        || character.equals(Characters.MUSHROOMS_MAN)
+                        || character.equals(Characters.THIEF))
                 .forEach(character -> this.characterParams.put(character, new CharacterCardImage(character, new ImageView(EMPTY_CHARACTERS_IMAGE_ENUM_MAP.get(character)))));
         for (Characters character : validCharacters) {
             this.characterCards.put(character, new CharacterCardImage(character, new ImageView(CHARACTERS_IMAGE_ENUM_MAP.get(character))));
@@ -615,6 +618,7 @@ public class GameScene extends Scene {
     }
 
     void addRequestColorHandler(SelectColorRequest selectColorRequest) {
+        this.showCharacterUsedMessage("Scegli un colore");
         this.CHARACTER_PARAMS_PANE.setBackground(Background.fill(new Color(0.05, 0.05, 0.05, 0.55)));
         this.CHARACTER_PARAMS_PANE.getChildren().clear();
         this.CHARACTER_PARAMS_PANE.setMaxWidth(BOARD_PANE_WIDTH);
@@ -659,6 +663,7 @@ public class GameScene extends Scene {
     }
 
     void addRequestIslandHandler(SelectIslandRequest selectIslandRequest) {
+        this.showCharacterUsedMessage("Scegli un'isola");
         this.ISLANDS.forEach((key, island) -> {
             if (selectIslandRequest.getValidIndexes().contains(island.getIndex())) {
                 island.getImageView().setCursor(Cursor.HAND);
@@ -672,6 +677,7 @@ public class GameScene extends Scene {
     }
 
     void addRequestPawnHandler(SelectPawnRequest selectPawnRequest) {
+        this.showCharacterUsedMessage("Scegli una pedina");
         this.CHARACTER_PARAMS_PANE.setBackground(Background.fill(new Color(0.05, 0.05, 0.05, 0.55)));
         this.CHARACTER_PARAMS_PANE.getChildren().clear();
         this.CHARACTER_PARAMS_PANE.setMaxWidth(BOARD_PANE_WIDTH);

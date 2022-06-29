@@ -16,7 +16,7 @@ public enum Characters {
     JESTER(1),
     MINSTREL(1),
     HERALD(3),
-    WITCH(3);
+    THIEF(3);
 
 
 

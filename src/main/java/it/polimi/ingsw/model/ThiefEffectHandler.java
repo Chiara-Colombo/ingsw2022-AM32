@@ -1,20 +1,17 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Handled.IMushroomManHandled;
-import it.polimi.ingsw.model.Handled.IWitchHandled;
+import it.polimi.ingsw.model.Handled.IThiefHandled;
 
-import java.util.ArrayList;
+public class ThiefEffectHandler implements EffectHandler {
 
-public class WitchEffectHandler implements EffectHandler {
-
-    private final IWitchHandled game;
+    private final IThiefHandled game;
     private final PawnsColors color;
 
     /**
      * Class Constructor
      */
 
-    public WitchEffectHandler(IWitchHandled game, PawnsColors color) {
+    public ThiefEffectHandler(IThiefHandled game, PawnsColors color) {
         this.game = game;
         this.color = color;
     }
@@ -26,7 +23,7 @@ public class WitchEffectHandler implements EffectHandler {
 
     @Override
     public void applyEffect() {
-        this.game.removeStudentsFromdiningRoom(color);
+        this.game.removeStudentsFromDiningRoom(color);
     }
 
     /**

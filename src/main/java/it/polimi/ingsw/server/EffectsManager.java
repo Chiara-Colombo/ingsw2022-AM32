@@ -39,7 +39,7 @@ public class EffectsManager {
         this.INSTANTIATE_EFFECT.put(Characters.MAGIC_MAILMAN, () -> new MagicMailmanEffectHandler(this.card));
         this.INSTANTIATE_EFFECT.put(Characters.SPOILED_PRINCESS, () -> new SpoiledPrincessEffectHandler(this.pawn, this.player, this.board));
         this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.player,this.pawns));
-        this.INSTANTIATE_EFFECT.put(Characters.WITCH, () -> new WitchEffectHandler(this.game,this.color));
+        this.INSTANTIATE_EFFECT.put(Characters.THIEF, () -> new ThiefEffectHandler(this.game,this.color));
 
         //this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.pawn,this.player));
         // this.INSTANTIATE_EFFECT.put(Characters.HERALD, () -> new HeraldEffectHandler());
