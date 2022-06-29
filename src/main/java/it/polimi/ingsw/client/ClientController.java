@@ -83,6 +83,7 @@ public class ClientController implements Runnable{
                 }
             }
         }
+        System.out.println("Closed Thread");
         executor.shutdown();
     }
 
@@ -115,7 +116,6 @@ public class ClientController implements Runnable{
 
     private void connectionLost() {
         this.close();
-        this.clientVisitor.visitMessage(new ConnectionLost());
     }
 
     void close() {
@@ -139,6 +139,7 @@ public class ClientController implements Runnable{
                 this.inputStream.notifyAll();
             }
         }
+        this.clientVisitor.visitMessage(new ConnectionLost());
     }
 }
 class ConnectionTask extends TimerTask {
