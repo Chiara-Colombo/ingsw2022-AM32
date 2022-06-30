@@ -30,6 +30,10 @@ public class GUI extends Application implements View{
     private ClientController controller;
     private ScenesManager scenesManager;
 
+    /**
+     * Method that shows the start in the Gui
+     */
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
@@ -45,13 +49,28 @@ public class GUI extends Application implements View{
         System.exit(0);
     }
 
+    /**
+     * Getter for the controller
+     * @return client controller
+     */
+
     public ClientController getController() {
         return this.controller;
     }
 
+    /**
+     * Method that closes the GUI
+     */
+
     public static void exit() {
         stage.close();
     }
+
+    /**
+     * Method that try to connect the Client to the Server
+     * @param address the IP address of the server
+     * @param port the number of the port used for connection
+     */
 
     public void startGame(String address, int port) {
         try {
@@ -64,6 +83,12 @@ public class GUI extends Application implements View{
         new Thread(this.controller).start();
         this.scenesManager.setController();
     }
+
+    /**
+     * Method that show a dialog box
+     * @param title title of the box
+     * @param message message that will be shown in the dialog box
+     */
 
     private void showDialogBox(String title, String message, EventHandler<ActionEvent> callback) {
         Platform.runLater(() -> {
@@ -98,25 +123,49 @@ public class GUI extends Application implements View{
         });
     }
 
+    /**
+     * Method that shows the server scene
+     */
+
     public void showServerScene() {
         stage.setScene(this.scenesManager.getScene(EnumScenes.CONNECTION_SCENE));
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showActionPhaseTurn(String nickname) {
         this.scenesManager.showTurn(nickname, controller.getUsername().equals(nickname));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showAssistantCardChosen() {}
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
         this.scenesManager.showAssistantCardRequest(availableCards);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {}
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showBoardUpdate(BoardUpdate boardUpdate) {
@@ -124,21 +173,41 @@ public class GUI extends Application implements View{
         this.scenesManager.showBoardUpdate(boardUpdate);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showCharacterCardUsed(Characters character, String username) {
         this.scenesManager.showCharacterUsed(character, username);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showChosenWizardCard() {}
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showCloudRequest(ArrayList<Integer> validClouds) {
         this.scenesManager.showCloudRequest(validClouds);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showCoinsUpdate() {}
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showConnectionLost() {
@@ -147,15 +216,27 @@ public class GUI extends Application implements View{
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showErrorMessage(String message) {
         this.showDialogBox("Errore", message, (event) -> {});
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showErrorOnPawnPosition() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showGameStartingView() {
@@ -163,23 +244,43 @@ public class GUI extends Application implements View{
         this.scenesManager.showPlayerChoosingWizard();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showMatchRequest() {
         stage.setScene(this.scenesManager.getScene(EnumScenes.MATCH_SETTING_SCENE));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showMNPositionUpdate() {}
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes) {
         this.scenesManager.showMoveMNRequest(movements, validIndexes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showMovePawnRequest(int numOfPawns) {
         this.scenesManager.showMovePawnRequest(numOfPawns);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showNoMatchAvailable() {
@@ -189,25 +290,45 @@ public class GUI extends Application implements View{
         this.controller.close();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showNotEnoughCoins(){
         this.showDialogBox("Attenzione!", "Non hai abbastanza monete per usare questo personaggio!", (event) -> {});
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showPlanningPhaseTurn(String nickname) {
         this.scenesManager.showPlanningPhaseTurn(nickname, controller.getUsername().equals(nickname));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showPlayerChoosingWizard() {
         this.scenesManager.showPlayerChoosingWizard();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showRequestExpertMode() {
         this.scenesManager.showExpertModeOptions();
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showRequestNumOfPlayers() {
@@ -215,34 +336,62 @@ public class GUI extends Application implements View{
         this.scenesManager.showNumOfPlayersOptions();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showRequestUsername() {
         stage.setScene(this.scenesManager.getScene(EnumScenes.USERNAME_SCENE));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showSchoolBoardUpdate() {
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showSelectColorRequest(SelectColorRequest selectColorRequest) {
         this.scenesManager.showColorRequest(selectColorRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showSelectIslandRequest(SelectIslandRequest selectIslandRequest) {
         this.scenesManager.showIslandRequest(selectIslandRequest);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showSelectPawnRequest(SelectPawnRequest selectPawnRequest) {
         this.scenesManager.showPawnRequest(selectPawnRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showWaitingView() {
         stage.setScene(this.scenesManager.getScene(EnumScenes.WAITING_SCENE));
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showWinnerMessage(String winner, String reason) {
@@ -253,15 +402,27 @@ public class GUI extends Application implements View{
         this.controller.close();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showWizardCardRequest(ArrayList<Wizards> validWizards) {
         this.scenesManager.showWizardCards(validWizards, this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showYourActionPhaseTurnEnds() {
         this.scenesManager.actionTurnEnds();
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showYourPlanningPhaseTurnEnds() {

@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * Message that asks the first player the number of players of the match
+ * (the players can be 2 or 3)
  */
 
 public class NumOfPlayersRequest extends ServerMessage {
