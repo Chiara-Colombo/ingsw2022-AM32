@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.Handled.IExtraInfluenceIsland;
 import it.polimi.ingsw.model.Handled.IMonkHandled;
 import it.polimi.ingsw.model.Handled.INoEntry;
 
@@ -59,6 +60,10 @@ public class IslandsManager implements IMonkHandled {
         return this.islands.get(islandIndex);
     }
 
+    public IExtraInfluenceIsland getExtraInfluenceIsland(int islandIndex){
+        return this.islands.get(islandIndex);
+
+    }
     /**
      * Method for getting the islands
      * @return islands, each  index of arraylist<arraylist<island>> it's a group and arraylist<island> represents

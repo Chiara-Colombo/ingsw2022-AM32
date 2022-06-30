@@ -123,7 +123,7 @@ public class ServerController  {
     }
 
     /**
-     * Method that sets  the parameters of the Characters
+     * Method that sets the parameters of the Characters
      */
 
     private void setCharactersParameters() {
@@ -224,6 +224,18 @@ public class ServerController  {
                 CharacterCardError message = new CharacterCardError("Non ci sono più studenti!");
                 this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
             }
+        });
+        this.charactersParameters.put(Characters.HERALD, () -> {
+
+            SelectIslandRequest selectIslandRequest = new SelectIslandRequest(
+                    Characters.HERALD, new ArrayList<>(this.game.getGameBoard().getIslandsManager().getAllIslands()
+                    .stream()
+                    .filter(island -> !island.isExtraInfluenceIsland())
+                    .map(IIsland::getIndex)
+                    .toList()
+            )
+            );
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
         });
     }
 
@@ -565,6 +577,13 @@ public class ServerController  {
             this.game.putGrandmaHerbsNoEntryTile();
         } else {
             this.checkTowers();
+            for (int i = 0;i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++){
+                if (this.game.getGameBoard().getIslandsManager().getIsland(i).isExtraInfluenceIsland()){
+                    this.checkTowersOnSpecificIsland(i);
+                    new HeraldEffectHandler(this.game.getGameBoard().getIslandsManager().getExtraInfluenceIsland(i)).restoreHeraldIsland();
+                }
+
+            }
         }
         if (this.isEndOfGame(false)) {
             this.stateOfTheGame = new EndState(this.game, this.usernames);
@@ -689,6 +708,7 @@ public class ServerController  {
             }
         });
     }
+
 
     /**
      * Method that allow (or denies) playing a Character Card to a player
@@ -990,5 +1010,81 @@ public class ServerController  {
                 this.game.getGameBoard().getAvailableProfessors(),
                 cloudsUpdate
         );
+    }
+
+
+    private int influenceForChosenIsland(Player player, int islandIndex) {
+        int playerInfluence = 0;
+        ArrayList<Pawn> professors = player.getSchoolBoard().getProfessors();
+        for (Pawn professor : professors) {
+            PawnsColors color = professor.getColor();
+            Iterator<Pawn> students = this.game.getGameBoard().getIslandsManager().getIsland(islandIndex).getStudents();
+            while (students.hasNext()) {
+                if (students.next().getColor().equals(color))
+                    playerInfluence += this.game.getInfluenceForColor(color);
+            }
+        }
+        playerInfluence += player.getExtraInfluence();
+        return playerInfluence;
+    }
+
+    public void checkTowersOnSpecificIsland(int islandIndex) {
+
+        this.game.getGameBoard().getIslandsManager().getIsland(islandIndex).getTower().ifPresentOrElse(tower -> {
+            int maxInfluence = 0, playerIndex = -1, actualPlayerIndex = -1;
+            boolean equalsInfluences = true;
+            ArrayList<Player> players = this.game.getPlayers();
+            for (int i = 0; i < players.size(); i++) {
+                int playerInfluence = this.influenceForChosenIsland(players.get(i), islandIndex);
+                if (players.get(i).getColor().equals(tower.getColor())) {
+                    actualPlayerIndex = i;
+                    playerInfluence += this.game.getGameBoard().getTowersInfluence();
+                }
+                if (playerInfluence == maxInfluence) equalsInfluences = true;
+                if (playerInfluence > maxInfluence) {
+                    equalsInfluences = false;
+                    maxInfluence = playerInfluence;
+                    playerIndex = i;
+                }
+            }
+            if (equalsInfluences) playerIndex = -1;
+            if (playerIndex >= 0 && this.game.getPlayers().get(playerIndex).getTowers() > 0 && playerIndex != actualPlayerIndex) {
+                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(islandIndex);
+                for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
+                    if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
+                        final int finalActualPlayerIndex = actualPlayerIndex;
+                        this.game.getGameBoard().getIslandsManager().getIsland(i).getTower().ifPresent(tower1 -> players.get(finalActualPlayerIndex).addTower(tower1));
+                        this.game.getGameBoard().getIslandsManager().setTowerOnIsland(players.get(playerIndex).removeTower(), i);
+                    }
+                }
+                this.sendUpdate();
+                this.checkIslandsMerge(groupOfIslands, players.get(playerIndex).getColor());
+            }
+        }, () -> {
+            int maxInfluence = 0, playerIndex = -1;
+            ArrayList<Player> players = this.game.getPlayers();
+            boolean equalsInfluence = true;
+            for (int i = 0; i < players.size(); i++) {
+                int playerInfluence = this.influenceForPlayer(players.get(i));
+                if (playerInfluence == maxInfluence) equalsInfluence = true;
+                if (playerInfluence > maxInfluence) {
+                    equalsInfluence = false;
+                    maxInfluence = playerInfluence;
+                    playerIndex = i;
+                }
+            }
+            if (equalsInfluence) playerIndex = -1;
+            if (playerIndex >= 0 && players.get(playerIndex).getTowers() > 0) {
+                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(islandIndex);
+                for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
+                    if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
+                        Tower tower = this.game.getPlayers().get(playerIndex).removeTower();
+                        this.game.getGameBoard().getIslandsManager().setTowerOnIsland(tower, i);
+                    }
+                }
+                this.sendUpdate();
+                this.checkIslandsMerge(groupOfIslands, players.get(playerIndex).getColor());
+            }
+        });
     }
 }

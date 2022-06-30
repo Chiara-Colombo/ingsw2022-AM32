@@ -1,6 +1,7 @@
 
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.Handled.IExtraInfluenceIsland;
 import it.polimi.ingsw.model.Handled.INoEntry;
 
 import java.util.ArrayList;
@@ -9,11 +10,11 @@ import java.util.Optional;
 
 
 
-public class Island implements IIsland, INoEntry {
+public class Island implements IIsland, INoEntry, IExtraInfluenceIsland {
 
     private final int index;
     private Optional<Tower> tower;
-    private boolean noEntry;
+    private boolean noEntry, extraInfluenceIsland;
     private final ArrayList<Pawn> students;
 
     /**
@@ -95,4 +96,14 @@ public class Island implements IIsland, INoEntry {
     public void setNoEntry(boolean noEntry) {
         this.noEntry = noEntry;
     }
+
+    @Override
+    public void setExtraInfluenceIsland (boolean extraInfluenceIsland){
+        this.extraInfluenceIsland = extraInfluenceIsland;
+    }
+
+    public boolean isExtraInfluenceIsland (){
+        return this.extraInfluenceIsland;
+    }
+
 }
