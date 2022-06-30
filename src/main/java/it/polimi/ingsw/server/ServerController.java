@@ -237,6 +237,34 @@ public class ServerController  {
             );
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
         });
+        this.charactersParameters.put(Characters.MINSTREL,()->{
+            if(this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().size() > 0){
+                for (int i=0 ; i<2; i++) {
+                    SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                            Characters.MINSTREL, new ArrayList<>(
+                            this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().stream()
+                                    .map(Pawn::getColor)
+                                    .toList()
+                    )
+                    );
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+                }
+                for (int i=0 ; i<2; i++) {
+                    SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                            Characters.MINSTREL, new ArrayList<>(
+                            this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().stream()
+                                    .map(Pawn::getColor)
+                                    .toList()
+                    )
+                    );
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+                }
+            }
+            else
+            {CharacterCardError message = new CharacterCardError("Non ci sono più studenti nell'ingresso!");
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            }
+        });
     }
 
     /**

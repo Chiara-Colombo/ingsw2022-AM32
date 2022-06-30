@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.Handled.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerHandled, IJesterHandled, IMinstrelHandled {
@@ -245,14 +244,21 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         this.schoolBoard.addStudent(pawn);
     }
 
-    public void fromDiningToEntrance(Pawn pawn){
-       this.schoolBoard.removeStudentInDining(pawn);
-        this.schoolBoard.addStudent(pawn);}
+    public void fromDiningToEntrance(ArrayList<Pawn> pawns) {
+        for (int i = 0; i < pawns.size(); i++){
+            Pawn student = pawns.get(i);
+            this.schoolBoard.removeStudentInDining(student);
+            this.schoolBoard.addStudent(student);
+        }
+    }
 
     @Override
-    public void fromEntranceToDining(Pawn pawn) {
-        this.schoolBoard.removeStudentInEntrance(pawn);
-        this.schoolBoard.addStudent(pawn);
+    public void fromEntranceToDining(ArrayList<Pawn> pawns) {
+        for (int i = 0; i < pawns.size(); i++){
+            Pawn student = pawns.get(i);
+            this.schoolBoard.removeStudentInEntrance(student);
+            this.schoolBoard.addStudent(student);
+        }
     }
 
 }
