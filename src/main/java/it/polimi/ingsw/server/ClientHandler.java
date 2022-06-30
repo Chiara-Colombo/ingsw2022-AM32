@@ -137,6 +137,10 @@ class ConnectionTask extends TimerTask {
         this.handler = handler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void run() {
         this.handler.sendObjectMessage(new Ping());
