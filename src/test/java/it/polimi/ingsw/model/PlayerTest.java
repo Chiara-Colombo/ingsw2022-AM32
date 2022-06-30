@@ -197,6 +197,68 @@ public class PlayerTest {
         assertEquals(7,player2.getSchoolBoard().getStudentsInEntrance().size());
 
 
+    }
+
+    @Test
+    void Minstrel() {
+
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Game game = new Game(2,true,jsonCards);
+        Player player = new Player("prova", 7);
+        Player player2 = new Player("prov2", 7);
+
+        game.addPlayer(player);
+        game.addPlayer(player2);
+
+        game.startGame();
+
+
+        ArrayList<Pawn> diningPawns = new ArrayList<>();
+        diningPawns.add(new Pawn(PawnsColors.BLUE));
+        diningPawns.add(new Pawn(PawnsColors.RED));
+
+        ArrayList<Pawn> entrancePawns = new ArrayList<>();
+
+        Pawn pawn1 = player.getSchoolBoard().getStudentsInEntrance().get(0);
+        Pawn pawn2 = player.getSchoolBoard().getStudentsInEntrance().get(1);
+        PawnsColors pawnsColors1 = pawn1.getColor();
+        PawnsColors pawnsColors2 = pawn2.getColor();
+
+        entrancePawns.add(pawn1);
+        entrancePawns.add(pawn2);
+
+
+
+        Pawn pawn3 = new Pawn(PawnsColors.BLUE);
+        game.getPlayers().get(0).addStudentInDiningRoom(pawn3);
+
+        Pawn pawn4 = new Pawn(PawnsColors.RED);
+        game.getPlayers().get(0).addStudentInDiningRoom(pawn4);
+
+        assertEquals(1, player.getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE).size());
+        assertEquals(1, player.getSchoolBoard().getStudentsOfColor(PawnsColors.RED).size());
+
+        assertEquals(7, player.getSchoolBoard().getStudentsInEntrance().size());
+
+
+
+        MinstrelEffectHandler minstrelEffectHandler = new MinstrelEffectHandler(player,diningPawns,entrancePawns);
+
+        minstrelEffectHandler.applyEffect();
+
+
+
+
+        assertEquals(7, player.getSchoolBoard().getStudentsInEntrance().size());
+
+
+
 
 
 

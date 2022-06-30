@@ -13,6 +13,7 @@ public class EffectsManager {
     private PawnsColors color;
     private Game game;
     private ArrayList<Pawn> pawns;
+    private ArrayList<Pawn> pawnsToswap;
     private int islandIndex;
     private final EnumMap<Characters, IInstantiateEffect> INSTANTIATE_EFFECT;
     private ServerController serverController;
@@ -41,7 +42,7 @@ public class EffectsManager {
         this.INSTANTIATE_EFFECT.put(Characters.SPOILED_PRINCESS, () -> new SpoiledPrincessEffectHandler(this.pawn, this.player, this.board));
         this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.player,this.pawns));
         this.INSTANTIATE_EFFECT.put(Characters.THIEF, () -> new ThiefEffectHandler(this.game,this.color));
-        this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.player, this.pawns));
+        this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.player, this.pawns,this.pawnsToswap));
          this.INSTANTIATE_EFFECT.put(Characters.HERALD, () -> new HeraldEffectHandler(this.board.getIslandsManager().getExtraInfluenceIsland(this.islandIndex)));
     }
 
@@ -120,5 +121,9 @@ public class EffectsManager {
 
     public void setPawns(ArrayList<Pawn> pawns) {
         this.pawns = pawns;
+    }
+
+    public void setPawnsToswap(ArrayList<Pawn> pawnsToswap) {
+        this.pawnsToswap = pawnsToswap;
     }
 }

@@ -243,7 +243,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         for(Pawn pawn : pawns)
         this.schoolBoard.addStudent(pawn);
     }
-
+/*
     public void fromDiningToEntrance(ArrayList<Pawn> pawns) {
         for (int i = 0; i < pawns.size(); i++){
             Pawn student = pawns.get(i);
@@ -251,7 +251,7 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
             this.schoolBoard.addStudent(student);
         }
     }
-
+/*
     @Override
     public void fromEntranceToDining(ArrayList<Pawn> pawns) {
         for (int i = 0; i < pawns.size(); i++){
@@ -260,5 +260,19 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
             this.schoolBoard.addStudent(student);
         }
     }
-
+*/
+    @Override
+    public void swapPawns(ArrayList<Pawn> diningPawns, ArrayList<Pawn> entrancePawns) {
+        int i = 0;
+        for(Pawn pawn : diningPawns){
+            Pawn diningPawn  = pawn;
+            int size = this.schoolBoard.getStudentsOfColor(diningPawn.getColor()).size();
+            this.schoolBoard.getStudentsOfColor(diningPawn.getColor()).remove(size - 1);
+            Pawn entrancePawn = entrancePawns.get(i);
+            this.schoolBoard.removeStudentInEntrance(entrancePawns.get(i));
+            this.schoolBoard.addStudentToDiningRoom(entrancePawn);
+            this.schoolBoard.addStudent(diningPawn);
+            i++;
+        }
+    }
 }

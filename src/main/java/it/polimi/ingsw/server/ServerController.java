@@ -239,6 +239,14 @@ public class ServerController  {
         });
         this.charactersParameters.put(Characters.MINSTREL,()->{
             if(this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().size() > 0){
+                /*for (int i=0 ; i<2; i++) {*/
+                    SelectColorRequest selectColorRequest = new SelectColorRequest(
+                            Characters.MINSTREL, new ArrayList<>(List.of(PawnsColors.values())
+                    )
+                    );
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
+                }
+                /**
                 for (int i=0 ; i<2; i++) {
                     SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
                             Characters.MINSTREL, new ArrayList<>(
@@ -249,17 +257,8 @@ public class ServerController  {
                     );
                     this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
                 }
-                for (int i=0 ; i<2; i++) {
-                    SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                            Characters.MINSTREL, new ArrayList<>(
-                            this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().stream()
-                                    .map(Pawn::getColor)
-                                    .toList()
-                    )
-                    );
-                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
-                }
-            }
+                 */
+
             else
             {CharacterCardError message = new CharacterCardError("Non ci sono più studenti nell'ingresso!");
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
@@ -792,6 +791,29 @@ public class ServerController  {
         }
     }
 
+    void selectColors(ArrayList<PawnsColors> colors) {
+        if(this.game.getActiveCharacter().equals(Characters.MINSTREL)) {
+            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+            ArrayList<Pawn> diningPawns = new ArrayList<>();
+            for(PawnsColors pawnsColor : colors){
+                int size = this.game.getCurrentPlayer().getSchoolBoard().getStudentsOfColor(pawnsColor).size();
+                Pawn pawn = this.game.getCurrentPlayer().getSchoolBoard().getStudentsOfColor(pawnsColor).get(size - 1);
+                diningPawns.add(pawn);
+            }
+            this.effectsManager.setPawns(diningPawns);
+            SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                    Characters.MINSTREL, new ArrayList<>(
+                    this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
+                            .stream()
+                            .map(Pawn::getColor)
+                            .toList()
+            )
+            );
+            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+        }
+
+    }
+
     /**
      * Method that allow to select a pawn in case of Spoiled princess or Monk cards
      * @param pawnIndex index of a pawn
@@ -854,6 +876,16 @@ public class ServerController  {
                 this.game.getJesterStudents().add(pawn);
             }
             checker = true;
+            this.applyEffect();
+        }
+
+        if (this.game.getActiveCharacter().equals(Characters.MINSTREL)) {
+            ArrayList<Pawn> entrancePawns = new ArrayList<>();
+            for(int pawnIndex : pawnsindex){
+                Pawn pawn = (this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().get(pawnIndex));
+                entrancePawns.add(pawn);
+            }
+            this.effectsManager.setPawnsToswap(entrancePawns);
             this.applyEffect();
         }
     }

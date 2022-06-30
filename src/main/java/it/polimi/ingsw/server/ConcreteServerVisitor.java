@@ -96,6 +96,11 @@ public class ConcreteServerVisitor implements VisitorServer{
         this.serverController.selectPawns(selectPawnsResponse.getPawnsindex());
     }
 
+    @Override
+    public void visitMessage(SelectColorsResponse selectColorsResponse) {
+        this.serverController.selectColors(selectColorsResponse.getColor());
+    }
+
     public void visitMessage(Quit quit){
 
     }
