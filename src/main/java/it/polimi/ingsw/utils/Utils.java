@@ -296,6 +296,10 @@ public class Utils {
             Map.entry(Characters.KNIGHT, "Cavaliere"),
             Map.entry(Characters.MAGIC_MAILMAN, "Postino Magico"),
             Map.entry(Characters.MUSHROOMS_MAN, "Fungaro"),
-            Map.entry(Characters.SPOILED_PRINCESS, "Principessa Viziata")
+            Map.entry(Characters.SPOILED_PRINCESS, "Principessa Viziata"),
+            Map.entry(Characters.MINSTREL, "Menestrello"),
+            Map.entry(Characters.THIEF, "Ladro"),
+            Map.entry(Characters.HERALD, "Araldo"),
+            Map.entry(Characters.JESTER, "Giullare")
     ));
 }

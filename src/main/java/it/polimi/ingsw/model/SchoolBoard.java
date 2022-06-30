@@ -118,4 +118,12 @@ public class SchoolBoard implements ISchoolBoard {
         return this.entrance;
     }
 
+    void removeStudentInDining(Pawn pawn){
+        PawnsColors color = pawn.getColor();
+        this.diningRoom.get(color).remove(pawn);
+    }
+    void removeStudentInEntrance(Pawn pawn){
+        this.entrance.remove(pawn);
+   }
+
 }

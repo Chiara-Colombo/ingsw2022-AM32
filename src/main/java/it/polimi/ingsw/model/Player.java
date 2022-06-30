@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerHandled, IJesterHandled {
+public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerHandled, IJesterHandled, IMinstrelHandled {
 
     private final String nickname;
     private final ArrayList<Tower> towers;
@@ -244,4 +244,15 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         for(Pawn pawn : pawns)
         this.schoolBoard.addStudent(pawn);
     }
+
+    public void fromDiningToEntrance(Pawn pawn){
+       this.schoolBoard.removeStudentInDining(pawn);
+        this.schoolBoard.addStudent(pawn);}
+
+    @Override
+    public void fromEntranceToDining(Pawn pawn) {
+        this.schoolBoard.removeStudentInEntrance(pawn);
+        this.schoolBoard.addStudent(pawn);
+    }
+
 }

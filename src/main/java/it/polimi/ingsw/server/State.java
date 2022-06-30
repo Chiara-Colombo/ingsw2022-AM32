@@ -54,6 +54,7 @@ public interface State {
      */
 
     void resumeState();
+
     /**
      * Method that change the state of the game
      * @return new phase of the game
