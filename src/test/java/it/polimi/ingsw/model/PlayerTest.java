@@ -140,6 +140,71 @@ public class PlayerTest {
     }
 
     @Test
+    void Jester() {
+
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Game game = new Game(2,true,jsonCards);
+        Player player = new Player("prova", 7);
+        Player player2 = new Player("prov2", 7);
+
+        game.addPlayer(player);
+        game.addPlayer(player2);
+
+        game.startGame();
+
+
+        ArrayList<Pawn> pawns = new ArrayList<>();
+        pawns.add(new Pawn(PawnsColors.BLUE));
+        pawns.add(new Pawn(PawnsColors.RED));
+        pawns.add(new Pawn(PawnsColors.YELLOW));
+
+
+        JesterEffectHandler jesterEffectHandler = new JesterEffectHandler(player,pawns);
+
+        assertEquals(7,player.getSchoolBoard().getStudentsInEntrance().size());
+
+        player.removeStudent(0);
+        player.removeStudent(1);
+        player.removeStudent(2);
+
+        assertEquals(4,player.getSchoolBoard().getStudentsInEntrance().size());
+
+        jesterEffectHandler.applyEffect();
+        assertEquals(7,player.getSchoolBoard().getStudentsInEntrance().size());
+
+        ArrayList<Pawn> pawns2 = new ArrayList<>();
+        pawns2.add(new Pawn(PawnsColors.BLUE));
+        pawns2.add(new Pawn(PawnsColors.RED));
+
+        JesterEffectHandler jesterEffectHandler2 = new JesterEffectHandler(player2,pawns2);
+
+        assertEquals(7,player2.getSchoolBoard().getStudentsInEntrance().size());
+
+        player2.removeStudent(0);
+        player2.removeStudent(1);
+
+        assertEquals(5,player2.getSchoolBoard().getStudentsInEntrance().size());
+
+
+        jesterEffectHandler2.applyEffect();
+
+        assertEquals(7,player2.getSchoolBoard().getStudentsInEntrance().size());
+
+
+
+
+
+
+
+    }
+
+    @Test
     void Towers(){
 
         int towers = 7;

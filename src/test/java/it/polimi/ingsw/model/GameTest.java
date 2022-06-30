@@ -354,6 +354,55 @@ public class GameTest {
     }
 
     @Test
+    void ThiefEffect(){
+
+        String jsonCards = null;
+        try {
+            jsonCards = readCards();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Game game = new Game(3,true,jsonCards);
+
+        Player p1 = new Player("p1",7);
+        Player p2 = new Player("p2",7);
+        Player p3 = new Player("p3",7);
+
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        game.startGame();
+
+
+        Pawn pawn = new Pawn(PawnsColors.BLUE);
+        game.getPlayers().get(0).addStudentInDiningRoom(pawn);
+
+
+        game.getPlayers().get(1).addStudentInDiningRoom(pawn);
+        game.getPlayers().get(1).addStudentInDiningRoom(pawn);
+
+        game.getPlayers().get(2).addStudentInDiningRoom(pawn);
+        game.getPlayers().get(2).addStudentInDiningRoom(pawn);
+        game.getPlayers().get(2).addStudentInDiningRoom(pawn);
+
+
+        ThiefEffectHandler thiefEffectHandler = new ThiefEffectHandler(game,PawnsColors.BLUE);
+
+        thiefEffectHandler.applyEffect();
+
+        assertEquals(0,game.getPlayers().get(1).getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE).size());
+        assertEquals(0,game.getPlayers().get(0).getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE).size());
+        assertEquals(0,game.getPlayers().get(2).getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE).size());
+
+
+
+
+
+    }
+
+    @Test
     void ActivateCharacter(){
         String jsonCards = null;
         try {
