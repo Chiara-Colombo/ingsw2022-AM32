@@ -66,7 +66,7 @@ public class AssistantCard implements IMagicMailManHandled, Serializable {
     }
 
     /**
-     *
+     * Getter for discarded cards
      * @return the discarded cards of AssistantCardsManager
      */
 

@@ -5,7 +5,7 @@ import it.polimi.ingsw.client.VisitorClient;
 import java.io.IOException;
 
 /**
- * Message that shows that there aren't available messages
+ * Message that shows that there aren't available matches
  */
 
 public class NoMatchAvailable extends ServerMessage {

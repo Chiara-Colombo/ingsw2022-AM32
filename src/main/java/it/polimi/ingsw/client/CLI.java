@@ -38,6 +38,11 @@ public class CLI  implements View{
             Map.entry(TowersColors.GREY, "G")
     ));
 
+    /**
+     * Method that starts the game:
+     * it asks the parameters that allows to connect to a server
+     */
+
     public void start() {
         boolean validInput = false;
         do {
@@ -58,6 +63,12 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * Method that tryes to connect the client to the server
+     * @param address the IP address of the server
+     * @param port the number of the port used for the connection
+     */
+
     private void connect(String address, int port) {
         try {
             this.clientController = new ClientController(port, address, this, false);
@@ -68,21 +79,40 @@ public class CLI  implements View{
         new Thread(this.clientController).start();
     }
 
+
+    /**
+     * Method that close the connection with the server
+     */
+
     private void closeConnection() {
         this.clientController.close();
         System.exit(0);
     }
+
+    /**
+     * Method that read the input given by the player
+     * @return it return the string written by the user
+     * @throws CharacterCardException the exception is launched when the user writes -carta_personaggio
+     *                                 and allows the player to use a Character Card
+     */
 
     private String readInput() throws CharacterCardException {
         String string = new Scanner(System.in).nextLine();
         if (string.equals("-carta_personaggio")) throw new CharacterCardException();
         return string;
     }
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showActionPhaseTurn(String nickname) {
         System.out.println("Fase Azione: è il turno di " + nickname);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showAssistantCardRequest(ArrayList<AssistantCard> availableCards) {
@@ -116,15 +146,27 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showAssistantCardChosen() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
-    public synchronized void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {
+     public synchronized void showAssistantsCardUpdate(AssistantsCardUpdate assistantsCardUpdate) {
         System.out.println(ANSI_RED + assistantsCardUpdate.getNickname() + ANSI_RESET + " ha scelto la seguente carta: \n VALORE : " + assistantsCardUpdate.getAssistantCard().getValue() + " Movimenti MN :" + assistantsCardUpdate.getAssistantCard().getMotherNatureMovements() );
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showBoardUpdate(BoardUpdate boardUpdate) {
@@ -235,15 +277,26 @@ public class CLI  implements View{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showCharacterCardUsed(Characters character, String username) {
         System.out.println(username + "ha usato la carta: " + CHARACTERS_NAME_MAP.get(character) + "\n");
     }
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showChosenWizardCard() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showCloudRequest(ArrayList<Integer> validClouds) {
@@ -265,10 +318,18 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showCoinsUpdate() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showConnectionLost() {
@@ -276,20 +337,36 @@ public class CLI  implements View{
         this.closeConnection();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showErrorMessage(String message) {
         System.out.println('\n' + message + '\n');
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showErrorOnPawnPosition() {
         System.out.println(ANSI_RED + "Hai selezionato una posizione scorretta! Ritenta! " + ANSI_RESET);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showGameStartingView() {
         System.out.println("Partita avviata");
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showMatchRequest() {
@@ -308,10 +385,18 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showMNPositionUpdate() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showMoveMNRequest(int movements, ArrayList<Integer> validIndexes) {
@@ -332,6 +417,10 @@ public class CLI  implements View{
             }
         } while (!validInput);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showMovePawnRequest(int numOfPawns) {
@@ -361,26 +450,46 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showNoMatchAvailable() {
         System.out.println("Nessuna partita disponibile!");
         this.closeConnection();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showNotEnoughCoins(){
         System.out.println(ANSI_RED + "Non hai abbastanza monete" + ANSI_RED);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showPlanningPhaseTurn(String nickname) {
         System.out.println("Fase Pianificazione: è il turno di " + nickname );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showPlayerChoosingWizard() {
         System.out.println("Un altro giocatore sta scegliendo il suo mago");
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showRequestExpertMode() {
@@ -400,6 +509,10 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showRequestNumOfPlayers() {
         boolean validInput = false;
@@ -417,6 +530,10 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showRequestUsername() {
         boolean validInput = false;
@@ -433,10 +550,18 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void showSchoolBoardUpdate() {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showSelectColorRequest(SelectColorRequest selectColorRequest) {
@@ -461,6 +586,10 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showSelectIslandRequest(SelectIslandRequest selectIslandRequest) {
         boolean validInput = false;
@@ -479,6 +608,10 @@ public class CLI  implements View{
             }
         } while (!validInput);
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showSelectPawnRequest(SelectPawnRequest selectPawnRequest) {
@@ -503,16 +636,28 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showWaitingView() {
         System.out.println("In attesa che altri giocatori si colleghino...");
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void showWinnerMessage(String winner, String reason) {
         System.out.println(winner + " vince la partita: " + reason + "!");
         this.closeConnection();
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public synchronized void showWizardCardRequest(ArrayList<Wizards> validWizards) {
@@ -533,15 +678,27 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showYourActionPhaseTurnEnds() {
         System.out.println("Il tuo turno è terminato");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public synchronized void showYourPlanningPhaseTurnEnds() {
         System.out.println("Il tuo turno è terminato");
     }
+
+    /**
+     * Method that allows the player to choose a Character Card between the three available in the match
+     */
 
     private void chooseCharacterCard() {
         boolean validInput = false;
