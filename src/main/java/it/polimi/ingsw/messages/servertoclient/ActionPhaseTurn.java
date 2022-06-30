@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.io.IOException;
 
 /**
- * Message that notifies that the action Phase turn is starting
+ * Message that notifies that the action Phase turn on a player is starting
  */
 
 public class ActionPhaseTurn extends ServerMessage{
