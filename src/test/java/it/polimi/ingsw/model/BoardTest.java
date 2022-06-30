@@ -161,11 +161,25 @@ class BoardTest {
     }
 
 
+
+
     @Test
     void Bag(){
         Board board = new Board(3);
         assertEquals(120,board.getBagSize());
         assertFalse(board.isBagEmpty());
+
+        board.drawFromBag();
+        board.drawFromBag();
+        board.drawFromBag();
+        board.drawFromBag();
+        assertEquals(116,board.getBagSize());
+        Pawn pawn = new Pawn(PawnsColors.BLUE);
+        board.putBackInBag(pawn);
+        board.putBackInBag(pawn);
+        assertEquals(118,board.getBagSize());
+
+
     }
 
     @Test
