@@ -825,6 +825,10 @@ class ActionPhaseIslandHandler implements EventHandler<MouseEvent> {
         this.manager = manager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void handle(MouseEvent event) {
         this.manager.setIslandIndex(this.island.getIndex());
@@ -840,6 +844,10 @@ class MoveMNIslandHandler implements  EventHandler<MouseEvent> {
         this.manager = manager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void handle(MouseEvent event) {
         this.manager.chooseIsland(this.island.getIndex());
@@ -854,6 +862,10 @@ class ChooseCloudHandler implements  EventHandler<MouseEvent> {
         this.cloud = cloud;
         this.manager = manager;
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void handle(MouseEvent event) {

@@ -26,11 +26,22 @@ import static it.polimi.ingsw.utils.Utils.*;
 
 public class GameSetupScene extends Scene {
     private final Pane MAIN_PANE;
+
+    /**
+     * Class Constructor
+     */
+
     public GameSetupScene(Pane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
         this.MAIN_PANE.setBackground(Background.fill(Paint.valueOf("#69BAE9")));
     }
+
+    /**
+     * Method that shows in the GUI the available Wizard Cards
+     * @param availableWizards cards that can be chosen by the player
+     * @param gui
+     */
 
     public void showWizardCards(ArrayList<Wizards> availableWizards, GUI gui) {
         this.MAIN_PANE.getChildren().clear();
@@ -62,6 +73,10 @@ public class GameSetupScene extends Scene {
         this.MAIN_PANE.getChildren().addAll(imageViews);
     }
 
+    /**
+     * Method that shows that another player is choosing the Wizard Card
+     */
+
     public void showPlayerChoosingWizard() {
         this.MAIN_PANE.getChildren().clear();
         Label title = new Label("Un altro giocatore sta scegliendo la carta mago");
@@ -82,10 +97,18 @@ class ImageViewHandler implements EventHandler<MouseEvent> {
     private final Wizards wizard;
     private final GUI gui;
 
+    /**
+     * Class Constructor
+     */
+
     ImageViewHandler(Wizards wizard, GUI gui) {
         this.wizard = wizard;
         this.gui = gui;
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     @Override
     public void handle(MouseEvent event) {

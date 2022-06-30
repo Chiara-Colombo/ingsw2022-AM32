@@ -27,6 +27,15 @@ public class ClientController implements Runnable{
     private int unreceivedPing;
     private String username;
 
+    /**
+     * Class Constructor
+     * @param serverPort the access port of the Server
+     * @param serverAddress the IP address of the Server
+     * @param view that shows all the messages
+     * @param isGui boolean that set if is GUI or CLI
+     * @throws IOException
+     */
+
     public ClientController(int serverPort, String serverAddress, View view, boolean isGui) throws IOException {
         this.isGui = isGui;
         this.unreceivedPing = 0;
@@ -37,6 +46,10 @@ public class ClientController implements Runnable{
         this.outputStream = new ObjectOutputStream(server.getOutputStream());
         this.inputStream = new ObjectInputStream(server.getInputStream());
     }
+
+    /**
+     * Method that run a Thread
+     */
 
     @Override
     public synchronized void run()  {
@@ -87,6 +100,11 @@ public class ClientController implements Runnable{
         executor.shutdown();
     }
 
+    /**
+     * Method that sends the object message
+     * @param message a Client message
+     */
+
     public void sendObjectMessage(ClientMessage message){
         synchronized (this.outputStream) {
             try {
@@ -100,13 +118,27 @@ public class ClientController implements Runnable{
         }
     }
 
+    /**
+     * Getter for the Username
+     * @return the username
+     */
+
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Setter for the username
+     * @param username nickname of the player
+     */
+
     public void setUsername(String username) {
         this.username = username;
     }
+
+    /**
+     * Method that says that the connection is lost in there are 5 not received pings
+     */
 
     void pingNotReceived() {
         this.unreceivedPing++;
@@ -114,9 +146,17 @@ public class ClientController implements Runnable{
             this.connectionLost();
     }
 
+    /**
+     * Method that close the Client controller when the connection is lost
+     */
+
     private void connectionLost() {
         this.close();
     }
+
+    /**
+     * Method that close the Client Controller
+     */
 
     void close() {
         this.task.cancel();
