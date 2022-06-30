@@ -25,6 +25,10 @@ public class ServerScene extends Scene {
     private final Button continueBtn, defaultAddressBtn, defaultPortBtn;
     private final ScenesManager scenesManager;
 
+    /**
+     * Class constructor
+     */
+
     public ServerScene(AnchorPane MAIN_PANE, ScenesManager scenesManager) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
@@ -37,6 +41,10 @@ public class ServerScene extends Scene {
         this.scenesManager = scenesManager;
         this.initialize();
     }
+
+    /**
+     * Method that initialize the screen that show to asks to choose the server and the port
+     */
 
     private void initialize() {
         VBox addressBox = new VBox();

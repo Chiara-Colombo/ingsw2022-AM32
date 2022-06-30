@@ -10,6 +10,10 @@ public class MoveStudentsManager {
     private int studentIndex, islandIndex;
     private boolean moveOnSchoolBoard;
 
+    /**
+     * Class Constructor
+     */
+
     public MoveStudentsManager(ScenesManager scenesManager) {
         this.scenesManager = scenesManager;
         this.studentIndex = -1;
@@ -17,10 +21,18 @@ public class MoveStudentsManager {
         this.moveOnSchoolBoard = true;
     }
 
+    /**
+     * Method that sets the student index
+     */
+
     public void setStudentIndex(int studentIndex) {
         if (studentIndex >= 0)
             this.studentIndex = studentIndex;
     }
+
+    /**
+     *Method that sets the island index
+     */
 
     public void setIslandIndex(int islandIndex) {
         if (islandIndex >= 0) {
@@ -32,12 +44,20 @@ public class MoveStudentsManager {
         }
     }
 
+    /**
+     * Method that set the movement of a student on School Board
+     */
+
     public void setMoveOnSchoolBoard() {
         this.moveOnSchoolBoard = true;
         if (this.studentIndex >= 0) {
             this.sendResponse();
         }
     }
+
+    /**
+     * Method that send the MovePawnResponse with the choices of the player
+     */
 
     private void sendResponse() {
         MovePawnResponse response = new MovePawnResponse(this.studentIndex, this.islandIndex, this.moveOnSchoolBoard);
@@ -47,6 +67,11 @@ public class MoveStudentsManager {
         this.islandIndex = -1;
         this.moveOnSchoolBoard = true;
     }
+
+    /**
+     * Setter for the controller
+     * @param controller the Client Controller
+     */
 
     void setController(ClientController controller) {
         this.controller = controller;

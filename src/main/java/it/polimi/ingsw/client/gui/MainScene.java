@@ -19,12 +19,21 @@ import static it.polimi.ingsw.utils.Utils.*;
 public class MainScene extends Scene {
     private final GridPane MAIN_PANE;
     private final ScenesManager scenesManager;
+
+    /**
+     * Class Constructor
+     */
+
     public MainScene(GridPane MAIN_PANE, ScenesManager scenesManager) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
         this.scenesManager = scenesManager;
         this.initialize();
     }
+
+    /**
+     * method that initialize the first screen seen by the player
+     */
 
     private void initialize() {
         final int COLUMNS = 10, ROWS = 8;

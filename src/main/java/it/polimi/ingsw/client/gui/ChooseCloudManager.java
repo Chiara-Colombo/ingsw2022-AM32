@@ -11,14 +11,28 @@ public class ChooseCloudManager {
     private final ScenesManager scenesManager;
     private ArrayList<Integer> validClouds;
 
+    /**
+     * Class Constructor
+     */
+
     public ChooseCloudManager(ScenesManager scenesManager) {
         this.scenesManager = scenesManager;
         this.validClouds = new ArrayList<>();
     }
 
+    /**
+     * Method that sets valid Clouds
+     * @param validClouds Clouds with students on top
+     */
+
     public void setValidClouds(ArrayList<Integer> validClouds) {
         this.validClouds = validClouds;
     }
+
+    /**
+     * Method that allows to choose a Cloud
+     * @param index index of the chosen cloud
+     */
 
     public void chooseCloud(int index) {
         if (index >= 0 && !this.validClouds.isEmpty()) {
@@ -29,6 +43,11 @@ public class ChooseCloudManager {
             }
         }
     }
+
+    /**
+     * Setter for the controller
+     * @param controller
+     */
 
     void setController(ClientController controller) {
         this.controller = controller;

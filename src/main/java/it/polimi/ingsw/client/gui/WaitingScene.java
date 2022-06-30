@@ -15,11 +15,20 @@ import static it.polimi.ingsw.utils.Utils.*;
 
 public class WaitingScene extends Scene {
     private final AnchorPane MAIN_PANE;
+
+    /**
+     * Class Constructor
+     */
+
     public WaitingScene(AnchorPane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
         this.initialize();
     }
+
+    /**
+     * Method that initialize the screen that shows to the player that he has to wait for other players
+     */
 
     private void initialize() {
         VBox loadingPane = new VBox();

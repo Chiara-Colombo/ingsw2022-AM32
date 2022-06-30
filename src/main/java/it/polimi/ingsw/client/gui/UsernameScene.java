@@ -25,11 +25,20 @@ import static it.polimi.ingsw.utils.Utils.*;
 public class UsernameScene extends Scene {
     private final AnchorPane MAIN_PANE;
     private ClientController controller;
+
+    /**
+     * Class Constructor
+     */
+
     public UsernameScene(AnchorPane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
         this.initialize();
     }
+
+    /**
+     * Method that initialize the screen that show to the player to set the username
+     */
 
     private void initialize() {
         Button continueBtn = new Button("Continua");
@@ -62,6 +71,10 @@ public class UsernameScene extends Scene {
             this.controller.sendObjectMessage(setUsername);
         });
     }
+
+    /**
+     * Setter for the controller
+     */
 
     void setController(ClientController controller) {
         this.controller = controller;

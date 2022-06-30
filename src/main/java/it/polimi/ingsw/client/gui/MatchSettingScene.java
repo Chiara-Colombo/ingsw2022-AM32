@@ -20,11 +20,22 @@ import static it.polimi.ingsw.utils.Utils.GUI_WIDTH;
 public class MatchSettingScene extends Scene {
     private final AnchorPane MAIN_PANE;
     private ClientController controller;
+
+    /**
+     * Class Constructor
+     */
+
     public MatchSettingScene(AnchorPane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
         this.initialize();
     }
+
+    /**
+     * Method that initialize the screen that shows if the player want to create or
+     * partecipate to a match
+     */
+
     private void initialize() {
         this.MAIN_PANE.getChildren().clear();
         Button continueBtn = new Button("Continua");
@@ -75,6 +86,11 @@ public class MatchSettingScene extends Scene {
         });
         this.MAIN_PANE.getChildren().add(matchSettingPane);
     }
+
+    /**
+     * Setter for the controller
+     * @param controller the Client controller
+     */
 
     void setController(ClientController controller) {
         this.controller = controller;
