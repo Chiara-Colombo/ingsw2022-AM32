@@ -7,18 +7,18 @@ import java.util.ArrayList;
 public class MinstrelEffectHandler implements EffectHandler {
 
     private final IMinstrelHandled player;
-    private final ArrayList<Pawn> diningPawns;
-    private final ArrayList<Pawn> entrancePawns;
+    private final ArrayList<PawnsColors> diningRoomPawns;
+    private final ArrayList<Integer> entrancePawns;
 
 
     /**
      * CLass Constructor
      */
 
-    public MinstrelEffectHandler(IMinstrelHandled player,ArrayList<Pawn> diningPawns, ArrayList<Pawn> entrancePawns) {
+    public MinstrelEffectHandler(IMinstrelHandled player, ArrayList<Integer> entrancePawns, ArrayList<PawnsColors> diningRoomPawns) {
         this.player = player;
-        this.diningPawns = diningPawns;
         this.entrancePawns = entrancePawns;
+        this.diningRoomPawns = diningRoomPawns;
 
     }
 
@@ -28,8 +28,7 @@ public class MinstrelEffectHandler implements EffectHandler {
 
     @Override
     public void applyEffect() {
-
-        this.player.swapPawns(diningPawns,entrancePawns);
+        this.player.swapPawns(this.entrancePawns, this.diningRoomPawns);
     }
 
     /**

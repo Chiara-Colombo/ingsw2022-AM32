@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.Handled.IThiefHandled;
 
 import java.util.*;
 
-public class Game implements IMushroomManHandled, IThiefHandled {
+public class Game implements IMushroomManHandled, IThiefHandled, IJesterStudents {
 
     private final ArrayList<Player> players;
     private final Board gameBoard;
@@ -62,10 +62,16 @@ public class Game implements IMushroomManHandled, IThiefHandled {
                 playersCopyList.add(p.getNickname());
             }
             final ArrayList<Characters> characters = new ArrayList<>(Arrays.asList(Characters.values()));
-            for (int i = 0; i < 3; i++) {
+            /*for (int i = 0; i < 3; i++) {
                 this.validCharacters.add(characters.remove((int) Math.floor(Math.random() * characters.size())));
                 this.charactersValue.put(this.validCharacters.get(i), this.validCharacters.get(i).getCoinValue());
-            }
+            }*/
+            this.validCharacters.add(Characters.MINSTREL);
+            this.validCharacters.add(Characters.JESTER);
+            this.validCharacters.add(Characters.HERALD);
+            this.charactersValue.put(Characters.MINSTREL, 0);
+            this.charactersValue.put(Characters.JESTER, 0);
+            this.charactersValue.put(Characters.HERALD, 0);
             this.setupCharacters();
             this.setupPlayers();
         } else {
@@ -109,18 +115,6 @@ public class Game implements IMushroomManHandled, IThiefHandled {
         return playersCopyList;
     }
 
-    /* only for testing*/
-
-    /**
-     * Method that get a copied list of player
-     *
-     * @return list of players
-     */
-
-    public List<String> getPlayersCopyList() {
-        return playersCopyList;
-    }
-
     /**
      * method that says if a Character Card is Active
      *
@@ -149,7 +143,6 @@ public class Game implements IMushroomManHandled, IThiefHandled {
         if (this.validCharacters.contains(Characters.GRANDMA_HERBS)) {
             this.grandmaHerbsNoEntryTiles = 4;
         }
-
         if (this.validCharacters.contains(Characters.JESTER)) {
             for (int i = 0; i < 6; i++) {
                 this.gameBoard.drawFromBag().ifPresent(this.jesterStudents::add);
@@ -185,10 +178,9 @@ public class Game implements IMushroomManHandled, IThiefHandled {
     public boolean nextPlayer() {
         if (this.playerOrderIndex + 1 >= this.playersCopyList.size()) {
             this.playerOrderIndex = 0;
-            String playerNick = playersCopyList.get(playerOrderIndex);
             int j = 0;
             for (Player player : players) {
-                if (player.getNickname() == playersCopyList.get(playerOrderIndex)) {
+                if (player.getNickname().equals(playersCopyList.get(playerOrderIndex))) {
                     this.currentPlayer = j;
                 }
                 j++;
@@ -196,10 +188,9 @@ public class Game implements IMushroomManHandled, IThiefHandled {
             return false;
         }
         this.playerOrderIndex++;
-        String playerNick = playersCopyList.get(playerOrderIndex);
         int i = 0;
         for (Player player : players) {
-            if (player.getNickname() == playersCopyList.get(playerOrderIndex)) {
+            if (player.getNickname().equals(playersCopyList.get(playerOrderIndex))) {
                 this.currentPlayer = i;
             }
             i++;
@@ -310,7 +301,6 @@ public class Game implements IMushroomManHandled, IThiefHandled {
     public void activateCharacter(Characters character) {
         this.characterActive = true;
         this.activeCharacter = character;
-        this.charactersValue.put(character, character.getCoinValue() + 1);
     }
 
     /**
@@ -331,6 +321,7 @@ public class Game implements IMushroomManHandled, IThiefHandled {
 
     public void useCharacterEffect(EffectHandler effect) {
         if (this.characterActive) {
+            this.charactersValue.put(this.activeCharacter, this.activeCharacter.getCoinValue() + 1);
             this.activeEffect = effect;
             this.activeEffect.applyEffect();
         }
@@ -412,7 +403,7 @@ public class Game implements IMushroomManHandled, IThiefHandled {
      *
      * @return students pawn on jester
      */
-
+    @Override
     public ArrayList<Pawn> getJesterStudents() {
         return this.jesterStudents;
     }
@@ -427,12 +418,6 @@ public class Game implements IMushroomManHandled, IThiefHandled {
     public int getCharacterCost(Characters character) {
         return this.charactersValue.get(character);
     }
-
-
-
- /*
-    METODI AGGIUNTIVI:
- */
 
     /**
      * Getter that returns the number of players which was selected
@@ -517,7 +502,4 @@ public class Game implements IMushroomManHandled, IThiefHandled {
         }
 
     }
-
-
-
 }

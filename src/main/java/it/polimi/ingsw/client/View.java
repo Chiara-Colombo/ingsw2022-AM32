@@ -64,11 +64,6 @@ public interface View {
 
     void showCloudRequest(ArrayList<Integer> validClouds);
 
-    /**
-     * Method that show the update of Coins
-     */
-
-    void showCoinsUpdate();
 
     /**
      * Method that shows that someone has lost connection
@@ -178,6 +173,8 @@ public interface View {
      */
 
     void showSelectColorRequest(SelectColorRequest selectColorRequest);
+
+    void showSelectEntrancePawnRequest(SelectEntrancePawnRequest selectEntrancePawnRequest);
 
     /**
      * Method that shows to a player that he has to choose an island

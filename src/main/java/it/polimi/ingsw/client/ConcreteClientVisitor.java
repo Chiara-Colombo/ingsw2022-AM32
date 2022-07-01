@@ -105,14 +105,6 @@ public class ConcreteClientVisitor implements VisitorClient{
         this.view.showCloudRequest(cloudRequest.getValidClouds());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-
-    @Override
-    public void visitMessage(CoinsUpdate coinsUpdate) {
-        this.view.showCoinsUpdate();
-    }
 
     /**
      * {@inheritDoc}
@@ -288,6 +280,11 @@ public class ConcreteClientVisitor implements VisitorClient{
     @Override
     public void visitMessage(SelectColorRequest selectColorRequest) {
         this.view.showSelectColorRequest(selectColorRequest);
+    }
+
+    @Override
+    public void visitMessage(SelectEntrancePawnRequest selectEntrancePawnRequest) {
+        this.view.showSelectEntrancePawnRequest(selectEntrancePawnRequest);
     }
 
     /**

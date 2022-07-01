@@ -94,6 +94,10 @@ public class Board implements ICentaurHandled, ICoinsSupply {
         return this.availableProfessors.remove(index);
     }
 
+    public void addProfessor(Pawn professor) {
+        this.availableProfessors.add(professor);
+    }
+
     /**
      * Getter that returns the collection of clouds
      * @return collection of clouds

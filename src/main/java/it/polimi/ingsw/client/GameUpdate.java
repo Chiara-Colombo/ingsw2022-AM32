@@ -13,18 +13,20 @@ public class GameUpdate implements Serializable {
     private final String currentPlayer;
     private final GamePhase gamePhase;
     private final ArrayList<Characters> validCharacters;
-    private final ArrayList<PawnsColors> monkStudents, spoiledPrincessStudents;
+    private final ArrayList<PawnsColors> monkStudents, spoiledPrincessStudents, jesterStudents;
 
     /**
      * Class constructor
-     * @param numOfPlayers number of players
-     * @param grandmaHerbsNoEntryTiles tiles affected by Grandma Herbs
-     * @param expertMode says if the expert mode is on
-     * @param currentPlayer th current player
-     * @param gamePhase the phase of the match
-     * @param validCharacters valid characters for this game
-     * @param monkStudents students on monk card
-     * @param spoiledPrincessStudents Students of spoiled princess card
+     *
+     * @param numOfPlayers              number of players
+     * @param grandmaHerbsNoEntryTiles  tiles affected by Grandma Herbs
+     * @param expertMode                says if the expert mode is on
+     * @param currentPlayer             th current player
+     * @param gamePhase                 the phase of the match
+     * @param validCharacters           valid characters for this game
+     * @param monkStudents              students on monk card
+     * @param spoiledPrincessStudents   Students of spoiled princess card
+     * @param jesterStudents            Students of jester card
      */
 
     public GameUpdate(int numOfPlayers,
@@ -34,7 +36,7 @@ public class GameUpdate implements Serializable {
                       GamePhase gamePhase,
                       ArrayList<Characters> validCharacters,
                       ArrayList<PawnsColors> monkStudents,
-                      ArrayList<PawnsColors> spoiledPrincessStudents) {
+                      ArrayList<PawnsColors> spoiledPrincessStudents, ArrayList<PawnsColors> jesterStudents) {
         this.numOfPlayers = numOfPlayers;
         this.grandmaHerbsNoEntryTiles = grandmaHerbsNoEntryTiles;
         this.expertMode = expertMode;
@@ -43,6 +45,7 @@ public class GameUpdate implements Serializable {
         this.validCharacters = validCharacters;
         this.monkStudents = monkStudents;
         this.spoiledPrincessStudents = spoiledPrincessStudents;
+        this.jesterStudents = jesterStudents;
     }
 
     /**
@@ -116,4 +119,6 @@ public class GameUpdate implements Serializable {
     public ArrayList<PawnsColors> getSpoiledPrincessStudents() {
         return this.spoiledPrincessStudents;
     }
+
+    public ArrayList<PawnsColors> getJesterStudents() { return this.jesterStudents; }
 }

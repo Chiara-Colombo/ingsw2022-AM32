@@ -12,10 +12,12 @@ import java.util.ArrayList;
  */
 
 public class SelectPawnRequest extends ServerMessage {
+    private final boolean multipleRequests;
     private final Characters character;
     private final ArrayList<PawnsColors> validPawns;
 
-    public SelectPawnRequest(Characters character, ArrayList<PawnsColors> validPawns) {
+    public SelectPawnRequest(boolean multipleRequests, Characters character, ArrayList<PawnsColors> validPawns) {
+        this.multipleRequests = multipleRequests;
         this.character = character;
         this.validPawns = validPawns;
     }
@@ -36,5 +38,9 @@ public class SelectPawnRequest extends ServerMessage {
 
     public Characters getCharacter() {
         return this.character;
+    }
+
+    public boolean isMultipleRequests() {
+        return this.multipleRequests;
     }
 }

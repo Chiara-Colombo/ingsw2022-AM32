@@ -75,13 +75,6 @@ public interface VisitorClient {
     void visitMessage(CloudRequest cloudRequest);
 
     /**
-     * Method that activate the view that shows the Coins Update
-     * @param coinsUpdate message that notifies the updated coins of a player
-     */
-
-    void visitMessage(CoinsUpdate coinsUpdate);
-
-    /**
      *  Method that activates the view that shows the fact that the server lost the connection with a player
      * @param connectionLost message that notifies the lost of connection
      */
@@ -222,6 +215,13 @@ public interface VisitorClient {
      */
 
     void visitMessage(SelectColorRequest selectColorRequest);
+
+    /**
+     * Method that activates the view that shows the request to select a student from the entrance
+     * @param selectEntrancePawnRequest message object
+     */
+
+    void visitMessage(SelectEntrancePawnRequest selectEntrancePawnRequest);
 
     /**
      * Method that activates the view that shows the request to select an island

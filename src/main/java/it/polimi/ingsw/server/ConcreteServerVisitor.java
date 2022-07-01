@@ -116,6 +116,11 @@ public class ConcreteServerVisitor implements VisitorServer{
         this.serverController.selectColor(selectColorResponse.getColor());
     }
 
+    @Override
+    public void visitMessage(SelectEntrancePawnResponse selectEntrancePawnResponse) {
+        this.serverController.selectPawn(selectEntrancePawnResponse.getPawnIndex());
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -150,24 +155,6 @@ public class ConcreteServerVisitor implements VisitorServer{
     @Override
     public void visitMessage(WizardCardResponse wizardCardResponse) {
         this.serverController.setWizard(wizardCardResponse.getChosenWizard());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-
-    @Override
-    public void visitMessage(SelectPawnsResponse selectPawnsResponse) {
-        this.serverController.selectPawns(selectPawnsResponse.getPawnsindex());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-
-    @Override
-    public void visitMessage(SelectColorsResponse selectColorsResponse) {
-        this.serverController.selectColors(selectColorsResponse.getColor());
     }
 
     public void visitMessage(Quit quit){

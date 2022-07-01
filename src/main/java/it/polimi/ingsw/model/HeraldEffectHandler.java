@@ -23,19 +23,11 @@ public class HeraldEffectHandler implements EffectHandler {
     }
 
     /**
-     * Method which removes the GrandmaHerbs characterCard effects
+     * Method which removes the HeraldEffectHandler characterCard effects
      */
 
     @Override
     public void removeEffect() {
-
-    }
-
-    /**
-     * Method that restores the islands
-     */
-
-    public void restoreHeraldIsland() {
         this.island.setExtraInfluenceIsland(false);
     }
 }

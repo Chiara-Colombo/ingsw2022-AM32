@@ -203,13 +203,6 @@ public class GUI extends Application implements View{
      */
 
     @Override
-    public void showCoinsUpdate() {}
-
-    /**
-     * {@inheritDoc}
-     */
-
-    @Override
     public void showConnectionLost() {
         this.showDialogBox("Errore!", "Connessione con il server persa!", (event) -> {
             stage.setScene(this.scenesManager.getScene(EnumScenes.MAIN_SCENE));
@@ -360,6 +353,12 @@ public class GUI extends Application implements View{
     @Override
     public void showSelectColorRequest(SelectColorRequest selectColorRequest) {
         this.scenesManager.showColorRequest(selectColorRequest);
+    }
+
+    @Override
+    public void showSelectEntrancePawnRequest(SelectEntrancePawnRequest selectEntrancePawnRequest) {
+        System.out.println("Select entrance pawn");
+        this.scenesManager.showEntrancePawnRequest();
     }
 
     /**

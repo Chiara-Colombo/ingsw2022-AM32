@@ -17,7 +17,7 @@ public class SchoolBoard implements ISchoolBoard {
         this.professorsTable = new ArrayList<>();
         this.diningRoom = new EnumMap<>(PawnsColors.class);
         for(PawnsColors color:PawnsColors.values())
-        this.diningRoom.put(color,new ArrayList<Pawn>());
+            this.diningRoom.put(color,new ArrayList<Pawn>());
     }
 
     /**
@@ -26,10 +26,7 @@ public class SchoolBoard implements ISchoolBoard {
      */
 
     public void addStudent(Pawn student){
-
-        /*if getStudentsInEntrance() - 7=0 --->you can't app other students in entrance
-        else*/
-        entrance.add(student) ;
+        this.entrance.add(student);
     }
 
     /**
@@ -65,7 +62,7 @@ public class SchoolBoard implements ISchoolBoard {
      */
 
     public void addProfessor(Pawn professor){
-        professorsTable.add(professor);
+        this.professorsTable.add(professor);
     }
 
     /**
@@ -118,13 +115,9 @@ public class SchoolBoard implements ISchoolBoard {
         return this.entrance;
     }
 
-    /**
-     * Method that remove a student from the entrance
-     * @param pawn student that has to been removed
-     */
-
-    void removeStudentInEntrance(Pawn pawn){
-        this.entrance.remove(pawn);
-   }
-
+    Pawn removeStudentFromDiningRoom(PawnsColors color) {
+        if (this.diningRoom.get(color).size() > 0)
+            return this.diningRoom.get(color).remove(0);
+        throw new IndexOutOfBoundsException();
+    }
 }

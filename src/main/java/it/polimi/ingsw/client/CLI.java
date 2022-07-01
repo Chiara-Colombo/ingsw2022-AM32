@@ -251,27 +251,20 @@ public class CLI  implements View{
                 System.out.println( "[" + i + "]" + CHARACTERS_NAME_MAP.get(this.validCharacters.get(i)));
             }
             for (Characters character : this.validCharacters) {
-                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
-                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? boardUpdate.getGameUpdate().getMonkStudents() : boardUpdate.getGameUpdate().
-                            getSpoiledPrincessStudents();
-                    if (character.equals(Characters.MONK)) {
-                        System.out.println("Monaco: ");
-                        System.out.print("[  ");
-                        for (PawnsColors pawnsColors : pawns) {
-                            System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + "  ");
-                        }
-                        System.out.println("]");
+                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS) || character.equals(Characters.JESTER)) {
+                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ?
+                            boardUpdate.getGameUpdate().getMonkStudents() : character.equals(Characters.SPOILED_PRINCESS) ?
+                            boardUpdate.getGameUpdate().getSpoiledPrincessStudents() : boardUpdate.getGameUpdate().getJesterStudents();
+                    System.out.println(CHARACTERS_NAME_MAP.get(character) + ": ");
+                    System.out.print("[  ");
+                    for (PawnsColors pawnsColors : pawns) {
+                        System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + "  ");
                     }
-                    if (character.equals(Characters.SPOILED_PRINCESS)) {
-                        System.out.println("Principessa viziata:");
-                        System.out.print("[  ");
-                        for (PawnsColors pawnsColors : pawns) {
-                            System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawnsColors) + "   " + ANSI_RESET + "  ");
-                        }
-                        System.out.println("]");
-                    }
+                    System.out.println("]");
                 }
-
+                if (character.equals(Characters.GRANDMA_HERBS)) {
+                    System.out.println("Tessere divieto: " + boardUpdate.getGameUpdate().getGrandmaHerbsNoEntryTiles());
+                }
             }
             System.out.println("Digita -carta_personaggio per usare una carta personaggio\n");
         }
@@ -323,18 +316,9 @@ public class CLI  implements View{
      */
 
     @Override
-    public void showCoinsUpdate() {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-
-    @Override
     public void showConnectionLost() {
         System.out.println("Connessione con il server persa!");
-        this.closeConnection();
+        System.exit(0);
     }
 
     /**
@@ -586,6 +570,29 @@ public class CLI  implements View{
         } while (!validInput);
     }
 
+    @Override
+    public void showSelectEntrancePawnRequest(SelectEntrancePawnRequest selectEntrancePawnRequest) {
+        ArrayList<PawnsColors> entrance = selectEntrancePawnRequest.getEntranceStudents();
+        boolean validInput = false;
+        do {
+            System.out.println("Scegli uno studente dal tuo ingresso:");
+            System.out.print("[  ");
+            for (int i = 0; i < entrance.size(); i++) {
+                System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(entrance.get(i)) + ANSI_BLACK + " " + i + " " + ANSI_RESET + ANSI_RESET + "  ");
+            }
+            System.out.print("]\n\n - ");
+            try {
+                int index = Integer.parseInt(this.readInput());
+                if (index < 0 || index >= entrance.size()) throw new InputMismatchException();
+                SelectEntrancePawnResponse response = new SelectEntrancePawnResponse(index);
+                this.clientController.sendObjectMessage(response);
+                validInput = true;
+            } catch (NumberFormatException | InputMismatchException| CharacterCardException e) {
+                System.out.println(ANSI_RED + "Hai inserito un valore non accettabile! Ritenta! " + ANSI_RESET);
+            }
+        } while(!validInput);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -621,12 +628,14 @@ public class CLI  implements View{
                 System.out.println("Seleziona una pedina:");
                 ArrayList<PawnsColors> pawns = selectPawnRequest.getValidPawns();
                 System.out.print("[  ");
-                for(int pawnIndex = 0; pawnIndex < pawns.size(); pawnIndex++){
+                if (selectPawnRequest.isMultipleRequests())
+                    System.out.print(WHITE_BACKGROUND_BRIGHT + ANSI_BLACK + " -1 " +ANSI_RESET + ANSI_RESET + "  ");
+                for (int pawnIndex = 0; pawnIndex < pawns.size(); pawnIndex++){
                     System.out.print(PAWNS_COLORS_ANSI_ENUM_MAP.get(pawns.get(pawnIndex)) + ANSI_BLACK +" "+ pawnIndex +" " + ANSI_RESET +  ANSI_RESET + "  ");
                 }
                 System.out.print("]\n\n - ");
                 int index = Integer.parseInt(this.readInput());
-                if (index < 0 || index >= pawns.size()) throw new InputMismatchException();
+                if ((index < 0 && !selectPawnRequest.isMultipleRequests()) || index >= pawns.size()) throw new InputMismatchException();
                 SelectPawnResponse response = new SelectPawnResponse(index);
                 this.clientController.sendObjectMessage(response);
                 validInput = true;

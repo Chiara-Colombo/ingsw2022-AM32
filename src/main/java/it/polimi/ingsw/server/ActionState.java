@@ -31,7 +31,7 @@ public class ActionState implements State{
         this.lastMessageAction = new HashMap<>(Map.ofEntries(
                 Map.entry("chooseCloud", this::chooseCloud),
                 Map.entry("moveMN", this::moveMN),
-                Map.entry("moveStudent", () -> this.moveStudent(false))
+                Map.entry("moveStudent", () -> this.moveStudent(true))
         ));
     }
 

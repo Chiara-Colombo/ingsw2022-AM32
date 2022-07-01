@@ -8,6 +8,7 @@ import it.polimi.ingsw.messages.servertoclient.SelectIslandRequest;
 import it.polimi.ingsw.messages.servertoclient.SelectPawnRequest;
 import it.polimi.ingsw.model.AssistantCard;
 import it.polimi.ingsw.model.Characters;
+import it.polimi.ingsw.model.PawnsColors;
 import it.polimi.ingsw.model.Wizards;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -185,6 +186,11 @@ public class ScenesManager {
         if (this.gui.getController().getUsername().equals(username))
             message = "Hai usato il personaggio: " + CHARACTERS_NAME_MAP.get(character);
         this.gameScene.showCharacterUsedMessage(message);
+    }
+
+    public void showEntrancePawnRequest() {
+        this.gameScene.showGamePhaseMessage("Seleziona uno studente dal tuo ingresso");
+        this.gameScene.addRequestEntrancePawnHandler();
     }
 
     /**

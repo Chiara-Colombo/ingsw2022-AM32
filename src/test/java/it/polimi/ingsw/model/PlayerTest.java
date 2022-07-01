@@ -141,7 +141,6 @@ public class PlayerTest {
 
     @Test
     void Jester() {
-
         String jsonCards = null;
         try {
             jsonCards = readCards();
@@ -149,7 +148,7 @@ public class PlayerTest {
             e.printStackTrace();
         }
 
-        Game game = new Game(2,true,jsonCards);
+        Game game = new Game(2, true, jsonCards);
         Player player = new Player("prova", 7);
         Player player2 = new Player("prov2", 7);
 
@@ -158,45 +157,69 @@ public class PlayerTest {
 
         game.startGame();
 
+        final int playerStudents = player.getSchoolBoard().getStudentsInEntrance().size(),
+                player2Students = player2.getSchoolBoard().getStudentsInEntrance().size(),
+                jesterStudents = game.getJesterStudents().size();
 
-        ArrayList<Pawn> pawns = new ArrayList<>();
-        pawns.add(new Pawn(PawnsColors.BLUE));
-        pawns.add(new Pawn(PawnsColors.RED));
-        pawns.add(new Pawn(PawnsColors.YELLOW));
+        for (int i = 0; i < playerStudents; i++) {
+            player.removeStudent(0);
+        }
+        assertEquals(0, player.getSchoolBoard().getStudentsInEntrance().size());
+        for (int i = 0; i < player2Students; i++) {
+            player2.removeStudent(0);
+        }
+        assertEquals(0, player2.getSchoolBoard().getStudentsInEntrance().size());
 
+        player.addStudentInEntrance(new Pawn(PawnsColors.BLUE));
+        player.addStudentInEntrance(new Pawn(PawnsColors.BLUE));
+        player.addStudentInEntrance(new Pawn(PawnsColors.BLUE));
 
-        JesterEffectHandler jesterEffectHandler = new JesterEffectHandler(player,pawns);
+        player2.addStudentInEntrance(new Pawn(PawnsColors.RED));
+        player2.addStudentInEntrance(new Pawn(PawnsColors.RED));
+        player2.addStudentInEntrance(new Pawn(PawnsColors.RED));
 
-        assertEquals(7,player.getSchoolBoard().getStudentsInEntrance().size());
+        for (int i = 0; i < jesterStudents; i++) {
+            game.getJesterStudents().remove(0);
+        }
 
-        player.removeStudent(0);
-        player.removeStudent(1);
-        player.removeStudent(2);
+        game.getJesterStudents().add(new Pawn(PawnsColors.GREEN));
+        game.getJesterStudents().add(new Pawn(PawnsColors.GREEN));
+        game.getJesterStudents().add(new Pawn(PawnsColors.GREEN));
+        game.getJesterStudents().add(new Pawn(PawnsColors.GREEN));
+        game.getJesterStudents().add(new Pawn(PawnsColors.GREEN));
+        game.getJesterStudents().add(new Pawn(PawnsColors.GREEN));
 
-        assertEquals(4,player.getSchoolBoard().getStudentsInEntrance().size());
+        ArrayList<Integer> jesterIndexes = new ArrayList<>(List.of(0, 1, 2));
+        ArrayList<Integer> player1Indexes = new ArrayList<>(List.of(2, 1));
+        ArrayList<Integer> player2Indexes = new ArrayList<>(List.of(0, 1, 2));
+
+        JesterEffectHandler jesterEffectHandler = new JesterEffectHandler(player, game, jesterIndexes, player1Indexes);
+        JesterEffectHandler jesterEffectHandler2 = new JesterEffectHandler(player2, game, jesterIndexes, player2Indexes);
 
         jesterEffectHandler.applyEffect();
-        assertEquals(7,player.getSchoolBoard().getStudentsInEntrance().size());
+        jesterEffectHandler.removeEffect();
 
-        ArrayList<Pawn> pawns2 = new ArrayList<>();
-        pawns2.add(new Pawn(PawnsColors.BLUE));
-        pawns2.add(new Pawn(PawnsColors.RED));
+        assertEquals(PawnsColors.BLUE, player.getSchoolBoard().getStudentsInEntrance().get(2).getColor());
+        assertEquals(PawnsColors.BLUE, player.getSchoolBoard().getStudentsInEntrance().get(1).getColor());
 
-        JesterEffectHandler jesterEffectHandler2 = new JesterEffectHandler(player2,pawns2);
-
-        assertEquals(7,player2.getSchoolBoard().getStudentsInEntrance().size());
-
-        player2.removeStudent(0);
-        player2.removeStudent(1);
-
-        assertEquals(5,player2.getSchoolBoard().getStudentsInEntrance().size());
-
+        assertEquals(PawnsColors.GREEN, game.getJesterStudents().get(0).getColor());
+        assertEquals(PawnsColors.GREEN, game.getJesterStudents().get(1).getColor());
+        assertEquals(PawnsColors.GREEN, game.getJesterStudents().get(2).getColor());
 
         jesterEffectHandler2.applyEffect();
+        jesterEffectHandler2.removeEffect();
 
-        assertEquals(7,player2.getSchoolBoard().getStudentsInEntrance().size());
+        assertEquals(PawnsColors.GREEN, player2.getSchoolBoard().getStudentsInEntrance().get(0).getColor());
+        assertEquals(PawnsColors.GREEN, player2.getSchoolBoard().getStudentsInEntrance().get(1).getColor());
+        assertEquals(PawnsColors.GREEN, player2.getSchoolBoard().getStudentsInEntrance().get(2).getColor());
 
 
+        assertEquals(PawnsColors.GREEN, game.getJesterStudents().get(0).getColor());
+        assertEquals(PawnsColors.GREEN, game.getJesterStudents().get(1).getColor());
+        assertEquals(PawnsColors.GREEN, game.getJesterStudents().get(2).getColor());
+        assertEquals(PawnsColors.RED, game.getJesterStudents().get(3).getColor());
+        assertEquals(PawnsColors.RED, game.getJesterStudents().get(4).getColor());
+        assertEquals(PawnsColors.RED, game.getJesterStudents().get(5).getColor());
     }
 
     @Test
@@ -209,7 +232,7 @@ public class PlayerTest {
             e.printStackTrace();
         }
 
-        Game game = new Game(2,true,jsonCards);
+        Game game = new Game(2, true, jsonCards);
         Player player = new Player("prova", 7);
         Player player2 = new Player("prov2", 7);
 
@@ -219,21 +242,14 @@ public class PlayerTest {
         game.startGame();
 
 
-        ArrayList<Pawn> diningPawns = new ArrayList<>();
-        diningPawns.add(new Pawn(PawnsColors.BLUE));
-        diningPawns.add(new Pawn(PawnsColors.RED));
+        ArrayList<PawnsColors> diningPawns = new ArrayList<>();
+        diningPawns.add(PawnsColors.BLUE);
+        diningPawns.add(PawnsColors.RED);
 
-        ArrayList<Pawn> entrancePawns = new ArrayList<>();
+        ArrayList<Integer> entrancePawns = new ArrayList<>();
 
-        Pawn pawn1 = player.getSchoolBoard().getStudentsInEntrance().get(0);
-        Pawn pawn2 = player.getSchoolBoard().getStudentsInEntrance().get(1);
-        PawnsColors pawnsColors1 = pawn1.getColor();
-        PawnsColors pawnsColors2 = pawn2.getColor();
-
-        entrancePawns.add(pawn1);
-        entrancePawns.add(pawn2);
-
-
+        entrancePawns.add(0);
+        entrancePawns.add(1);
 
         Pawn pawn3 = new Pawn(PawnsColors.BLUE);
         game.getPlayers().get(0).addStudentInDiningRoom(pawn3);
@@ -246,29 +262,15 @@ public class PlayerTest {
 
         assertEquals(7, player.getSchoolBoard().getStudentsInEntrance().size());
 
-
-
-        MinstrelEffectHandler minstrelEffectHandler = new MinstrelEffectHandler(player,diningPawns,entrancePawns);
-
+        MinstrelEffectHandler minstrelEffectHandler = new MinstrelEffectHandler(player, entrancePawns, diningPawns);
         minstrelEffectHandler.applyEffect();
-
-
-
+        minstrelEffectHandler.removeEffect();
 
         assertEquals(7, player.getSchoolBoard().getStudentsInEntrance().size());
-
-
-
-
-
-
-
-
     }
 
     @Test
     void Towers(){
-
         int towers = 7;
         Player player = new Player("Stefano",towers);
         assertEquals(towers, player.getTowers());

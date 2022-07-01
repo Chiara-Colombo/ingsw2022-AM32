@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.Handled.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 
 public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerHandled, IJesterHandled, IMinstrelHandled {
@@ -76,21 +77,16 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
      *Method which put a student tile in the schoolBoard entrance of the selected player
      * @param student the student Pawn that needs to be put
      */
-
+    @Override
     public void addStudentInEntrance(Pawn student){
-        schoolBoard.addStudent(student);
+        this.schoolBoard.addStudent(student);
     }
 
-/**
-    public boolean moveStudentInDiningRoom(Pawn student){
-        return;
-    }
- */
     /**
      * Method which removes a student pawn
      * @param studentIndex the index of the student pawn to be removed
      */
-
+    @Override
     public Pawn removeStudent(int studentIndex){
         return this.schoolBoard.removeStudent(studentIndex);
     }
@@ -237,30 +233,20 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         this.towers.add(tower);
     }
 
-    @Override
-    public void addStudentsInEntrance(ArrayList<Pawn> pawns) {
-        for(Pawn pawn : pawns)
-        this.schoolBoard.addStudent(pawn);
-    }
-
     /**
      * Method that swap the pawns
-     * @param diningPawns pawns that are in the dining room and that are going to be put in the entrance
-     * @param entrancePawns pawns that are in the entrance and that are going to be put in the dining room
+     * @param diningRoomPawns colors of pawns in the dining room that are going to be put in the entrance
+     * @param entrancePawnsIndexes indexes of pawns in the entrance that are going to be put in the dining room
      */
 
     @Override
-    public void swapPawns(ArrayList<Pawn> diningPawns, ArrayList<Pawn> entrancePawns) {
-        int i = 0;
-        for(Pawn pawn : diningPawns){
-            Pawn diningPawn  = pawn;
-            int size = this.schoolBoard.getStudentsOfColor(diningPawn.getColor()).size();
-            this.schoolBoard.getStudentsOfColor(diningPawn.getColor()).remove(size - 1);
-            Pawn entrancePawn = entrancePawns.get(i);
-            this.schoolBoard.removeStudentInEntrance(entrancePawns.get(i));
-            this.schoolBoard.addStudentToDiningRoom(entrancePawn);
-            this.schoolBoard.addStudent(diningPawn);
-            i++;
+    public void swapPawns(ArrayList<Integer> entrancePawnsIndexes, ArrayList<PawnsColors> diningRoomPawns) {
+        if (entrancePawnsIndexes.size() == diningRoomPawns.size()) {
+            entrancePawnsIndexes.sort(Comparator.reverseOrder());
+            for (int i = 0; i < entrancePawnsIndexes.size(); i++) {
+                this.addStudentInDiningRoom(this.removeStudent(entrancePawnsIndexes.get(i)));
+                this.addStudentInEntrance(this.schoolBoard.removeStudentFromDiningRoom(diningRoomPawns.get(i)));
+            }
         }
     }
 }

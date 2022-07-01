@@ -42,10 +42,13 @@ public class FXUtils {
             Map.entry(Characters.MONK, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_monk_empty.jpg")))),
             Map.entry(Characters.MUSHROOMS_MAN, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_mushroom_man_empty.jpg")))),
             Map.entry(Characters.SPOILED_PRINCESS, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_spoiled_princess_empty.jpg")))),
-            Map.entry(Characters.THIEF, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_thief_empty.jpg"))))
+            Map.entry(Characters.THIEF, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_thief_empty.jpg")))),
+            Map.entry(Characters.MINSTREL, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_minstrel_empty.jpg")))),
+            Map.entry(Characters.JESTER, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/character_jester_empty.jpg"))))
     ));
     public static final Image COIN_IMAGE = new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/coin.png")));
     public static final Image NO_ENTRY_TILE_IMAGE = new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/no_entry_tile.png")));
+    public static final Image GREY_PAWN = new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/pawn_grey.png")));
     public static final EnumMap<Wizards, Image> WIZARDS_IMAGE_MAP = new EnumMap<>(Map.ofEntries(
             Map.entry(Wizards.FIRST, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/wizard_1.png")))),
             Map.entry(Wizards.SECOND, new Image(Objects.requireNonNull(FXUtils.class.getResourceAsStream("/assets/wizard_2.png")))),

@@ -76,6 +76,8 @@ public interface VisitorServer {
 
     void visitMessage(SelectColorResponse selectColorResponse);
 
+    void visitMessage(SelectEntrancePawnResponse selectEntrancePawnResponse);
+
     /**
      * Method that gets the island chosen by the player
      * @param selectIslandResponse message that contains tha chosen islands
@@ -85,7 +87,7 @@ public interface VisitorServer {
 
     /**
      * Method that gets the pawn selected by a player
-     * @param selectPawnResponse message that contains the pawn selected by the player
+     * @param selectPawnResponse  message that contains the pawn selected by the player
      */
 
     void visitMessage(SelectPawnResponse selectPawnResponse);
@@ -105,18 +107,4 @@ public interface VisitorServer {
     void visitMessage(WizardCardResponse wizardCardResponse);
 
     void visitMessage(Quit quit);
-
-    /**
-     * Method that gets the pawns selected by a player
-     * @param selectPawnsResponse  message that contains the pawns selected by the player
-     */
-
-    void visitMessage(SelectPawnsResponse selectPawnsResponse);
-
-    /**
-     * Method that get the color chosen by the player
-     * @param selectColorsResponse message that contains the chosen color
-     */
-
-    void visitMessage(SelectColorsResponse selectColorsResponse);
 }

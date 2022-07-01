@@ -238,7 +238,9 @@ public class GameScene extends Scene {
                 .filter(character -> character.equals(Characters.SPOILED_PRINCESS)
                         || character.equals(Characters.MONK)
                         || character.equals(Characters.MUSHROOMS_MAN)
-                        || character.equals(Characters.THIEF))
+                        || character.equals(Characters.THIEF)
+                        || character.equals(Characters.JESTER)
+                        || character.equals(Characters.MINSTREL))
                 .forEach(character -> this.characterParams.put(character, new CharacterCardImage(character, new ImageView(EMPTY_CHARACTERS_IMAGE_ENUM_MAP.get(character)))));
         for (Characters character : validCharacters) {
             this.characterCards.put(character, new CharacterCardImage(character, new ImageView(CHARACTERS_IMAGE_ENUM_MAP.get(character))));
@@ -553,8 +555,10 @@ public class GameScene extends Scene {
                 cardImage.setLayoutY(CARD_Y);
                 cardImage.setLayoutX(CARD_X);
                 this.MAIN_PANE.getChildren().add(cardImage);
-                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS)) {
-                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ? gameUpdate.getMonkStudents() : gameUpdate.getSpoiledPrincessStudents();
+                if (character.equals(Characters.MONK) || character.equals(Characters.SPOILED_PRINCESS) || character.equals(Characters.JESTER)) {
+                    ArrayList<PawnsColors> pawns = character.equals(Characters.MONK) ?
+                            gameUpdate.getMonkStudents() : character.equals(Characters.SPOILED_PRINCESS) ?
+                            gameUpdate.getSpoiledPrincessStudents() : gameUpdate.getJesterStudents();
                     for (int j = 0; j < pawns.size(); j++) {
                         ImageView pawnImage;
                         PawnsColors color = pawns.get(j);
@@ -753,6 +757,18 @@ public class GameScene extends Scene {
         });
     }
 
+    void addRequestEntrancePawnHandler() {
+        this.removeHandlers();
+        this.entrance.forEach(pawnImage -> {
+            pawnImage.getImageView().setCursor(Cursor.HAND);
+            pawnImage.getImageView().setOnMouseClicked((event) -> {
+                SelectEntrancePawnResponse response = new SelectEntrancePawnResponse(pawnImage.getIndex());
+                this.controller.sendObjectMessage(response);
+                this.removeHandlers();
+            });
+        });
+    }
+
     /**
      * Method that adds a Request Pawn Handler
      * @param selectPawnRequest message that asks to select a pawn
@@ -776,8 +792,8 @@ public class GameScene extends Scene {
         cardImage.setLayoutX(CARD_X);
         this.CHARACTER_PARAMS_PANE.getChildren().add(cardImage);
         ArrayList<PawnsColors> validPawns = selectPawnRequest.getValidPawns();
-        final double PAWN_WIDTH = 6 * PAWNS_RADIUS,
-                PAWN_HEIGHT = 6 * PAWNS_RADIUS,
+        final double PAWN_WIDTH = 3.8 * PAWNS_RADIUS,
+                PAWN_HEIGHT = 3.8 * PAWNS_RADIUS,
                 X_SPACE = (CARD_WIDTH - 2 * PAWN_WIDTH) / 3.0,
                 Y_SPACE = 20.0;
         for (int i = 0; i < validPawns.size(); i++) {
@@ -798,6 +814,21 @@ public class GameScene extends Scene {
             this.studentsIndexes.put(color, this.studentsIndexes.get(color) + 1);
         }
         this.addCharacterListsListeners();
+        if (selectPawnRequest.isMultipleRequests()) {
+            double x = CARD_X + CARD_WIDTH / 2.0 - PAWN_WIDTH / 2,
+                    y = CARD_Y + CARD_HEIGHT / 2.0 + 30.0 + (PAWN_HEIGHT + Y_SPACE) * 1.5;
+            ImageView greyPawnImage = new ImageView(GREY_PAWN);
+            greyPawnImage.setFitWidth(PAWN_WIDTH);
+            greyPawnImage.setFitHeight(PAWN_HEIGHT);
+            greyPawnImage.setLayoutY(y);
+            greyPawnImage.setLayoutX(x);
+            greyPawnImage.setCursor(Cursor.HAND);
+            greyPawnImage.setOnMouseClicked(event -> {
+                SelectPawnResponse response = new SelectPawnResponse(-1);
+                this.controller.sendObjectMessage(response);
+            });
+            this.CHARACTER_PARAMS_PANE.getChildren().add(greyPawnImage);
+        }
         this.MAIN_PANE.getChildren().add(this.CHARACTER_PARAMS_PANE);
     }
 

@@ -158,7 +158,7 @@ public class ServerController  {
         this.charactersParameters.put(Characters.MONK, () -> {
             if (this.game.getMonkStudents().size() > 0) {
                 SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                        Characters.MONK, new ArrayList<>(
+                        false, Characters.MONK, new ArrayList<>(
                         this.game.getMonkStudents()
                                 .stream()
                                 .map(Pawn::getColor)
@@ -174,12 +174,12 @@ public class ServerController  {
         this.charactersParameters.put(Characters.JESTER, () -> {
             if (this.game.getJesterStudents().size() > 0) {
                 SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                        Characters.JESTER, new ArrayList<>(
-                        this.game.getJesterStudents()
-                                .stream()
-                                .map(Pawn::getColor)
-                                .toList()
-                )
+                        true, Characters.JESTER, new ArrayList<>(
+                                this.game.getJesterStudents()
+                                        .stream()
+                                        .map(Pawn::getColor)
+                                        .toList()
+                        )
                 );
                 this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
             } else {
@@ -212,7 +212,7 @@ public class ServerController  {
         this.charactersParameters.put(Characters.SPOILED_PRINCESS, () -> {
             if (this.game.getSpoiledPrincessStudents().size() > 0) {
                 SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                        Characters.SPOILED_PRINCESS, new ArrayList<>(
+                        false, Characters.SPOILED_PRINCESS, new ArrayList<>(
                         this.game.getSpoiledPrincessStudents()
                                 .stream()
                                 .map(Pawn::getColor)
@@ -226,42 +226,43 @@ public class ServerController  {
             }
         });
         this.charactersParameters.put(Characters.HERALD, () -> {
-
             SelectIslandRequest selectIslandRequest = new SelectIslandRequest(
-                    Characters.HERALD, new ArrayList<>(this.game.getGameBoard().getIslandsManager().getAllIslands()
-                    .stream()
-                    .filter(island -> !island.isExtraInfluenceIsland())
-                    .map(IIsland::getIndex)
-                    .toList()
-            )
+                    Characters.HERALD, new ArrayList<>(
+                            this.game.getGameBoard().getIslandsManager().getAllIslands()
+                                    .stream()
+                                    .filter(island -> !island.isExtraInfluenceIsland())
+                                    .map(IIsland::getIndex)
+                                    .toList()
+                    )
             );
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
         });
-        this.charactersParameters.put(Characters.MINSTREL,()->{
-            if(this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().size() > 0){
-                /*for (int i=0 ; i<2; i++) {*/
-                    SelectColorRequest selectColorRequest = new SelectColorRequest(
-                            Characters.MINSTREL, new ArrayList<>(List.of(PawnsColors.values())
-                    )
-                    );
-                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
+        this.charactersParameters.put(Characters.MINSTREL,() -> {
+            boolean hasStudentsInDiningRoom = false;
+            for (PawnsColors color : PawnsColors.values()) {
+                if (this.game.getCurrentPlayer().getSchoolBoard().getStudentsOfColor(color).size() > 0) {
+                    hasStudentsInDiningRoom = true;
+                    break;
                 }
-                /**
-                for (int i=0 ; i<2; i++) {
-                    SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                            Characters.MINSTREL, new ArrayList<>(
-                            this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().stream()
-                                    .map(Pawn::getColor)
-                                    .toList()
-                    )
+            }
+            if (!hasStudentsInDiningRoom) {
+                CharacterCardError message = new CharacterCardError("Non hai studenti nella sala da scambiare!");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+            } else {
+                if (this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().size() > 0) {
+                    SelectEntrancePawnRequest entrancePawnRequest = new SelectEntrancePawnRequest(
+                            new ArrayList<>(
+                                    this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
+                                            .stream()
+                                            .map(Pawn::getColor)
+                                            .toList()
+                            )
                     );
-                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(entrancePawnRequest);
+                } else {
+                    CharacterCardError message = new CharacterCardError("Non ci sono più studenti nell'ingresso!");
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
                 }
-                 */
-
-            else
-            {CharacterCardError message = new CharacterCardError("Non ci sono più studenti nell'ingresso!");
-            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
             }
         });
     }
@@ -494,21 +495,8 @@ public class ServerController  {
                 Map<String, Integer> sorted = cardValues .entrySet() .stream()
                         .sorted(comparingByValue())
                         .collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
-                System.out.println(sorted);
                 ArrayList<String> keys = new ArrayList<>(sorted.keySet());
                 this.game.ChangePlayersOrder(keys);
-                System.out.print("Game --> getPlayers = ");
-                for(Player player : this.game.getPlayers()) {
-                    System.out.print( "[ " + player.getNickname() + " ] ");
-                }
-                System.out.println("");
-                System.out.print("Real order determinated through cards -->  = ");
-                for(String player : this.game.getPlayersCopyList()){
-                    System.out.print("[ " + player + " ] ");
-                }
-                System.out.println("");
-                System.out.print("Current Player --> ");
-                System.out.println(this.game.getCurrentPlayer().getNickname());
                 ActionPhaseTurn phaseTurn = new ActionPhaseTurn(this.game.getCurrentPlayer().getNickname());
                 this.clients.forEach(client -> client.sendObjectMessage(phaseTurn));
                 this.stateOfTheGame = this.stateOfTheGame.changeState();
@@ -568,6 +556,13 @@ public class ServerController  {
      */
 
     private void checkProfessor(PawnsColors color) {
+        for (Player player : this.game.getPlayers()) {
+            for (int i = 0; i < player.getSchoolBoard().getProfessors().size(); i++) {
+                if (player.getSchoolBoard().getStudentsOfColor(player.getSchoolBoard().getProfessors().get(i).getColor()).size() == 0) {
+                    this.game.getGameBoard().addProfessor(player.removeProfessor(i));
+                }
+            }
+        }
         final Player currentPlayer = this.game.getCurrentPlayer();
         final int studentsOnDiningRoom = currentPlayer.getSchoolBoard().getStudentsOfColor(color).size() + currentPlayer.getExtraStudent();
         this.game.getPlayers().forEach(player -> {
@@ -584,7 +579,7 @@ public class ServerController  {
             }
         });
         for (int i = 0; i < this.game.getGameBoard().getAvailableProfessors().size(); i++) {
-            if (this.game.getGameBoard().getAvailableProfessors().get(i).equals(color)) {
+            if (this.game.getGameBoard().getAvailableProfessors().get(i).equals(color) && studentsOnDiningRoom > 0) {
                 Pawn professor = this.game.getGameBoard().removeProfessor(i);
                 this.game.getCurrentPlayer().addProfessor(professor);
             }
@@ -603,14 +598,7 @@ public class ServerController  {
             new GrandmaHerbsEffectHandler(this.game.getGameBoard().getIslandsManager().getNoEntryIsland(position)).restoreIsland();
             this.game.putGrandmaHerbsNoEntryTile();
         } else {
-            this.checkTowers();
-            for (int i = 0;i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++){
-                if (this.game.getGameBoard().getIslandsManager().getIsland(i).isExtraInfluenceIsland()){
-                    this.checkTowersOnSpecificIsland(i);
-                    new HeraldEffectHandler(this.game.getGameBoard().getIslandsManager().getExtraInfluenceIsland(i)).restoreHeraldIsland();
-                }
-
-            }
+            this.checkTowers(this.game.getGameBoard().getMotherNature());
         }
         if (this.isEndOfGame(false)) {
             this.stateOfTheGame = new EndState(this.game, this.usernames);
@@ -676,14 +664,13 @@ public class ServerController  {
      * and if islands needs to be merged
      */
 
-    private void checkTowers() {
-        final int motherNature = this.game.getGameBoard().getMotherNature();
-        this.game.getGameBoard().getIslandsManager().getIsland(motherNature).getTower().ifPresentOrElse(tower -> {
+    private void checkTowers(int islandIndex) {
+        this.game.getGameBoard().getIslandsManager().getIsland(islandIndex).getTower().ifPresentOrElse(tower -> {
             int maxInfluence = 0, playerIndex = -1, actualPlayerIndex = -1;
             boolean equalsInfluences = true;
             ArrayList<Player> players = this.game.getPlayers();
             for (int i = 0; i < players.size(); i++) {
-                int playerInfluence = this.influenceForPlayer(players.get(i));
+                int playerInfluence = this.influenceForPlayer(players.get(i), islandIndex);
                 if (players.get(i).getColor().equals(tower.getColor())) {
                     actualPlayerIndex = i;
                     playerInfluence += this.game.getGameBoard().getTowersInfluence();
@@ -697,7 +684,7 @@ public class ServerController  {
             }
             if (equalsInfluences) playerIndex = -1;
             if (playerIndex >= 0 && this.game.getPlayers().get(playerIndex).getTowers() > 0 && playerIndex != actualPlayerIndex) {
-                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(motherNature);
+                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(islandIndex);
                 for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
                     if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
                         final int finalActualPlayerIndex = actualPlayerIndex;
@@ -713,7 +700,7 @@ public class ServerController  {
             ArrayList<Player> players = this.game.getPlayers();
             boolean equalsInfluence = true;
             for (int i = 0; i < players.size(); i++) {
-                int playerInfluence = this.influenceForPlayer(players.get(i));
+                int playerInfluence = this.influenceForPlayer(players.get(i), islandIndex);
                 if (playerInfluence == maxInfluence) equalsInfluence = true;
                 if (playerInfluence > maxInfluence) {
                     equalsInfluence = false;
@@ -723,7 +710,7 @@ public class ServerController  {
             }
             if (equalsInfluence) playerIndex = -1;
             if (playerIndex >= 0 && players.get(playerIndex).getTowers() > 0) {
-                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(motherNature);
+                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(islandIndex);
                 for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
                     if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
                         Tower tower = this.game.getPlayers().get(playerIndex).removeTower();
@@ -736,7 +723,6 @@ public class ServerController  {
         });
     }
 
-
     /**
      * Method that allow (or denies) playing a Character Card to a player
      * @param character Character card chosen
@@ -745,8 +731,6 @@ public class ServerController  {
     synchronized void useCharacterCard(Characters character) {
         if (this.game.getCurrentPlayer().getCoins() >= this.game.getCharacterCost(character)) {
             if (!this.game.isCharacterActive()) {
-                this.game.getCurrentPlayer().payCoins(this.game.getCharacterCost(character));
-                this.game.getGameBoard().addCoins(this.game.getCharacterCost(character));
                 this.game.activateCharacter(character);
                 this.charactersParameters.get(character).setCharacterParameters();
             } else {
@@ -766,9 +750,22 @@ public class ServerController  {
      */
 
     void applyEffect() {
+        this.game.getCurrentPlayer().payCoins(this.game.getCharacterCost(this.game.getActiveCharacter()));
+        this.game.getGameBoard().addCoins(this.game.getCharacterCost(this.game.getActiveCharacter()));
         this.game.useCharacterEffect(this.effectsManager.getEffect(this.game.getActiveCharacter()));
+        for (int i = 0;i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++){
+            if (this.game.getGameBoard().getIslandsManager().getIsland(i).isExtraInfluenceIsland()){
+                this.checkTowers(i);
+            }
+        }
+        for (PawnsColors color : PawnsColors.values()) {
+            this.checkProfessor(color);
+        }
         CharacterCardUsed message = new CharacterCardUsed(this.game.getCurrentPlayer().getNickname(), this.game.getActiveCharacter());
         this.clients.forEach(client -> client.sendObjectMessage(message));
+        this.effectsManager.clearDiningRoomPawns();
+        this.effectsManager.clearEntrancePawnIndex();
+        this.effectsManager.clearJesterPawnsIndexes();
         this.sendUpdate();
         this.stateOfTheGame.resumeState();
     }
@@ -779,39 +776,34 @@ public class ServerController  {
      */
 
     void selectColor(PawnsColors color) {
-        if(this.game.getActiveCharacter().equals(Characters.MUSHROOMS_MAN)) {
-            this.effectsManager.setGame(this.game);
-            this.effectsManager.setColor(color);
-            this.applyEffect();
-        }
-        if(this.game.getActiveCharacter().equals(Characters.THIEF)){
-            this.effectsManager.setGame(this.game);
-            this.effectsManager.setColor(color);
-            this.applyEffect();
-        }
-    }
-
-    void selectColors(ArrayList<PawnsColors> colors) {
-        if(this.game.getActiveCharacter().equals(Characters.MINSTREL)) {
-            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
-            ArrayList<Pawn> diningPawns = new ArrayList<>();
-            for(PawnsColors pawnsColor : colors){
-                int size = this.game.getCurrentPlayer().getSchoolBoard().getStudentsOfColor(pawnsColor).size();
-                Pawn pawn = this.game.getCurrentPlayer().getSchoolBoard().getStudentsOfColor(pawnsColor).get(size - 1);
-                diningPawns.add(pawn);
+        if (this.game.getActiveCharacter().equals(Characters.MINSTREL)) {
+            if (this.game.getCurrentPlayer().getSchoolBoard().getStudentsOfColor(color).size() < this.effectsManager.neededPawnsInDiningRoom(color) + 1) {
+                CharacterCardError message = new CharacterCardError("Non hai abbastanza studenti di quel colore nella sala");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+                SelectColorRequest selectColorRequest = new SelectColorRequest(Characters.MINSTREL, new ArrayList<>(List.of(PawnsColors.values())));
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
+            } else {
+                this.effectsManager.addDiningRoomPawn(color);
+                if (this.effectsManager.entrancePawnIndexesSize() < 2 && this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().size() > 1) {
+                    SelectEntrancePawnRequest entrancePawnRequest = new SelectEntrancePawnRequest(
+                            new ArrayList<>(
+                                    this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
+                                            .stream()
+                                            .map(Pawn::getColor)
+                                            .toList()
+                            )
+                    );
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(entrancePawnRequest);
+                } else {
+                    this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+                    this.applyEffect();
+                }
             }
-            this.effectsManager.setPawns(diningPawns);
-            SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                    Characters.MINSTREL, new ArrayList<>(
-                    this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
-                            .stream()
-                            .map(Pawn::getColor)
-                            .toList()
-            )
-            );
-            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+        } else {
+            this.effectsManager.setGame(this.game);
+            this.effectsManager.setColor(color);
+            this.applyEffect();
         }
-
     }
 
     /**
@@ -840,56 +832,79 @@ public class ServerController  {
             );
             this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectIslandRequest);
         }
-    }
-
-
-
-    boolean checker = true;
-    void selectPawns(ArrayList<Integer> pawnsindex){
-
-        if (this.game.getActiveCharacter().equals(Characters.JESTER) && checker) {
-            ArrayList<Pawn> jestertoschool = new ArrayList<>();
-            for(int pawnIndex : pawnsindex){
-                Pawn pawn = (this.game.getJesterStudents().remove(pawnIndex));
-                jestertoschool.add(pawn);
-            }
-            this.effectsManager.setPlayer(this.game.getCurrentPlayer());
-            this.effectsManager.setPawns(jestertoschool);
-            SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
-                    Characters.JESTER, new ArrayList<>(
-                    this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
-                            .stream()
-                            .map(Pawn::getColor)
-                            .toList()
-            )
-            );
-            this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
-            checker = false;
-        }
-        if (this.game.getActiveCharacter().equals(Characters.JESTER) && !checker) {
-            ArrayList<Pawn> schooltojester = new ArrayList<>();
-            for(int pawnIndex : pawnsindex){
-                Pawn pawn = (this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().remove(pawnIndex));
-                schooltojester.add(pawn);
-            }
-            for(Pawn pawn : schooltojester){
-                this.game.getJesterStudents().add(pawn);
-            }
-            checker = true;
-            this.applyEffect();
-        }
-
         if (this.game.getActiveCharacter().equals(Characters.MINSTREL)) {
-            ArrayList<Pawn> entrancePawns = new ArrayList<>();
-            for(int pawnIndex : pawnsindex){
-                Pawn pawn = (this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().get(pawnIndex));
-                entrancePawns.add(pawn);
+            if (!this.effectsManager.addEntrancePawnIndex(pawnIndex) && this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance().size() > 1) {
+                CharacterCardError message = new CharacterCardError("Non puoi selezionare lo stesso studente");
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+                SelectEntrancePawnRequest entrancePawnRequest = new SelectEntrancePawnRequest(
+                        new ArrayList<>(
+                                this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
+                                        .stream()
+                                        .map(Pawn::getColor)
+                                        .toList()
+                        )
+                );
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(entrancePawnRequest);
+            } else {
+                SelectColorRequest selectColorRequest = new SelectColorRequest(Characters.MINSTREL, new ArrayList<>(List.of(PawnsColors.values())));
+                this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectColorRequest);
             }
-            this.effectsManager.setPawnsToswap(entrancePawns);
-            this.applyEffect();
+        }
+        if (this.game.getActiveCharacter().equals(Characters.JESTER)) {
+            if (this.effectsManager.jesterPawnsIndexesSize() > this.effectsManager.entrancePawnIndexesSize()) {
+                this.effectsManager.addEntrancePawnIndex(pawnIndex);
+                if (this.effectsManager.jesterPawnsIndexesSize() == 3) {
+                    this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+                    this.effectsManager.setGame(this.game);
+                    this.applyEffect();
+                } else {
+                    SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                            true,
+                            Characters.JESTER,
+                            new ArrayList<>(
+                                    this.game.getJesterStudents()
+                                            .stream()
+                                            .map(Pawn::getColor)
+                                            .toList()
+                            )
+                    );
+                    this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+                }
+            } else if (this.effectsManager.jesterPawnsIndexesSize() == this.effectsManager.entrancePawnIndexesSize()) {
+                if (pawnIndex < 0) {
+                    this.effectsManager.setPlayer(this.game.getCurrentPlayer());
+                    this.effectsManager.setGame(this.game);
+                    this.applyEffect();
+                } else {
+                    if (this.effectsManager.addJesterPawn(pawnIndex)) {
+                        SelectEntrancePawnRequest entrancePawnRequest = new SelectEntrancePawnRequest(
+                                new ArrayList<>(
+                                        this.game.getCurrentPlayer().getSchoolBoard().getStudentsInEntrance()
+                                                .stream()
+                                                .map(Pawn::getColor)
+                                                .toList()
+                                )
+                        );
+                        this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(entrancePawnRequest);
+                    } else {
+                        CharacterCardError message = new CharacterCardError("Non puoi selezionare lo stesso studente");
+                        this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(message);
+                        SelectPawnRequest selectPawnRequest = new SelectPawnRequest(
+                                true,
+                                Characters.JESTER,
+                                new ArrayList<>(
+                                        this.game.getJesterStudents()
+                                                .stream()
+                                                .map(Pawn::getColor)
+                                                .toList()
+                                )
+                        );
+                        this.usernames.get(this.game.getCurrentPlayer().getNickname()).sendObjectMessage(selectPawnRequest);
+                    }
+                }
+            }
         }
     }
-
 
     /**
      * Method that select an island in order to apply a Character card effect
@@ -908,12 +923,12 @@ public class ServerController  {
      * @return value of the influence
      */
 
-    private int influenceForPlayer(Player player) {
+    private int influenceForPlayer(Player player, int islandIndex) {
         int playerInfluence = 0;
         ArrayList<Pawn> professors = player.getSchoolBoard().getProfessors();
         for (Pawn professor : professors) {
             PawnsColors color = professor.getColor();
-            Iterator<Pawn> students = this.game.getGameBoard().getIslandsManager().getIsland(this.game.getGameBoard().getMotherNature()).getStudents();
+            Iterator<Pawn> students = this.game.getGameBoard().getIslandsManager().getIsland(islandIndex).getStudents();
             while (students.hasNext()) {
                 if (students.next().getColor().equals(color))
                     playerInfluence += this.game.getInfluenceForColor(color);
@@ -984,8 +999,8 @@ public class ServerController  {
                 this.game.getGamePhase(),
                 this.game.getValidCharacters(),
                 new ArrayList<>(this.game.getMonkStudents().stream().map(Pawn::getColor).toList()),
-                new ArrayList<>(this.game.getSpoiledPrincessStudents().stream().map(Pawn::getColor).toList())
-        );
+                new ArrayList<>(this.game.getSpoiledPrincessStudents().stream().map(Pawn::getColor).toList()),
+                new ArrayList<>(this.game.getJesterStudents().stream().map(Pawn::getColor).toList()));
         return new BoardUpdate(playerUpdates, boardUpdateContent, gameUpdate);
     }
 
@@ -1070,81 +1085,5 @@ public class ServerController  {
                 this.game.getGameBoard().getAvailableProfessors(),
                 cloudsUpdate
         );
-    }
-
-
-    private int influenceForChosenIsland(Player player, int islandIndex) {
-        int playerInfluence = 0;
-        ArrayList<Pawn> professors = player.getSchoolBoard().getProfessors();
-        for (Pawn professor : professors) {
-            PawnsColors color = professor.getColor();
-            Iterator<Pawn> students = this.game.getGameBoard().getIslandsManager().getIsland(islandIndex).getStudents();
-            while (students.hasNext()) {
-                if (students.next().getColor().equals(color))
-                    playerInfluence += this.game.getInfluenceForColor(color);
-            }
-        }
-        playerInfluence += player.getExtraInfluence();
-        return playerInfluence;
-    }
-
-    public void checkTowersOnSpecificIsland(int islandIndex) {
-
-        this.game.getGameBoard().getIslandsManager().getIsland(islandIndex).getTower().ifPresentOrElse(tower -> {
-            int maxInfluence = 0, playerIndex = -1, actualPlayerIndex = -1;
-            boolean equalsInfluences = true;
-            ArrayList<Player> players = this.game.getPlayers();
-            for (int i = 0; i < players.size(); i++) {
-                int playerInfluence = this.influenceForChosenIsland(players.get(i), islandIndex);
-                if (players.get(i).getColor().equals(tower.getColor())) {
-                    actualPlayerIndex = i;
-                    playerInfluence += this.game.getGameBoard().getTowersInfluence();
-                }
-                if (playerInfluence == maxInfluence) equalsInfluences = true;
-                if (playerInfluence > maxInfluence) {
-                    equalsInfluences = false;
-                    maxInfluence = playerInfluence;
-                    playerIndex = i;
-                }
-            }
-            if (equalsInfluences) playerIndex = -1;
-            if (playerIndex >= 0 && this.game.getPlayers().get(playerIndex).getTowers() > 0 && playerIndex != actualPlayerIndex) {
-                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(islandIndex);
-                for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
-                    if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
-                        final int finalActualPlayerIndex = actualPlayerIndex;
-                        this.game.getGameBoard().getIslandsManager().getIsland(i).getTower().ifPresent(tower1 -> players.get(finalActualPlayerIndex).addTower(tower1));
-                        this.game.getGameBoard().getIslandsManager().setTowerOnIsland(players.get(playerIndex).removeTower(), i);
-                    }
-                }
-                this.sendUpdate();
-                this.checkIslandsMerge(groupOfIslands, players.get(playerIndex).getColor());
-            }
-        }, () -> {
-            int maxInfluence = 0, playerIndex = -1;
-            ArrayList<Player> players = this.game.getPlayers();
-            boolean equalsInfluence = true;
-            for (int i = 0; i < players.size(); i++) {
-                int playerInfluence = this.influenceForPlayer(players.get(i));
-                if (playerInfluence == maxInfluence) equalsInfluence = true;
-                if (playerInfluence > maxInfluence) {
-                    equalsInfluence = false;
-                    maxInfluence = playerInfluence;
-                    playerIndex = i;
-                }
-            }
-            if (equalsInfluence) playerIndex = -1;
-            if (playerIndex >= 0 && players.get(playerIndex).getTowers() > 0) {
-                final int groupOfIslands = this.game.getGameBoard().getIslandsManager().getIslandGroup(islandIndex);
-                for (int i = 0; i < this.game.getGameBoard().getIslandsManager().getIslandsSize(); i++) {
-                    if (this.game.getGameBoard().getIslandsManager().getIslandGroup(i) == groupOfIslands){
-                        Tower tower = this.game.getPlayers().get(playerIndex).removeTower();
-                        this.game.getGameBoard().getIslandsManager().setTowerOnIsland(tower, i);
-                    }
-                }
-                this.sendUpdate();
-                this.checkIslandsMerge(groupOfIslands, players.get(playerIndex).getColor());
-            }
-        });
     }
 }

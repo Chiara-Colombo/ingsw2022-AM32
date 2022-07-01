@@ -3,19 +3,23 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.Handled.IJesterHandled;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class JesterEffectHandler implements EffectHandler {
 
     private final IJesterHandled player;
-    private final ArrayList<Pawn> pawns;
+    private final IJesterStudents jesterStudents;
+    private final ArrayList<Integer> jesterPawnsIndexes, entrancePawnsIndexes;
 
     /**
      * Class Constructor
      */
 
-    public JesterEffectHandler(IJesterHandled player, ArrayList<Pawn> pawns){
+    public JesterEffectHandler(IJesterHandled player, IJesterStudents jesterStudents, ArrayList<Integer> jesterPawnsIndexes, ArrayList<Integer> entrancePawnsIndexes){
         this.player = player;
-        this.pawns = pawns;
+        this.jesterStudents = jesterStudents;
+        this.jesterPawnsIndexes = jesterPawnsIndexes;
+        this.entrancePawnsIndexes = entrancePawnsIndexes;
     }
 
     /**
@@ -25,7 +29,15 @@ public class JesterEffectHandler implements EffectHandler {
 
     @Override
     public void applyEffect() {
-        this.player.addStudentsInEntrance(pawns);
+        if (this.jesterPawnsIndexes.size() == this.entrancePawnsIndexes.size()) {
+            this.jesterPawnsIndexes.sort(Comparator.reverseOrder());
+            this.entrancePawnsIndexes.sort(Comparator.reverseOrder());
+            for (int i = 0; i < this.entrancePawnsIndexes.size(); i++) {
+                Pawn entrancePawn = this.player.removeStudent(this.entrancePawnsIndexes.get(i));
+                this.player.addStudentInEntrance(this.jesterStudents.getJesterStudents().remove(this.jesterPawnsIndexes.get(i).intValue()));
+                this.jesterStudents.getJesterStudents().add(entrancePawn);
+            }
+        }
     }
 
     /**

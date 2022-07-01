@@ -6,17 +6,16 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 public class EffectsManager {
+    private int islandIndex;
     private Player player;
     private Pawn pawn;
     private Board board;
     private AssistantCard card;
     private PawnsColors color;
     private Game game;
-    private ArrayList<Pawn> pawns;
-    private ArrayList<Pawn> pawnsToswap;
-    private int islandIndex;
+    private final ArrayList<Integer> entrancePawnsIndexes, jesterPawnsIndexes;
+    private final ArrayList<PawnsColors> diningRoomPawns;
     private final EnumMap<Characters, IInstantiateEffect> INSTANTIATE_EFFECT;
-    private ServerController serverController;
 
     /**
      * Class constructor
@@ -24,6 +23,9 @@ public class EffectsManager {
 
     public EffectsManager() {
         this.INSTANTIATE_EFFECT = new EnumMap<>(Characters.class);
+        this.entrancePawnsIndexes = new ArrayList<>();
+        this.diningRoomPawns = new ArrayList<>();
+        this.jesterPawnsIndexes = new ArrayList<>();
         this.initiate();
     }
 
@@ -40,10 +42,10 @@ public class EffectsManager {
         this.INSTANTIATE_EFFECT.put(Characters.MUSHROOMS_MAN, () -> new MushroomManEffectHandler(this.color, this.game));
         this.INSTANTIATE_EFFECT.put(Characters.MAGIC_MAILMAN, () -> new MagicMailmanEffectHandler(this.card));
         this.INSTANTIATE_EFFECT.put(Characters.SPOILED_PRINCESS, () -> new SpoiledPrincessEffectHandler(this.pawn, this.player, this.board));
-        this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.player,this.pawns));
-        this.INSTANTIATE_EFFECT.put(Characters.THIEF, () -> new ThiefEffectHandler(this.game,this.color));
-        this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.player, this.pawns,this.pawnsToswap));
-         this.INSTANTIATE_EFFECT.put(Characters.HERALD, () -> new HeraldEffectHandler(this.board.getIslandsManager().getExtraInfluenceIsland(this.islandIndex)));
+        this.INSTANTIATE_EFFECT.put(Characters.JESTER, () -> new JesterEffectHandler(this.player, this.game, this.jesterPawnsIndexes, this.entrancePawnsIndexes));
+        this.INSTANTIATE_EFFECT.put(Characters.THIEF, () -> new ThiefEffectHandler(this.game, this.color));
+        this.INSTANTIATE_EFFECT.put(Characters.MINSTREL, () -> new MinstrelEffectHandler(this.player, this.entrancePawnsIndexes, this.diningRoomPawns));
+        this.INSTANTIATE_EFFECT.put(Characters.HERALD, () -> new HeraldEffectHandler(this.board.getIslandsManager().getExtraInfluenceIsland(this.islandIndex)));
     }
 
     /**
@@ -52,7 +54,7 @@ public class EffectsManager {
      * @return
      */
 
-    public EffectHandler getEffect(Characters character) {
+    EffectHandler getEffect(Characters character) {
         return this.INSTANTIATE_EFFECT.get(character).instantiateEffect();
     }
 
@@ -61,7 +63,7 @@ public class EffectsManager {
      * @param player the player
      */
 
-    public void setPlayer(Player player) {
+    void setPlayer(Player player) {
         this.player = player;
     }
 
@@ -70,7 +72,7 @@ public class EffectsManager {
      * @param pawn
      */
 
-    public void setPawn(Pawn pawn) {
+    void setPawn(Pawn pawn) {
         this.pawn = pawn;
     }
 
@@ -79,7 +81,7 @@ public class EffectsManager {
      * @param board the game board
      */
 
-    public void setBoard(Board board) {
+    void setBoard(Board board) {
         this.board = board;
     }
 
@@ -88,7 +90,7 @@ public class EffectsManager {
      * @param card Assistant Card
      */
 
-    public void setCard(AssistantCard card) {
+    void setCard(AssistantCard card) {
         this.card = card;
     }
 
@@ -97,7 +99,7 @@ public class EffectsManager {
      * @param color color of a pawn
      */
 
-    public void setColor(PawnsColors color) {
+    void setColor(PawnsColors color) {
         this.color = color;
     }
 
@@ -106,7 +108,7 @@ public class EffectsManager {
      * @param game the game
      */
 
-    public void setGame(Game game) {
+    void setGame(Game game) {
         this.game = game;
     }
 
@@ -115,25 +117,52 @@ public class EffectsManager {
      * @param islandIndex index that identifies an island
      */
 
-    public void setIslandIndex(int islandIndex) {
+    void setIslandIndex(int islandIndex) {
         this.islandIndex = islandIndex;
     }
 
     /**
-     * Setter for the pawns
-     * @param pawns pawns to be setted
+     * Setter for the pawns that have to be swapped
+     * @param pawnIndex pawns that have to be swapped
      */
 
-    public void setPawns(ArrayList<Pawn> pawns) {
-        this.pawns = pawns;
+    boolean addEntrancePawnIndex(int pawnIndex) {
+        if (this.entrancePawnsIndexes.contains(pawnIndex)) return false;
+        this.entrancePawnsIndexes.add(pawnIndex);
+        return true;
     }
 
-    /**
-     * Setter for the pawns that have to benn swapped
-     * @param pawnsToswap pawns that have to been swapped
-     */
+    int entrancePawnIndexesSize() {
+        return this.entrancePawnsIndexes.size();
+    }
 
-    public void setPawnsToswap(ArrayList<Pawn> pawnsToswap) {
-        this.pawnsToswap = pawnsToswap;
+    void clearEntrancePawnIndex() {
+        this.entrancePawnsIndexes.clear();
+    }
+
+    void addDiningRoomPawn(PawnsColors pawn) {
+        this.diningRoomPawns.add(pawn);
+    }
+
+    void clearDiningRoomPawns() {
+        this.diningRoomPawns.clear();
+    }
+
+    int neededPawnsInDiningRoom(PawnsColors color) {
+        return this.diningRoomPawns.stream().filter(pawn -> pawn.equals(color)).toList().size();
+    }
+
+    boolean addJesterPawn(int pawnIndex) {
+        if (this.jesterPawnsIndexes.contains(pawnIndex)) return false;
+        this.jesterPawnsIndexes.add(pawnIndex);
+        return true;
+    }
+
+    void clearJesterPawnsIndexes() {
+        this.jesterPawnsIndexes.clear();
+    }
+
+    int jesterPawnsIndexesSize() {
+        return this.jesterPawnsIndexes.size();
     }
 }
