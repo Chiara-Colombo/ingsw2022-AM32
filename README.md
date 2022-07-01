@@ -35,3 +35,8 @@ What to do for start playing:
 1. In a terminal window, run the .jar file and press 1 to start the server
 
 2. For each player, in a terminal window, run the .jar file and press 2 to start the CLI or 3 to start the GUI
+
+To run the .jar file use the command :
+```bash        
+java -jar AM32-1.0-SNAPSHOT.jar
+```
