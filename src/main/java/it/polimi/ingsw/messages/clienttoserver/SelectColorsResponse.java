@@ -7,6 +7,10 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Messages that return the colors of pawns chosen by a player
+ */
+
 public class SelectColorsResponse extends ClientMessage{
 
     private final ArrayList<PawnsColors> colors;

@@ -185,6 +185,10 @@ public class ClientController implements Runnable{
 class ConnectionTask extends TimerTask {
     private final ClientController controller;
 
+    /**
+     * Class Constructor
+     */
+
     ConnectionTask(ClientController controller) {
         this.controller = controller;
     }

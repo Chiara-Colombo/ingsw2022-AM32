@@ -32,6 +32,10 @@ public class GameSettingsScene extends Scene {
     private ClientController controller;
     private boolean isNumOfPlayersOptions;
 
+    /**
+     * Class Constructor
+     */
+
     public GameSettingsScene(AnchorPane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
@@ -43,6 +47,10 @@ public class GameSettingsScene extends Scene {
         this.isNumOfPlayersOptions = false;
         this.initialize();
     }
+
+    /**
+     * Method that initialize the Game
+     */
 
     private void initialize() {
         this.continueBtn.setText("Continua");
@@ -67,6 +75,10 @@ public class GameSettingsScene extends Scene {
         this.MAIN_PANE.getChildren().add(this.continueBtn);
     }
 
+    /**
+     * Method that reset the scene
+     */
+
     void reset() {
         this.MAIN_PANE.getChildren().clear();
         this.continueBtn.setOnAction(null);
@@ -74,6 +86,10 @@ public class GameSettingsScene extends Scene {
         this.numOfPlayersPane.setDisable(false);
         this.initialize();
     }
+
+    /**
+     * Method that shows the possibility to choose the number of players of the match (2 players or 3 players)
+     */
 
     public void showNumOfPlayersOptions() {
         this.numOfPlayersPane.setAlignment(Pos.CENTER);
@@ -111,6 +127,10 @@ public class GameSettingsScene extends Scene {
         AnchorPane.setTopAnchor(this.numOfPlayersPane, 20.0);
         this.MAIN_PANE.getChildren().add(this.numOfPlayersPane);
     }
+
+    /**
+     * Method that shows the possibility to choose between simple and expert mode
+     */
 
     public void showExpertModeOptions() {
         this.isNumOfPlayersOptions = false;
@@ -151,6 +171,11 @@ public class GameSettingsScene extends Scene {
         AnchorPane.setBottomAnchor(expertModePane, 100.0);
         this.MAIN_PANE.getChildren().add(expertModePane);
     }
+
+    /**
+     * setter for the controller
+     * @param controller Client Controller
+     */
 
     void setController(ClientController controller) {
         this.controller = controller;

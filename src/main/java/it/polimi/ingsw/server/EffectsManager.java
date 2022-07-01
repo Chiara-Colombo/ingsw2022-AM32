@@ -119,9 +119,19 @@ public class EffectsManager {
         this.islandIndex = islandIndex;
     }
 
+    /**
+     * Setter for the pawns
+     * @param pawns pawns to be setted
+     */
+
     public void setPawns(ArrayList<Pawn> pawns) {
         this.pawns = pawns;
     }
+
+    /**
+     * Setter for the pawns that have to benn swapped
+     * @param pawnsToswap pawns that have to been swapped
+     */
 
     public void setPawnsToswap(ArrayList<Pawn> pawnsToswap) {
         this.pawnsToswap = pawnsToswap;

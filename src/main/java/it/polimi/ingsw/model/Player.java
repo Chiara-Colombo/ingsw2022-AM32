@@ -228,7 +228,6 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         return this.towers.remove(0);
     }
 
-
     /**
      * Method that adds a tower
      * @param tower a tower
@@ -243,24 +242,13 @@ public class Player implements IKnightHandled, ISpoiledPrincessHandled, IFarmerH
         for(Pawn pawn : pawns)
         this.schoolBoard.addStudent(pawn);
     }
-/*
-    public void fromDiningToEntrance(ArrayList<Pawn> pawns) {
-        for (int i = 0; i < pawns.size(); i++){
-            Pawn student = pawns.get(i);
-            this.schoolBoard.removeStudentInDining(student);
-            this.schoolBoard.addStudent(student);
-        }
-    }
-/*
-    @Override
-    public void fromEntranceToDining(ArrayList<Pawn> pawns) {
-        for (int i = 0; i < pawns.size(); i++){
-            Pawn student = pawns.get(i);
-            this.schoolBoard.removeStudentInEntrance(student);
-            this.schoolBoard.addStudent(student);
-        }
-    }
-*/
+
+    /**
+     * Method that swap the pawns
+     * @param diningPawns pawns that are in the dining room and that are going to be put in the entrance
+     * @param entrancePawns pawns that are in the entrance and that are going to be put in the dining room
+     */
+
     @Override
     public void swapPawns(ArrayList<Pawn> diningPawns, ArrayList<Pawn> entrancePawns) {
         int i = 0;

@@ -24,6 +24,10 @@ public class ClientHandler implements Runnable {
     private ServerController controller;
     private ConcreteServerVisitor visitorServer;
 
+    /**
+     * Class constructor
+     */
+
     public ClientHandler(MatchManager matchManager, Socket client) throws IOException {
         this.matchManager = matchManager;
         this.inputStream = new ObjectInputStream(client.getInputStream());
@@ -34,6 +38,10 @@ public class ClientHandler implements Runnable {
         this.visitorServer = new ConcreteServerVisitor(this.matchManager, this);
         this.closed = false;
     }
+
+    /**
+     * Method that run a Client Handler
+     */
 
     @Override
     public void run() {
@@ -69,6 +77,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Method that closes the Client Handler
+     */
+
     void close() {
         this.timer.cancel();
         this.task.cancel();
@@ -91,18 +103,38 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Setter for the controller
+     * @param controller the Server Controller
+     */
+
     void setController(ServerController controller) {
         this.controller = controller;
         this.visitorServer.setServerController(controller);
     }
 
+    /**
+     * Method that set the player Username
+     * @param nickname the player username
+     */
+
     void setNickname(String nickname){
         this.nickname = nickname;
     }
 
+    /**
+     * Getter for the player username
+     * @return the player username
+     */
+
     String getNickname() {
         return nickname;
     }
+
+    /**
+     * Method that sends Server Messages
+     * @param message message sent by the Server
+     */
 
     void sendObjectMessage(ServerMessage message) {
         synchronized (this.outputStream) {
@@ -117,9 +149,18 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Method that start to send the ping
+     */
+
     void startPing() {
         this.timer.scheduleAtFixedRate(this.task, 1000, 1000);
     }
+
+    /**
+     * Method that removes a player if it lost connection
+     * (the connection is lost when 5 ping don't have a response)
+     */
 
     void newPingSent() {
         this.pingSent++;

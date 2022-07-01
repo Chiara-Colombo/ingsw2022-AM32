@@ -97,11 +97,22 @@ public class Island implements IIsland, INoEntry, IExtraInfluenceIsland {
         this.noEntry = noEntry;
     }
 
+    /**
+     * Method that sets an island where calculate the influence even if Mother Nature doesn't stop on it
+     * @param extraInfluenceIsland True if is an Extra influence Island
+     *                             False is it is not
+     */
+
     @Override
     public void setExtraInfluenceIsland (boolean extraInfluenceIsland){
         this.extraInfluenceIsland = extraInfluenceIsland;
     }
 
+    /**
+     * {@inheritDOC}
+     */
+
+    @Override
     public boolean isExtraInfluenceIsland (){
         return this.extraInfluenceIsland;
     }

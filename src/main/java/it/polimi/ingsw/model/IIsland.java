@@ -33,6 +33,12 @@ public interface IIsland {
     Iterator<Pawn> getStudents();
 
 
+    /**
+     * Method that says if there is an island where calculate the influence even if Mother Nature
+     * doesn't stop on it
+     * @return True if is an Extra influence Island
+     *          False is it is not
+     */
 
     boolean isExtraInfluenceIsland ();
 

@@ -5,7 +5,7 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 
 /**
- * message that returns the pawn that the player want to move
+ * Message that returns the pawn that the player want to move
  */
 
 public class MovePawnResponse extends ClientMessage{

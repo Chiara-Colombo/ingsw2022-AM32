@@ -5,6 +5,10 @@ import it.polimi.ingsw.server.VisitorServer;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Message that returns the pawns selected by a player
+ */
+
 public class SelectPawnsResponse extends ClientMessage{
 
     private final ArrayList<Integer> pawnsindex;

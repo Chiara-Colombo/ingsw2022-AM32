@@ -7,13 +7,13 @@ import java.util.ArrayList;
 public class MinstrelEffectHandler implements EffectHandler {
 
     private final IMinstrelHandled player;
-    /*
-    private final ArrayList<Pawn> pawns;
-     */
     private final ArrayList<Pawn> diningPawns;
     private final ArrayList<Pawn> entrancePawns;
 
 
+    /**
+     * CLass Constructor
+     */
 
     public MinstrelEffectHandler(IMinstrelHandled player,ArrayList<Pawn> diningPawns, ArrayList<Pawn> entrancePawns) {
         this.player = player;
@@ -22,14 +22,19 @@ public class MinstrelEffectHandler implements EffectHandler {
 
     }
 
+    /**
+     * Method that applies Minstrel Card Effect
+     */
+
     @Override
     public void applyEffect() {
-        /*
-        this.player.fromDiningToEntrance(pawns);
-        this.player.fromEntranceToDining(pawns);
-         */
+
         this.player.swapPawns(diningPawns,entrancePawns);
     }
+
+    /**
+     * Method that remove Minstrel Class Effect
+     */
 
     @Override
     public void removeEffect() {

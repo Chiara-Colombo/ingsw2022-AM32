@@ -14,7 +14,6 @@ public class NumOfPlayersResponse extends ClientMessage {
     int numOfPlayers;
     public String typeOfMessage = "NumOfPlayersResponse";
 
-
     public NumOfPlayersResponse(int numOfPlayers){
         this.numOfPlayers=numOfPlayers;
     }

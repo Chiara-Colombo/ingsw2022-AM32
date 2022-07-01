@@ -721,4 +721,8 @@ public class CLI  implements View{
     }
 }
 
+/**
+ * Exception launched when a player wants to use a Character Card
+ */
+
 class CharacterCardException extends Exception {}

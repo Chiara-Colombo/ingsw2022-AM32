@@ -493,6 +493,11 @@ public class Game implements IMushroomManHandled, IThiefHandled {
         return this.expertMode;
     }
 
+    /**
+     * Method that removes 3 students for each player from the Dining Room
+     * (Thief Card Effect)
+     * @param color
+     */
     @Override
     public void removeStudentsFromDiningRoom(PawnsColors color) {
         for (Player player : players) {

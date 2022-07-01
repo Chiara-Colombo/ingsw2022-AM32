@@ -9,7 +9,14 @@ import java.io.IOException;
 
 public interface VisitorServer {
 
+    /**
+     * Method that sets the Number of players according to NumOfPlayersResponse
+     * if the input is valid
+     * @param numOfPlayersResponse response that contains the number of player chosen by the first user
+     */
+
     void visitMessage(NumOfPlayersResponse numOfPlayersResponse);
+
     void visitMessage(GameModeResponse gameModeResponse);
     void visitMessage(SetUsername username);
     void visitMessage(AssistantCardResponse assistantCardResponse);
