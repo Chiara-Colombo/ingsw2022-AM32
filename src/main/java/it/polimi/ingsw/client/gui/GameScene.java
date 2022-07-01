@@ -53,6 +53,10 @@ public class GameScene extends Scene {
     private int currentMNPosition, coinsIndex, noEntryTilesIndex;
     private boolean firstBoardUpdate, firstPlayersUpdate, firstGameUpdate;
 
+    /**
+     * Class constructor
+     */
+
     public GameScene(Pane MAIN_PANE) {
         super(MAIN_PANE, GUI_WIDTH, GUI_HEIGHT);
         this.MAIN_PANE = MAIN_PANE;
@@ -89,9 +93,19 @@ public class GameScene extends Scene {
         this.firstGameUpdate = true;
     }
 
+    /**
+     * Setter for the controller
+     * @param controller the client controller
+     */
+
     void setController(ClientController controller) {
         this.controller = controller;
     }
+
+    /**
+     * Method that loads the Board Images
+     * @param boardUpdate it contains what has been updated on the board
+     */
 
     private void loadBoardImages(BoardUpdateContent boardUpdate) {
         this.MAIN_PANE.setBackground(Background.fill(Paint.valueOf("#69BAE9")));
@@ -130,6 +144,11 @@ public class GameScene extends Scene {
         this.coins.add(new ImageView(COIN_IMAGE));
         this.firstBoardUpdate = false;
     }
+
+    /**
+     * Method that loards all the images related to the update of a player (ex. towers and School Board)
+     * @param playersUpdate it contains the informations about the update
+     */
 
     private void loadPlayerImages(ArrayList<PlayerUpdate> playersUpdate) {
         int index = 0;
@@ -207,6 +226,11 @@ public class GameScene extends Scene {
         this.firstPlayersUpdate = false;
     }
 
+    /**
+     * Method that loads the Characters Card Images and if it's needed it puts pawns on them
+     * @param gameUpdate it contains the informations about the update of the game
+     */
+
     private void loadCharactersImages(GameUpdate gameUpdate) {
         ArrayList<Characters> validCharacters = gameUpdate.getValidCharacters();
         validCharacters
@@ -226,6 +250,13 @@ public class GameScene extends Scene {
         }
         this.firstGameUpdate = false;
     }
+
+    /**
+     * Method that updates the board when it's needed
+     * @param boardUpdate it contains the board Update informations
+     * @param isExpertMode true the match is in expert mode
+     *                     false the match is in simple mode
+     */
 
     void updateBoard(BoardUpdateContent boardUpdate, boolean isExpertMode) {
         this.towersIndexes.forEach((key, value) -> this.towersIndexes.put(key, 0));
@@ -373,9 +404,20 @@ public class GameScene extends Scene {
         this.MAIN_PANE.getChildren().add(this.BOARD_PANE);
     }
 
+    /**
+     * Method that shows the board
+     */
+
     void showBoard() {
         this.MAIN_PANE.getChildren().remove(this.ASSISTANT_CARDS_PANE);
     }
+
+    /**
+     * Method that updates what is related to the player (School Board, Towers and Coins)
+     * @param playersUpdate it contains the information related to the player updates
+     * @param isExpertMode true the match is in expert mode
+     *                     false the match is in simple mode
+     */
 
     void updatePlayers(ArrayList<PlayerUpdate> playersUpdate, boolean isExpertMode) {
         if (this.firstPlayersUpdate)
@@ -489,6 +531,11 @@ public class GameScene extends Scene {
         this.MAIN_PANE.getChildren().addAll(this.PLAYERS_PANES.values());
     }
 
+    /**
+     * Method that updates the game (Character Cards and Turns)
+     * @param gameUpdate it contains informations about the Game Update
+     */
+
     void updateGame(GameUpdate gameUpdate) {
         if (gameUpdate.isExpertMode()) {
             if (this.firstGameUpdate) loadCharactersImages(gameUpdate);
@@ -545,6 +592,11 @@ public class GameScene extends Scene {
         this.showTurnMessage(message);
     }
 
+    /**
+     * Method that shows the name of the player that has to play
+     * @param message it contains who is going to play
+     */
+
     void showTurnMessage(String message) {
         this.MAIN_PANE.getChildren().remove(this.TURN_MESSAGE);
         this.TURN_MESSAGE.setText(message);
@@ -558,6 +610,11 @@ public class GameScene extends Scene {
         this.TURN_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
         this.MAIN_PANE.getChildren().add(this.TURN_MESSAGE);
     }
+
+    /**
+     * Method that shows which phase of the Game is
+     * @param message it contains the phase of the Game
+     */
 
     void showGamePhaseMessage(String message) {
         this.MAIN_PANE.getChildren().remove(this.GAME_PHASE_MESSAGE);
@@ -574,6 +631,11 @@ public class GameScene extends Scene {
         this.MAIN_PANE.getChildren().add(this.GAME_PHASE_MESSAGE);
     }
 
+    /**
+     * Method that shows which Character Card has been used
+     * @param message it contains the Character Card that has been used in a turn
+     */
+
     void showCharacterUsedMessage(String message) {
         this.MAIN_PANE.getChildren().remove(this.CHARACTER_USED_MESSAGE);
         this.CHARACTER_USED_MESSAGE.setWrapText(true);
@@ -588,6 +650,11 @@ public class GameScene extends Scene {
         this.CHARACTER_USED_MESSAGE.setPadding(new Insets(0, 5.0, 0, 5.0));
         this.MAIN_PANE.getChildren().add(this.CHARACTER_USED_MESSAGE);
     }
+
+    /**
+     * It shows a dialog window where the player can choose an Assistant Card from the available.
+     * @param availableCards list of Assistan Cards not used by the player
+     */
 
     void showAssistantCardsPane(ArrayList<AssistantCard> availableCards) {
         this.ASSISTANT_CARDS_PANE.setBackground(Background.fill(new Color(0.05, 0.05, 0.05, 0.8)));
@@ -616,6 +683,11 @@ public class GameScene extends Scene {
         }
         this.MAIN_PANE.getChildren().add(this.ASSISTANT_CARDS_PANE);
     }
+
+    /**
+     * Method that adds a Request Color Handler
+     * @param selectColorRequest message that ask to choose a Color
+     */
 
     void addRequestColorHandler(SelectColorRequest selectColorRequest) {
         this.showCharacterUsedMessage("Scegli un colore");
@@ -662,6 +734,11 @@ public class GameScene extends Scene {
         this.addCharacterListsListeners();
     }
 
+    /**
+     * Method that adds a Request Island Handler
+     * @param selectIslandRequest message that request to choose an island
+     */
+
     void addRequestIslandHandler(SelectIslandRequest selectIslandRequest) {
         this.showCharacterUsedMessage("Scegli un'isola");
         this.ISLANDS.forEach((key, island) -> {
@@ -675,6 +752,11 @@ public class GameScene extends Scene {
             }
         });
     }
+
+    /**
+     * Method that adds a Request Pawn Handler
+     * @param selectPawnRequest message that asks to select a pawn
+     */
 
     void addRequestPawnHandler(SelectPawnRequest selectPawnRequest) {
         this.showCharacterUsedMessage("Scegli una pedina");
@@ -719,6 +801,10 @@ public class GameScene extends Scene {
         this.MAIN_PANE.getChildren().add(this.CHARACTER_PARAMS_PANE);
     }
 
+    /**
+     * Method that add a Listener for tha Character Card
+     */
+
     void addCharacterListsListeners() {
         this.characterColorsList.forEach(color -> {
             color.getImageView().setCursor(Cursor.HAND);
@@ -737,6 +823,11 @@ public class GameScene extends Scene {
             });
         });
     }
+
+    /**
+     * Method that remove tha Listeners for tha Character Cards
+     */
+
     void removeCharacterListsListeners() {
         this.MAIN_PANE.getChildren().remove(this.CHARACTER_PARAMS_PANE);
         this.characterPawnsList.forEach(pawn -> {
@@ -751,6 +842,11 @@ public class GameScene extends Scene {
         this.characterColorsList.clear();
     }
 
+    /**
+     * Method that handles where a player what to put a student
+     * @param manager manager for the movements of the students
+     */
+
     void addMoveEntranceStudentsHandlers(MoveStudentsManager manager) {
         this.entrance.forEach(pawnImage -> {
             pawnImage.getImageView().setCursor(Cursor.HAND);
@@ -763,6 +859,11 @@ public class GameScene extends Scene {
             island.getImageView().setOnMouseClicked(new ActionPhaseIslandHandler(island, manager));
         });
     }
+
+    /**
+     * Method that handles in which available island the player wants to put Mother Nature
+     * @param manager manager of Mother Nature movements
+     */
 
     void addMoveMNHandlers(MoveMNManager manager) {
         manager.setCurrentMNPosition(this.currentMNPosition);
@@ -784,6 +885,11 @@ public class GameScene extends Scene {
         });
     }
 
+    /**
+     * Method that add a Choose Cloud Handler on every cloud
+     * @param manager it menages the choice of the clouds
+     */
+
     void addChooseCloudHandler(ChooseCloudManager manager) {
         this.CLOUDS.forEach(cloud -> {
             cloud.getImageView().setCursor(Cursor.HAND);
@@ -791,12 +897,20 @@ public class GameScene extends Scene {
         });
     }
 
+    /**
+     * Method that removes the Characters Handlers
+     */
+
     void removeCharactersHandlers() {
         this.characterCards.forEach((character, image) -> {
             image.getImageView().setCursor(Cursor.DEFAULT);
             image.getImageView().setOnMouseClicked(null);
         });
     }
+
+    /**
+     * Method that removes all the handlers
+     */
 
     void removeHandlers() {
         this.entrance.forEach(pawnImage -> {
@@ -820,6 +934,10 @@ class ActionPhaseIslandHandler implements EventHandler<MouseEvent> {
     private final TileImage island;
     private final MoveStudentsManager manager;
 
+    /**
+     * Class constructor
+     */
+
     public ActionPhaseIslandHandler(TileImage island, MoveStudentsManager manager) {
         this.island = island;
         this.manager = manager;
@@ -839,6 +957,10 @@ class MoveMNIslandHandler implements  EventHandler<MouseEvent> {
     private final TileImage island;
     private final MoveMNManager manager;
 
+    /**
+     * Class Consturctor
+     */
+
     MoveMNIslandHandler(TileImage island, MoveMNManager manager) {
         this.island = island;
         this.manager = manager;
@@ -857,6 +979,11 @@ class MoveMNIslandHandler implements  EventHandler<MouseEvent> {
 class ChooseCloudHandler implements  EventHandler<MouseEvent> {
     private final TileImage cloud;
     private final ChooseCloudManager manager;
+
+
+    /**
+     * Class constructor
+     */
 
     ChooseCloudHandler(TileImage cloud, ChooseCloudManager manager) {
         this.cloud = cloud;
