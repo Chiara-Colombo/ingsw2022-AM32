@@ -23,7 +23,7 @@ public class GameTest {
     }
 
     /**
-     * select the number of players
+     * testing the change of order of play
      */
 
     @Test
@@ -276,11 +276,6 @@ public class GameTest {
         gametest.startGame();
 
         assertEquals(GamePhase.START_PHASE,gametest.getGamePhase());
-/**
-        System.out.println(gametest.getValidCharacters().get(0).getCoinValue());
-        System.out.println(gametest.getValidCharacters().get(1).getCoinValue());
-        System.out.println(gametest.getValidCharacters().get(2).getCoinValue());
-*/
         gametest.setGamePhase(GamePhase.ACTION_PHASE);
         assertEquals(GamePhase.ACTION_PHASE,gametest.getGamePhase());
     }
@@ -347,10 +342,6 @@ public class GameTest {
         assertEquals(0,game.getPlayers().get(0).getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE).size());
         assertEquals(0,game.getPlayers().get(2).getSchoolBoard().getStudentsOfColor(PawnsColors.BLUE).size());
 
-
-
-
-
     }
 
     @Test
@@ -373,8 +364,6 @@ public class GameTest {
 
         gametest.activateCharacter(Characters.MONK);
         assertEquals(Characters.MONK,gametest.getActiveCharacter());
-
-
 
     }
 }

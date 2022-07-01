@@ -33,6 +33,9 @@ public class AssistantCardTest {
         assertEquals(2,card.getMotherNatureMovements());
     }
 
+    /**
+     * tests the magicmailman card
+     */
     @Test
     void MagicMailManEffectHandler(){
         AssistantCard assistantCard=new AssistantCard(7,3);

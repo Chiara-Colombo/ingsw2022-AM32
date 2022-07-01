@@ -7,7 +7,9 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class SchoolBoardTest {
-
+    /**
+     * tests the correct behavior of adding students to the dining room
+     */
     @Test
     void addToDiningRoom() {
 
@@ -32,6 +34,9 @@ public class SchoolBoardTest {
 
     }
 
+    /**
+     * tests the correct behavior of adding students to the entrance
+     */
     @Test
     void addStudentInEntrance() {
         SchoolBoard schoolBoard = new SchoolBoard();
@@ -46,7 +51,9 @@ public class SchoolBoardTest {
         assertEquals(studentToadd - 1, entrance.size());
 
     }
-
+    /**
+     * tests the correct behavior of adding professor to  the schoolboard
+     */
     @Test
     void addProfessor() {
         SchoolBoard schoolBoard = new SchoolBoard();

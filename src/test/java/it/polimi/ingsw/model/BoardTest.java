@@ -129,6 +129,10 @@ class BoardTest {
         assertEquals(board.getCoinsSupply(),20);
     }
 
+    /**
+     * tests the monk card effect
+     */
+
     @Test
     void monkEffectHandler(){
         Board boardTest = new Board(3);
@@ -143,10 +147,12 @@ class BoardTest {
             iterator.next();
             i++;
         }
-
-        //when the board is created it arleady has a  student pawn on the island
         assertEquals(1,i);
     }
+
+    /**
+     * tests the centaur card effect
+     */
 
     @Test
     void CentaurEffect(){
@@ -161,7 +167,9 @@ class BoardTest {
     }
 
 
-
+    /**
+     * tests the method drawfrombag
+     */
 
     @Test
     void Bag(){

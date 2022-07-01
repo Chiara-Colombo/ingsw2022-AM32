@@ -21,8 +21,7 @@ public class PlayerTest {
     }
 
     /**
-     * add differents students pawns to the diningroom and check if the size of che key values which is the number of pawn of
-     * each color is right
+     * tests assigning towers to player
      */
 
 
@@ -53,6 +52,10 @@ public class PlayerTest {
 
     }
 
+    /**
+     * tests adding students pawn in entrance
+     */
+
     @Test
     void setStudentInEntrance() {
         int i = 0;
@@ -67,10 +70,11 @@ public class PlayerTest {
         ArrayList<Pawn> students = schoolBoard.getStudentsInEntrance();
         assertEquals(2, students.size());
 
-
     }
 
-
+    /**
+     * tests the correct behavior of give coin pay coin
+     */
     @Test
     void Coins() {
         Player player = new Player("prova", 2);
@@ -85,6 +89,7 @@ public class PlayerTest {
         player.payCoins(1);
         assertEquals(1, player.getCoins());
     }
+
 
     @Test
     void addProfessor() {
@@ -102,7 +107,9 @@ public class PlayerTest {
         assertEquals(0, professors.size());
     }
 
-
+    /**
+     * test for the card spoiled princess
+     */
     @Test
     void SpoiledPrincessEffectHandler() {
         Player player = new Player("player", 7);
@@ -116,6 +123,9 @@ public class PlayerTest {
         assertEquals(1, students.size());
     }
 
+    /**
+     * test for the card farmer princess
+     */
     @Test
     void FarmerEffecttHandler() {
         Player player = new Player("test", 5);
@@ -127,6 +137,9 @@ public class PlayerTest {
 
     }
 
+    /**
+     * test for the knight card
+     */
     @Test
     void KnightEffectHandler() {
         Player player = new Player("test", 7);
@@ -138,7 +151,9 @@ public class PlayerTest {
         assertEquals(0,player.getExtraStudent());
 
     }
-
+    /**
+     * test for the jester card
+     */
     @Test
     void Jester() {
 
@@ -256,12 +271,6 @@ public class PlayerTest {
 
 
         assertEquals(7, player.getSchoolBoard().getStudentsInEntrance().size());
-
-
-
-
-
-
 
 
     }
